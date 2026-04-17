@@ -1,0 +1,15 @@
+{
+  "version": "0.0.1",
+  "configurations": [
+    {
+      "name": "value-chain",
+      "runtimeExecutable": "/Users/bryanbabb/node-dist/bin/node",
+      "runtimeArgs": ["/Users/bryanbabb/node-dist/bin/npm", "run", "dev"],
+      "cwd": "/Users/bryanbabb/Documents/Babb's Vault/Work/Projects/Zennify Accelerate/ZennifyAccelerate/app",
+      "env": {
+        "PATH": "/Users/bryanbabb/node-dist/bin:/usr/local/bin:/usr/bin:/bin"
+      },
+      "port": 5173
+    }
+  ]
+}

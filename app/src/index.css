@@ -1,0 +1,42 @@
+@import url('https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;1,9..40,300&display=swap');
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  padding: 0;
+  font-family: 'DM Sans', 'Inter', system-ui, sans-serif;
+  background: #f8fafc;
+  overflow: hidden;
+}
+
+.react-flow__node {
+  cursor: pointer;
+}
+
+.react-flow__node:focus {
+  outline: none;
+}
+
+/* Smooth edge rendering */
+.react-flow__edge path {
+  transition: stroke 0.15s ease;
+}
+
+/* Remove default react-flow node styling */
+.react-flow__node-stageNode,
+.react-flow__node-agentNode,
+.react-flow__node-deliverableNode,
+.react-flow__node-railNode,
+.react-flow__node-sharedToolNode,
+.react-flow__node-personaBand,
+.react-flow__node-handoffNode {
+  padding: 0;
+  border: none;
+  background: transparent;
+}

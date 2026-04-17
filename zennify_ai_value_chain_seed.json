@@ -1,0 +1,197 @@
+{
+  "$schema": "zennify-ai-value-chain/v1",
+  "meta": {
+    "program": "ZennifyAccelerate",
+    "purpose": "Interactive value chain diagram for leadership gap analysis",
+    "sourceOfTruth": "Zennify_AI_Journey_v3.pptx + project knowledge",
+    "lastUpdated": "2026-04-17",
+    "version": "0.2-seed"
+  },
+
+  "personas": [
+    { "id": "portfolio-leader", "name": "Portfolio Leader", "engagesAllStages": true },
+    { "id": "ssa", "name": "SSA", "engagesAllStages": true },
+    { "id": "sa", "name": "SA / Solution Architect", "engagesAllStages": true },
+    { "id": "architect", "name": "Architect", "engagesAllStages": true },
+    { "id": "developer", "name": "Developer", "engagesAllStages": true },
+    { "id": "qa", "name": "QA", "engagesAllStages": true },
+    { "id": "legal", "name": "Legal", "engagesAllStages": true },
+    { "id": "delivery-lead", "name": "Delivery Lead", "engagesAllStages": true },
+    { "id": "consultant", "name": "Consultant", "engagesAllStages": true },
+    { "id": "client", "name": "Client", "engagesAllStages": true }
+  ],
+
+  "stages": [
+    {
+      "id": "s1",
+      "type": "presales",
+      "number": "1",
+      "name": "Prospect Qualification",
+      "activities": 9,
+      "value": "10–20 hrs saved",
+      "outcomes": ["Speed + quality", "Exec relevance"]
+    },
+    {
+      "id": "s2",
+      "type": "presales",
+      "number": "2",
+      "name": "Research & Scoping",
+      "activities": 13,
+      "value": "10–30 hrs saved",
+      "outcomes": ["Quality + depth", "Scope clarity"]
+    },
+    {
+      "id": "s3",
+      "type": "presales",
+      "number": "3",
+      "name": "Solution & Proposal",
+      "activities": 16,
+      "value": "14–40 hrs saved",
+      "outcomes": ["Speed + consistency", "Margin protection"]
+    },
+    {
+      "id": "s4",
+      "type": "presales",
+      "number": "4",
+      "name": "SOW & Risk",
+      "activities": 10,
+      "value": "1–4 hrs saved",
+      "outcomes": ["Risk reduction", "Fewer surprises"]
+    },
+    {
+      "id": "s5",
+      "type": "presales",
+      "number": "5",
+      "name": "Closure & Handoff",
+      "activities": 11,
+      "value": "Intent preserved · 2–4 hrs saved",
+      "outcomes": ["Seamless start"],
+      "isHingeFromPresalesToDelivery": true
+    },
+    {
+      "id": "d1",
+      "type": "delivery",
+      "number": "D1",
+      "name": "Discovery & Requirements",
+      "activities": null,
+      "cadence": "Ongoing",
+      "outcomes": ["Scope drift visible Day 1", "Traceability"]
+    },
+    {
+      "id": "d2",
+      "type": "delivery",
+      "number": "D2",
+      "name": "Solution Design · Build · Test",
+      "activities": null,
+      "cadence": "Ongoing",
+      "outcomes": ["Faster releases", "Higher quality", "Predictable"]
+    },
+    {
+      "id": "d3",
+      "type": "delivery",
+      "number": "D3",
+      "name": "Enablement & Knowledge",
+      "activities": null,
+      "cadence": "Post-delivery",
+      "outcomes": ["Compounding ROI", "Faster adoption", "IP per deal"]
+    }
+  ],
+
+  "agents": [
+    { "id": "glengarry", "name": "Glengarry", "description": "Research agent", "stageIds": ["s1", "s2"], "status": "unknown" },
+    { "id": "dma-agent", "name": "DMA Agent", "description": "Digital Maturity Assessment agent", "stageIds": ["s1"], "status": "unknown" },
+    { "id": "hubbl", "name": "Hubbl Agent", "description": "Org scan", "stageIds": ["s2"], "status": "unknown" },
+    { "id": "opp-brief-agent", "name": "Opp Brief Agent", "description": "Opportunity briefing", "stageIds": ["s2"], "status": "unknown" },
+    { "id": "serena", "name": "Serena", "description": "Proposal agent", "stageIds": ["s3"], "status": "unknown" },
+    { "id": "pre-sales-factory", "name": "Pre-Sales Factory", "description": "BRD + design", "stageIds": ["s3"], "status": "unknown" },
+    { "id": "maverick", "name": "Maverick", "description": "SOW risk agent", "stageIds": ["s4"], "status": "unknown" },
+    { "id": "elle", "name": "Elle", "description": "Contract risk", "stageIds": ["s4"], "status": "unknown" },
+    { "id": "rfp-ralph", "name": "RFP Ralph", "description": "RFP response engine", "stageIds": ["s4"], "status": "unknown" },
+    { "id": "transition-asst", "name": "Transition Asst", "description": "Delivery transition knowledge", "stageIds": ["s5"], "status": "unknown" },
+    { "id": "slack-sf-agent", "name": "Slack↔SF Coordination Agent", "stageIds": ["s5"], "status": "unknown" },
+    { "id": "discovery-helper", "name": "Discovery Helper", "stageIds": ["d1"], "status": "unknown" },
+    { "id": "traceability-agent", "name": "Traceability Agent", "stageIds": ["d1"], "status": "unknown" },
+    { "id": "auctor-listening", "name": "Auctor Listening", "stageIds": ["d1", "d3"], "status": "unknown" },
+    { "id": "solution-design-asst", "name": "Solution Design Asst", "stageIds": ["d2"], "status": "unknown" },
+    { "id": "windsurf", "name": "Windsurf Dev Agent", "stageIds": ["d2"], "status": "unknown" },
+    { "id": "testing-quality", "name": "Testing & Quality Agents", "stageIds": ["d2"], "status": "unknown" },
+    { "id": "enablement-agent", "name": "Enablement Agent", "stageIds": ["d3"], "status": "unknown" },
+    { "id": "doc-agent", "name": "Doc Agent", "stageIds": ["d3"], "status": "unknown" }
+  ],
+
+  "orchestration": [
+    { "id": "sales-brain", "name": "Sales Brain", "description": "Knowledge layer · deal context · IP grounding", "spansStageIds": ["s1", "s2", "s3", "s4", "s5"], "type": "rail" },
+    { "id": "delivery-brain", "name": "Delivery Brain", "description": "Context · institutional IP · quality layer", "spansStageIds": ["d1", "d2", "d3"], "type": "rail" },
+    { "id": "claude-project", "name": "Claude Project", "description": "Deal / proposal / SOW context", "spansStageIds": ["s2", "s3", "s4"], "type": "shared-tool" },
+    { "id": "estimating-factory", "name": "Estimating Factory", "description": "LOE engine", "spansStageIds": ["s3"], "type": "shared-tool" },
+    { "id": "swantide", "name": "Org Analysis (Swantide)", "spansStageIds": ["d2"], "type": "shared-tool" }
+  ],
+
+  "frameworks": [
+    { "id": "dmf", "name": "Digital Maturity Framework", "stageIds": ["s1"] },
+    { "id": "exec-pov", "name": "Exec POV Methodology", "stageIds": ["s1"] },
+    { "id": "solution-narrative", "name": "Solution Narrative Framework", "stageIds": ["s2"] },
+    { "id": "capability-maturity", "name": "Capability Maturity Model (Hubbl)", "stageIds": ["s2"] },
+    { "id": "solution-design-framework", "name": "Solution Design Framework", "stageIds": ["s3"] },
+    { "id": "value-phasing", "name": "Value-Based Phasing Model", "stageIds": ["s3"] },
+    { "id": "commercial-risk", "name": "Commercial Risk Rubric", "stageIds": ["s4"] },
+    { "id": "scope-integrity", "name": "Scope Integrity Model", "stageIds": ["s4"] },
+    { "id": "handoff-intent", "name": "Handoff Intent Preservation Model", "stageIds": ["s5"] },
+    { "id": "knowledge-transfer", "name": "Knowledge Transfer Protocol", "stageIds": ["s5"] },
+    { "id": "sow-to-story", "name": "SOW→Story Traceability Model", "stageIds": ["d1"] },
+    { "id": "sentiment-capture", "name": "Sentiment Capture Framework", "stageIds": ["d1"] },
+    { "id": "arch-guardrails", "name": "Architecture Guardrails Model", "stageIds": ["d2"] },
+    { "id": "test-coverage-risk", "name": "Test Coverage Risk Model", "stageIds": ["d2"] },
+    { "id": "role-based-enablement", "name": "Role-Based Enablement Model", "stageIds": ["d3"] },
+    { "id": "living-knowledge", "name": "Living Knowledge Retention Protocol", "stageIds": ["d3"] }
+  ],
+
+  "deliverables": [
+    { "id": "account-brief", "name": "Account Brief", "producedAtStageId": "s1", "ingestedByStageId": "s2" },
+    { "id": "dma-deck", "name": "DMA Presentation Deck", "producedAtStageId": "s1", "ingestedByStageId": "s2" },
+    { "id": "hubbl-health-check", "name": "Hubbl Health Check Deck", "producedAtStageId": "s2", "ingestedByStageId": "s3" },
+    { "id": "opp-brief", "name": "Opp Brief Document", "producedAtStageId": "s2", "ingestedByStageId": "s3" },
+    { "id": "proposal-deck", "name": "Proposal Deck First Draft", "producedAtStageId": "s3", "ingestedByStageId": "s4" },
+    { "id": "brd-scope", "name": "BRD + Scope Definition", "producedAtStageId": "s3", "ingestedByStageId": "s4", "ws4DocMapping": "BRD" },
+    { "id": "risk-flag-report", "name": "Risk Flag Report", "producedAtStageId": "s4", "ingestedByStageId": "s5" },
+    { "id": "redline-guide", "name": "Redline Management Guide", "producedAtStageId": "s4", "ingestedByStageId": "s5", "buildStatus": "likely-gap" },
+    { "id": "engagement-brief", "name": "Engagement Brief", "producedAtStageId": "s5", "ingestedByStageId": "d1", "ws4DocMapping": "Charter" },
+    { "id": "handoff-pack", "name": "Deal Desk Handoff Pack", "producedAtStageId": "s5", "ingestedByStageId": "d1" },
+    { "id": "question-backlog", "name": "Question Backlog", "producedAtStageId": "d1", "ingestedByStageId": "d2" },
+    { "id": "transcripts", "name": "Transcript Summaries", "producedAtStageId": "d1", "ingestedByStageId": "d2" },
+    { "id": "arch-patterns", "name": "Build-Ready Arch Patterns", "producedAtStageId": "d2", "ingestedByStageId": "d3" },
+    { "id": "test-case-gen", "name": "Test Case Generators", "producedAtStageId": "d2", "ingestedByStageId": "d3" },
+    { "id": "migration-auto", "name": "Data Migration Automation", "producedAtStageId": "d2", "ingestedByStageId": "d3" },
+    { "id": "training-assets", "name": "Training Asset Generators", "producedAtStageId": "d3", "ingestedByStageId": "ip-loop" },
+    { "id": "status-reports", "name": "Status Report Output Format", "producedAtStageId": "d3", "ingestedByStageId": "ip-loop" }
+  ],
+
+  "ws4EightDocFramework": {
+    "note": "WS4 is the 8-document delivery framework. Three of the eight begin in pre-sales (Charter, BRD, Solution Blueprint). This is a critical overlay layer for v3 of the diagram.",
+    "docs": [
+      { "id": "ws4-charter", "name": "Charter", "startsAtStageId": "s5", "ownerWorkstream": "WS4" },
+      { "id": "ws4-brd", "name": "BRD", "startsAtStageId": "s3", "ownerWorkstream": "WS4" },
+      { "id": "ws4-solution-blueprint", "name": "Solution Blueprint", "startsAtStageId": "s3", "ownerWorkstream": "WS4" },
+      { "id": "ws4-doc4", "name": "Doc 4 (TBD)", "startsAtStageId": null, "ownerWorkstream": "WS4" },
+      { "id": "ws4-doc5", "name": "Doc 5 (TBD)", "startsAtStageId": null, "ownerWorkstream": "WS4" },
+      { "id": "ws4-doc6", "name": "Doc 6 (TBD)", "startsAtStageId": null, "ownerWorkstream": "WS4" },
+      { "id": "ws4-doc7", "name": "Doc 7 (TBD)", "startsAtStageId": null, "ownerWorkstream": "WS4" },
+      { "id": "ws4-doc8", "name": "Doc 8 (Post-Go-Live)", "startsAtStageId": "d3", "ownerWorkstream": "WS4" }
+    ]
+  },
+
+  "workstreamsMapping": {
+    "note": "Nine workstreams own different parts of this chain. Use this for color-coding or filter overlays.",
+    "workstreams": [
+      { "id": "ws1", "name": "Capability Framework & IP System", "owner": "Sam Friedewald", "tier": 1, "coversElements": ["frameworks", "agents"] },
+      { "id": "ws2", "name": "AI Agent Ecosystem & Tooling", "owner": "TBD", "tier": 1, "coversElements": ["agents", "orchestration"], "gap": "CRITICAL_OPEN_OWNERSHIP" },
+      { "id": "ws3", "name": "Pre-Sales Buying Experience", "owner": "Kevin Murray", "tier": 2, "coversStageIds": ["s1", "s2", "s3", "s4", "s5"] },
+      { "id": "ws4", "name": "8-Document Delivery Framework", "owner": "Bryan Babb", "tier": 2, "coversElements": ["deliverables"], "coversStageIds": ["s3", "s5", "d1", "d2", "d3"] },
+      { "id": "ws5", "name": "Fixed-Price Commercial Model", "owner": "Kevin Murray / Bryan Babb", "tier": 2, "coversStageIds": ["s3", "s4"] },
+      { "id": "ws6", "name": "Productized Offerings", "owner": "Kevin Murray / Carlie Welsh", "tier": 2, "coversStageIds": ["s1", "s2", "s3"] },
+      { "id": "ws7", "name": "AI-Native Delivery & Staffing Model", "owner": "Bryan Babb / Janet Larsen", "tier": 2, "coversElements": ["personas"], "coversStageIds": ["d1", "d2", "d3"] },
+      { "id": "ws8", "name": "Change Management & Enablement", "owner": "Kevin / Bryan / Janet", "tier": 3 },
+      { "id": "ws9", "name": "GTM & External Positioning", "owner": "Kevin Murray / Carlie Welsh", "tier": 3 }
+    ]
+  }
+}
