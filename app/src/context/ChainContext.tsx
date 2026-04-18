@@ -26,6 +26,7 @@ export interface Customizations {
   owners: Record<string, string>
   stageOverrides: Record<string, string[]>
   links: Record<string, { url: string; label: string }[]>
+  statusFields: Record<string, { sopUrl?: string; sopLabel?: string; done?: string; inProgress?: string; outstanding?: string; plan?: string }>
 }
 
 interface ChainState {
@@ -57,6 +58,7 @@ type Action =
   | { type: 'SET_STAGE_OVERRIDE'; nodeId: string; stageIds: string[] }
   | { type: 'ADD_LINK'; nodeId: string; url: string; label: string }
   | { type: 'REMOVE_LINK'; nodeId: string; index: number }
+  | { type: 'SET_STATUS_FIELD'; nodeId: string; field: string; value: string }
   | { type: 'RESTORE'; customizations: Customizations }
   | { type: 'RESET' }
 
@@ -86,9 +88,11 @@ interface ChainContextValue {
   setStageOverride: (nodeId: string, stageIds: string[]) => void
   addLink: (nodeId: string, url: string, label: string) => void
   removeLink: (nodeId: string, index: number) => void
+  setStatusField: (nodeId: string, field: string, value: string) => void
   positions: Record<string, { x: number; y: number }>
   stageOverrides: Record<string, string[]>
   links: Record<string, { url: string; label: string }[]>
+  statusFields: Record<string, { sopUrl?: string; sopLabel?: string; done?: string; inProgress?: string; outstanding?: string; plan?: string }>
   sizes: Record<string, { width: number; height: number }>
   notes: Record<string, Note[]>
   statuses: Record<string, 'live' | 'wip' | 'planned'>
@@ -135,6 +139,7 @@ const defaultCustomizations: Customizations = {
   owners: {},
   stageOverrides: {},
   links: {},
+  statusFields: {},
 }
 
 // ─── reducer ──────────────────────────────────────────────────────────────────
@@ -246,6 +251,11 @@ function reducer(state: ChainState, action: Action): ChainState {
       return { ...state, customizations: { ...c, links: { ...(c.links ?? {}), [action.nodeId]: existing.filter((_, i) => i !== action.index) } } }
     }
 
+    case 'SET_STATUS_FIELD': {
+      const existing = (c.statusFields ?? {})[action.nodeId] ?? {}
+      return { ...state, customizations: { ...c, statusFields: { ...(c.statusFields ?? {}), [action.nodeId]: { ...existing, [action.field]: action.value } } } }
+    }
+
     case 'RESTORE':
       // merge with defaults so new fields don't break on old stored data
       return { ...state, customizations: { ...defaultCustomizations, ...action.customizations } }
@@ -351,6 +361,7 @@ export function ChainProvider({ children }: { children: ReactNode }) {
     owners: state.customizations.owners ?? {},
     stageOverrides: state.customizations.stageOverrides ?? {},
     links: state.customizations.links ?? {},
+    statusFields: state.customizations.statusFields ?? {},
     toggleEditing: () => dispatch({ type: 'TOGGLE_EDIT' }),
     addAgent: (stageId, name, description, category) =>
       dispatch({ type: 'ADD_AGENT', agent: { id: `agent-custom-${Date.now()}`, name, description, stageIds: [stageId], status: 'unknown', category } }),
@@ -378,6 +389,7 @@ export function ChainProvider({ children }: { children: ReactNode }) {
     setStageOverride: (nodeId, stageIds) => dispatch({ type: 'SET_STAGE_OVERRIDE', nodeId, stageIds }),
     addLink: (nodeId, url, label) => dispatch({ type: 'ADD_LINK', nodeId, url, label }),
     removeLink: (nodeId, index) => dispatch({ type: 'REMOVE_LINK', nodeId, index }),
+    setStatusField: (nodeId, field, value) => dispatch({ type: 'SET_STATUS_FIELD', nodeId, field, value }),
     reset: () => dispatch({ type: 'RESET' }),
   }
 

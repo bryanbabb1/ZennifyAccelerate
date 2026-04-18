@@ -27,6 +27,9 @@ interface Props {
   nodeLinks?: { url: string; label: string }[]
   onAddLink?: (url: string, label: string) => void
   onRemoveLink?: (index: number) => void
+  nodeStatus?: 'live' | 'wip' | 'planned' | null
+  nodeStatusFields?: { sopUrl?: string; sopLabel?: string; done?: string; inProgress?: string; outstanding?: string; plan?: string }
+  onSetStatusField?: (field: string, value: string) => void
 }
 
 // ─── colour tokens ────────────────────────────────────────────────────────────
@@ -447,6 +450,75 @@ function OrchestrationBody({ orch, nodeId, taggedPersonas, descriptions, onSetDe
   )
 }
 
+// ─── status-driven fields ─────────────────────────────────────────────────────
+type StatusFields = { sopUrl?: string; sopLabel?: string; done?: string; inProgress?: string; outstanding?: string; plan?: string }
+
+function StatusSection({ status, fields = {}, onChange }: {
+  status: 'live' | 'wip' | 'planned'
+  fields?: StatusFields
+  onChange: (field: string, value: string) => void
+}) {
+  const ta = (field: string, value: string, placeholder: string, rows = 3) => (
+    <textarea value={value} onChange={e => onChange(field, e.target.value)}
+      placeholder={placeholder} rows={rows}
+      style={{ width: '100%', padding: '7px 9px', borderRadius: 6, border: `1px solid ${Z.border}`, fontSize: 12, fontFamily: 'DM Sans, Inter, sans-serif', resize: 'vertical', outline: 'none', lineHeight: 1.5, boxSizing: 'border-box', background: '#fafafa' }} />
+  )
+
+  if (status === 'live') {
+    return (
+      <Card bg={Z.greenLight} border={Z.greenBorder} mb={14}>
+        <SectionLabel text="● Live — SOP & Documentation" color={Z.green} />
+        <div style={{ display: 'flex', gap: 6, marginBottom: 6 }}>
+          <input value={fields.sopUrl ?? ''} onChange={e => onChange('sopUrl', e.target.value)}
+            placeholder="https://…  (SOP or guide document URL)"
+            style={{ flex: 2, padding: '6px 9px', borderRadius: 6, border: `1px solid ${Z.greenBorder}`, fontSize: 12, fontFamily: 'DM Sans, Inter, sans-serif', outline: 'none', background: '#fff' }} />
+          <input value={fields.sopLabel ?? ''} onChange={e => onChange('sopLabel', e.target.value)}
+            placeholder="Link label"
+            style={{ flex: 1, padding: '6px 9px', borderRadius: 6, border: `1px solid ${Z.greenBorder}`, fontSize: 12, fontFamily: 'DM Sans, Inter, sans-serif', outline: 'none', background: '#fff' }} />
+        </div>
+        {fields.sopUrl ? (
+          <a href={fields.sopUrl} target="_blank" rel="noopener noreferrer"
+            style={{ fontSize: 12, color: Z.green, fontWeight: 600, textDecoration: 'none' }}>
+            🔗 {fields.sopLabel || fields.sopUrl}
+          </a>
+        ) : (
+          <div style={{ fontSize: 11, color: '#94a3b8', fontStyle: 'italic' }}>No SOP linked yet — paste a URL above.</div>
+        )}
+      </Card>
+    )
+  }
+
+  if (status === 'wip') {
+    const rows: { field: string; label: string; icon: string; placeholder: string }[] = [
+      { field: 'done',        label: 'Done',                    icon: '✅', placeholder: 'What has been completed so far…' },
+      { field: 'inProgress',  label: 'In Progress',             icon: '⏳', placeholder: 'What is actively being worked on…' },
+      { field: 'outstanding', label: 'Outstanding to Enable',   icon: '⚑',  placeholder: "Blockers, missing pieces, what's needed to go live…" },
+    ]
+    return (
+      <Card bg={Z.goldLight} border={Z.goldBorder} mb={14}>
+        <SectionLabel text="◐ In Progress — Status Tracker" color="#92400e" />
+        {rows.map(({ field, label, icon, placeholder }) => (
+          <div key={field} style={{ marginBottom: 10 }}>
+            <div style={{ fontSize: 10.5, fontWeight: 700, color: '#92400e', marginBottom: 4 }}>{icon} {label}</div>
+            {ta(field, (fields as Record<string, string>)[field] ?? '', placeholder, 2)}
+          </div>
+        ))}
+      </Card>
+    )
+  }
+
+  if (status === 'planned') {
+    return (
+      <Card bg={Z.purpleLight} border={Z.purpleBorder} mb={14}>
+        <SectionLabel text="○ Planned — Build Checklist" color={Z.purple} />
+        {ta('plan', fields.plan ?? '', 'What needs to happen to build this? List requirements, blockers, dependencies, owners…', 5)}
+      </Card>
+    )
+  }
+
+  return null
+}
+
 // ─── links + notes ────────────────────────────────────────────────────────────
 function LinksSection({ links = [], onAdd, onRemove }: {
   links?: { url: string; label: string }[]
@@ -539,6 +611,7 @@ export default function DetailPanel({
   personaInteractions, allPersonas, descriptions, owners, onSetDescription, onSetOwner, onRename,
   isEditing, allStages, onSetStageOverride,
   nodeLinks, onAddLink, onRemoveLink,
+  nodeStatus, nodeStatusFields, onSetStatusField,
 }: Props) {
   const [editingName, setEditingName] = useState(false)
   const [nameDraft, setNameDraft] = useState('')
@@ -618,6 +691,10 @@ export default function DetailPanel({
         <div style={{ flex: 1, overflowY: 'auto', padding: '20px 24px 24px' }}>
 
           <OwnerField nodeId={nodeId} savedOwner={savedOwner || undefined} derivedOwner={derivedOwner?.name} onSetOwner={onSetOwner} />
+
+          {nodeStatus && onSetStatusField && (
+            <StatusSection status={nodeStatus} fields={nodeStatusFields} onChange={onSetStatusField} />
+          )}
 
           {item.kind === 'stage' && (
             <StageBody stage={item.data} nodeId={nodeId} taggedPersonas={taggedPersonas}

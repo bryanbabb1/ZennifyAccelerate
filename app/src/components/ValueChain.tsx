@@ -55,7 +55,8 @@ export default function ValueChain() {
           addAgent, addDeliverable, addOrchestration, addStage, notes, addNote, removeNote, reset,
           statuses, togglePersonaNode, setPersonaNote, personaInteractions,
           descriptions, owners, setDescription, setOwner, rename,
-          setStageOverride, links, addLink, removeLink } = useChain()
+          setStageOverride, links, addLink, removeLink,
+          statusFields, setStatusField } = useChain()
 
   function handleExport() {
     const raw = localStorage.getItem('zennify-chain-v2') ?? '{}'
@@ -246,6 +247,19 @@ export default function ValueChain() {
   const stageName = addForm?.kind !== 'orchestration' && addForm?.kind !== 'stage'
     ? data.stages.find(s => s.id === addForm?.stageId)?.name
     : null
+
+  const nodeStatus: 'live' | 'wip' | 'planned' | null = (() => {
+    if (!selected || !selectedNodeId) return null
+    const override = statuses[selectedNodeId]
+    if (override) return override
+    if (selected.kind === 'agent') {
+      const s = selected.data.status
+      if (s === 'production') return 'live'
+      if (s === 'in-development') return 'wip'
+      if (s === 'concept') return 'planned'
+    }
+    return null
+  })()
   return (
     <div style={{ width: '100%', height: '100%', position: 'relative' }}>
 
@@ -416,6 +430,9 @@ export default function ValueChain() {
           nodeLinks={selectedNodeId ? (links[selectedNodeId] ?? []) : []}
           onAddLink={(url, label) => selectedNodeId && addLink(selectedNodeId, url, label)}
           onRemoveLink={(index) => selectedNodeId && removeLink(selectedNodeId, index)}
+          nodeStatus={nodeStatus}
+          nodeStatusFields={selectedNodeId ? (statusFields[selectedNodeId] ?? {}) : {}}
+          onSetStatusField={(field, value) => selectedNodeId && setStatusField(selectedNodeId, field, value)}
         />
       )}
 
