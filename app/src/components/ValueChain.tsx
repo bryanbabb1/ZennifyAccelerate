@@ -241,8 +241,6 @@ export default function ValueChain() {
   const stageName = addForm?.kind !== 'orchestration' && addForm?.kind !== 'stage'
     ? data.stages.find(s => s.id === addForm?.stageId)?.name
     : null
-  const panelOpen = selected !== null || addForm !== null || personaConfigId !== null
-
   return (
     <div style={{ width: '100%', height: '100%', position: 'relative' }}>
 
@@ -267,7 +265,7 @@ export default function ValueChain() {
       </div>
 
       {/* ── Top-right controls ── */}
-      <div style={{ position: 'absolute', top: 16, right: panelOpen ? 336 : 16, zIndex: 5, display: 'flex', alignItems: 'center', gap: 8, transition: 'right 0.2s ease' }}>
+      <div style={{ position: 'absolute', top: 16, right: 16, zIndex: 5, display: 'flex', alignItems: 'center', gap: 8 }}>
 
         {isEditing && (
           <>

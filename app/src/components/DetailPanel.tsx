@@ -220,8 +220,12 @@ export default function DetailPanel({ item, nodeId, notes, onAddNote, onRemoveNo
   if (!item) return null
 
   return (
-    <div style={{ position: 'absolute', top: 0, right: 0, bottom: 0, width: 320, background: '#ffffff', borderLeft: '1px solid #e2e8f0', overflowY: 'auto', zIndex: 10, fontFamily: 'DM Sans, Inter, sans-serif' }}>
-      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '16px 20px', borderBottom: '1px solid #f1f5f9', position: 'sticky', top: 0, background: '#ffffff', zIndex: 1 }}>
+    <div
+      onClick={e => { if (e.target === e.currentTarget) onClose() }}
+      style={{ position: 'fixed', inset: 0, background: 'rgba(15,23,42,0.45)', zIndex: 50, display: 'flex', alignItems: 'center', justifyContent: 'center', fontFamily: 'DM Sans, Inter, sans-serif' }}
+    >
+      <div style={{ background: '#ffffff', borderRadius: 14, boxShadow: '0 24px 64px rgba(0,0,0,0.18)', width: '90%', maxWidth: 680, maxHeight: '85vh', display: 'flex', flexDirection: 'column', overflow: 'hidden' }}>
+      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '18px 24px', borderBottom: '1px solid #f1f5f9', flexShrink: 0 }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
           <span style={{ fontSize: 11, fontWeight: 600, color: '#94a3b8', textTransform: 'uppercase', letterSpacing: '0.08em' }}>{item.kind}</span>
           {activePersonaName && (
@@ -230,10 +234,10 @@ export default function DetailPanel({ item, nodeId, notes, onAddNote, onRemoveNo
             </span>
           )}
         </div>
-        <button onClick={onClose} style={{ background: 'none', border: 'none', cursor: 'pointer', fontSize: 18, color: '#94a3b8', lineHeight: 1, padding: '0 4px' }}>×</button>
+        <button onClick={onClose} style={{ background: 'none', border: 'none', cursor: 'pointer', fontSize: 22, color: '#94a3b8', lineHeight: 1, padding: '0 4px' }}>×</button>
       </div>
 
-      <div style={{ padding: '20px 20px 32px' }}>
+      <div style={{ padding: '24px 28px 32px', overflowY: 'auto' }}>
         {item.kind === 'stage' && <StageDetail stage={item.data} />}
         {item.kind === 'agent' && <AgentDetail agent={item.data} />}
         {item.kind === 'deliverable' && <DeliverableDetail deliv={item.data} />}
@@ -269,6 +273,7 @@ export default function DetailPanel({ item, nodeId, notes, onAddNote, onRemoveNo
             onRemove={onRemoveNote}
           />
         )}
+      </div>
       </div>
     </div>
   )
