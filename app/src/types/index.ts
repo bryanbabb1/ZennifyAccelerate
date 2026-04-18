@@ -14,6 +14,7 @@ export interface Stage {
   cadence?: string
   outcomes: string[]
   isHingeFromPresalesToDelivery?: boolean
+  isSprintCycle?: boolean
 }
 
 export interface Agent {

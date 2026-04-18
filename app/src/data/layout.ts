@@ -32,7 +32,7 @@ const PERSONA_PANEL_X = -(PERSONA_PANEL_W + 24)
 const PERSONA_PANEL_Y = SPANNING_AGENT_Y - 20
 
 // ─── stage X map ──────────────────────────────────────────────────────────────
-const STAGE_ORDER = ['s1', 's2', 's3', 's4', 's5', 'd1', 'd2', 'd3']
+const STAGE_ORDER = ['s1', 's2', 's3', 's4', 's5', 'd1', 'd2', 'd3', 'd4', 'd5', 'd6', 'd7', 'd8']
 
 function buildStageXMap(): Record<string, number> {
   const map: Record<string, number> = {}
