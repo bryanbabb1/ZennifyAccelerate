@@ -496,12 +496,6 @@ export default function DetailPanel({
                   )}
                 </div>
               )}
-              {item.kind === 'agent' && item.data.description && (
-                <div style={{ fontSize: 13, color: 'rgba(255,255,255,0.72)', marginTop: 7, lineHeight: 1.45 }}>{item.data.description}</div>
-              )}
-              {item.kind === 'orchestration' && item.data.description && (
-                <div style={{ fontSize: 13, color: 'rgba(255,255,255,0.72)', marginTop: 7, lineHeight: 1.45 }}>{item.data.description}</div>
-              )}
             </div>
             <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-end', gap: 8, flexShrink: 0 }}>
               <button onClick={onClose}
