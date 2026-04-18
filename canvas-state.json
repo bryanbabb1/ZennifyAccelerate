@@ -1,1 +1,53 @@
-{}
+{
+  "addedAgents": [],
+  "removedAgentIds": [],
+  "addedStages": [],
+  "removedStageIds": [],
+  "addedDeliverables": [],
+  "removedDeliverableIds": [
+    "redline-guide"
+  ],
+  "addedOrchestration": [],
+  "removedOrchestrationIds": [
+    "sales-brain",
+    "delivery-brain"
+  ],
+  "renames": {
+    "auctor-listening": "Auctor"
+  },
+  "positions": {
+    "persona-band": {
+      "x": 0,
+      "y": 280
+    },
+    "shared-claude-project": {
+      "x": 200,
+      "y": -100
+    },
+    "agent-glengarry": {
+      "x": 0,
+      "y": -220
+    },
+    "agent-auctor-listening": {
+      "x": 1040,
+      "y": -220
+    }
+  },
+  "sizes": {},
+  "notes": {},
+  "statuses": {
+    "agent-maverick": "live",
+    "agent-elle": "live",
+    "agent-rfp-ralph": "live",
+    "agent-pre-sales-factory": "wip",
+    "agent-serena": "live",
+    "agent-hubbl": "live",
+    "agent-opp-brief-agent": "live",
+    "agent-dma-agent": "live",
+    "agent-glengarry": "live"
+  },
+  "flagged": [],
+  "nodeLabels": {},
+  "nodeOwners": {},
+  "personaInteractions": {}
+}
