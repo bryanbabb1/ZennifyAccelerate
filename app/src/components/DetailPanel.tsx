@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import type { SelectedItem, Persona } from '../types'
 import type { Note } from '../context/ChainContext'
 import seed from '../data/seed'
@@ -20,6 +20,7 @@ interface Props {
   owners?: Record<string, string>
   onSetDescription?: (text: string) => void
   onSetOwner?: (owner: string) => void
+  onRename?: (id: string, name: string) => void
 }
 
 // ─── colour tokens ────────────────────────────────────────────────────────────
@@ -109,11 +110,11 @@ function statusStyle(status: string): { color: string; bg: string; label: string
 }
 
 // ─── editable description ─────────────────────────────────────────────────────
-function DescriptionField({ nodeId, descriptions, onSetDescription, placeholder }: {
+function DescriptionField({ nodeId, descriptions, onSetDescription, placeholder, defaultValue }: {
   nodeId: string | null; descriptions?: Record<string, string>;
-  onSetDescription?: (t: string) => void; placeholder: string
+  onSetDescription?: (t: string) => void; placeholder: string; defaultValue?: string
 }) {
-  const value = nodeId ? (descriptions?.[nodeId] ?? '') : ''
+  const value = nodeId ? (descriptions?.[nodeId] ?? defaultValue ?? '') : ''
   return (
     <div style={{ marginBottom: 14 }}>
       <SectionLabel text="Description" color={Z.slate} />
@@ -270,7 +271,8 @@ function AgentBody({ agent, nodeId, taggedPersonas, descriptions, onSetDescripti
       </Card>
 
       <DescriptionField nodeId={nodeId} descriptions={descriptions} onSetDescription={onSetDescription}
-        placeholder={`What does ${agent.name} do? What inputs does it take and what does it produce?`} />
+        placeholder={`What does ${agent.name} do? What inputs does it take and what does it produce?`}
+        defaultValue={agent.description} />
 
       {stages.length > 0 && (
         <div style={{ marginBottom: 14 }}>
@@ -359,7 +361,8 @@ function OrchestrationBody({ orch, nodeId, taggedPersonas, descriptions, onSetDe
       </Card>
 
       <DescriptionField nodeId={nodeId} descriptions={descriptions} onSetDescription={onSetDescription}
-        placeholder={`What does ${orch.name} do? What does it provide across stages?`} />
+        placeholder={`What does ${orch.name} do? What does it provide across stages?`}
+        defaultValue={orch.description} />
 
       {stages.length > 0 && (
         <div style={{ marginBottom: 14 }}>
@@ -432,8 +435,12 @@ function NotesSection({ notes, onAdd, onRemove }: { notes: Note[]; onAdd: (t: st
 export default function DetailPanel({
   item, nodeId, notes, onAddNote, onRemoveNote, onClose,
   activePersonaId, activePersonaName, personaNote, onPersonaNoteChange,
-  personaInteractions, allPersonas, descriptions, owners, onSetDescription, onSetOwner,
+  personaInteractions, allPersonas, descriptions, owners, onSetDescription, onSetOwner, onRename,
 }: Props) {
+  const [editingName, setEditingName] = useState(false)
+  const [nameDraft, setNameDraft] = useState('')
+  useEffect(() => { setEditingName(false) }, [nodeId])
+
   if (!item) return null
 
   const derivedOwner = getDerivedOwner(item)
@@ -456,9 +463,39 @@ export default function DetailPanel({
               <div style={{ fontSize: 9.5, fontWeight: 700, color: 'rgba(255,255,255,0.6)', letterSpacing: '0.12em', textTransform: 'uppercase', marginBottom: 6 }}>
                 {getKindLabel(item)}
               </div>
-              <div style={{ fontSize: 23, fontWeight: 800, color: '#ffffff', lineHeight: 1.15, letterSpacing: '-0.01em' }}>
-                {item.data.name}
-              </div>
+              {editingName ? (
+                <div style={{ display: 'flex', alignItems: 'center', gap: 6, marginTop: 2 }}>
+                  <input autoFocus value={nameDraft}
+                    onChange={e => setNameDraft(e.target.value)}
+                    onKeyDown={e => {
+                      if (e.key === 'Enter' && nameDraft.trim()) { onRename?.(item.data.id, nameDraft.trim()); setEditingName(false) }
+                      if (e.key === 'Escape') setEditingName(false)
+                    }}
+                    style={{ flex: 1, background: 'rgba(255,255,255,0.15)', border: '1.5px solid rgba(255,255,255,0.5)', borderRadius: 7, padding: '5px 10px', fontSize: 20, fontWeight: 800, color: '#fff', fontFamily: 'DM Sans, Inter, sans-serif', outline: 'none', minWidth: 0 }}
+                  />
+                  <button onClick={() => { if (nameDraft.trim()) { onRename?.(item.data.id, nameDraft.trim()); setEditingName(false) } }}
+                    style={{ background: 'rgba(255,255,255,0.2)', border: '1px solid rgba(255,255,255,0.4)', cursor: 'pointer', fontSize: 11, color: '#fff', borderRadius: 6, padding: '5px 10px', fontFamily: 'DM Sans, Inter, sans-serif', whiteSpace: 'nowrap', flexShrink: 0 }}>
+                    Save
+                  </button>
+                  <button onClick={() => setEditingName(false)}
+                    style={{ background: 'none', border: 'none', cursor: 'pointer', fontSize: 16, color: 'rgba(255,255,255,0.7)', padding: '4px', flexShrink: 0 }}>
+                    ✕
+                  </button>
+                </div>
+              ) : (
+                <div style={{ display: 'flex', alignItems: 'center', gap: 8, flexWrap: 'wrap' }}>
+                  <div style={{ fontSize: 23, fontWeight: 800, color: '#ffffff', lineHeight: 1.15, letterSpacing: '-0.01em' }}>
+                    {item.data.name}
+                  </div>
+                  {onRename && item.kind !== 'persona' && (
+                    <button onClick={() => { setNameDraft(item.data.name); setEditingName(true) }}
+                      title="Rename"
+                      style={{ background: 'rgba(255,255,255,0.12)', border: '1px solid rgba(255,255,255,0.25)', cursor: 'pointer', fontSize: 10, color: 'rgba(255,255,255,0.7)', borderRadius: 5, padding: '3px 8px', fontFamily: 'DM Sans, Inter, sans-serif', flexShrink: 0 }}>
+                      ✎ Rename
+                    </button>
+                  )}
+                </div>
+              )}
               {item.kind === 'agent' && item.data.description && (
                 <div style={{ fontSize: 13, color: 'rgba(255,255,255,0.72)', marginTop: 7, lineHeight: 1.45 }}>{item.data.description}</div>
               )}

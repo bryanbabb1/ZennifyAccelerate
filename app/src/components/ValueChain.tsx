@@ -23,6 +23,7 @@ import PersonaBandNode from './nodes/PersonaBandNode'
 import HandoffNode from './nodes/HandoffNode'
 import AddButtonNode from './nodes/AddButtonNode'
 import DetailPanel from './DetailPanel'
+import EditPasswordModal from './EditPasswordModal'
 
 const nodeTypes = {
   stageNode: StageNode,
@@ -53,7 +54,7 @@ export default function ValueChain() {
   const { data, isEditing, toggleEditing, positions, setPosition, sizes,
           addAgent, addDeliverable, addOrchestration, addStage, notes, addNote, removeNote, reset,
           statuses, togglePersonaNode, setPersonaNote, personaInteractions,
-          descriptions, owners, setDescription, setOwner } = useChain()
+          descriptions, owners, setDescription, setOwner, rename } = useChain()
 
   function handleExport() {
     const raw = localStorage.getItem('zennify-chain-v2') ?? '{}'
@@ -89,6 +90,7 @@ export default function ValueChain() {
   const [selected, setSelected] = useState<SelectedItem | null>(null)
   const [addForm, setAddForm] = useState<AddForm | null>(null)
   const [showResetConfirm, setShowResetConfirm] = useState(false)
+  const [showPasswordModal, setShowPasswordModal] = useState(false)
   const [activePersonaId, setActivePersonaId] = useState<string | null>(null)
   const [personaConfigId, setPersonaConfigId] = useState<string | null>(null)
 
@@ -299,7 +301,12 @@ export default function ValueChain() {
           ↑ Import
         </button>
 
-        <button onClick={toggleEditing}
+        <button onClick={() => {
+            if (isEditing) { toggleEditing(); return }
+            const pwd = import.meta.env.VITE_EDIT_PASSWORD as string | undefined
+            if (!pwd || sessionStorage.getItem('zennify-edit-auth') === '1') { toggleEditing() }
+            else { setShowPasswordModal(true) }
+          }}
           style={{ background: isEditing ? '#0F6E56' : 'rgba(255,255,255,0.95)', color: isEditing ? '#fff' : '#374151', border: `1px solid ${isEditing ? '#0F6E56' : '#e2e8f0'}`, borderRadius: 8, padding: '8px 14px', fontFamily: 'DM Sans, Inter, sans-serif', fontSize: 12, fontWeight: 600, cursor: 'pointer', display: 'flex', alignItems: 'center', gap: 6 }}>
           {isEditing ? '✓ Editing' : '✏ Edit'}
         </button>
@@ -315,6 +322,14 @@ export default function ValueChain() {
         <div style={{ position: 'absolute', top: 0, left: 0, right: 0, zIndex: 4, background: '#0F6E56', color: '#fff', fontFamily: 'DM Sans, Inter, sans-serif', fontSize: 11, fontWeight: 500, padding: '5px 16px', display: 'flex', alignItems: 'center', gap: 8 }}>
           ✏ Edit mode — <strong>drag</strong> to reposition · <strong>drag corner</strong> to resize · <strong>click name</strong> to rename · <strong>hover</strong> to delete · <strong>+ buttons</strong> to add
         </div>
+      )}
+
+      {/* ── Password modal ── */}
+      {showPasswordModal && (
+        <EditPasswordModal
+          onConfirm={() => { setShowPasswordModal(false); toggleEditing() }}
+          onCancel={() => setShowPasswordModal(false)}
+        />
       )}
 
       {/* ── Reset confirm ── */}
@@ -362,6 +377,7 @@ export default function ValueChain() {
       {/* ── Detail + Notes panel ── */}
       {selected && !addForm && !personaConfigId && (
         <DetailPanel
+          key={selectedNodeId}
           item={selected}
           nodeId={selectedNodeId}
           notes={selectedNotes}
@@ -380,6 +396,10 @@ export default function ValueChain() {
           owners={owners}
           onSetDescription={(text) => selectedNodeId && setDescription(selectedNodeId, text)}
           onSetOwner={(owner) => selectedNodeId && setOwner(selectedNodeId, owner)}
+          onRename={(id, name) => {
+            rename(id, name)
+            if (selected) setSelected({ ...selected, data: { ...selected.data, name } })
+          }}
         />
       )}
 

@@ -1,6 +1,7 @@
-import { createContext, useContext, useReducer, useEffect, type ReactNode } from 'react'
+import { createContext, useContext, useReducer, useEffect, useRef, type ReactNode } from 'react'
 import type { Agent, Deliverable, Orchestration, SeedData, Stage } from '../types'
 import baseSeed from '../data/seed'
+import { loadLive, saveLive } from '../lib/persistence'
 
 export interface Note { text: string; timestamp: number }
 
@@ -278,9 +279,20 @@ export function ChainProvider({ children }: { children: ReactNode }) {
     isEditing: false,
   })
 
+  const saveTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null)
+
   useEffect(() => {
     localStorage.setItem(STORAGE_KEY, JSON.stringify(state.customizations))
+    if (saveTimerRef.current) clearTimeout(saveTimerRef.current)
+    saveTimerRef.current = setTimeout(() => { saveLive(state.customizations) }, 2000)
   }, [state.customizations])
+
+  // Load from Supabase on mount — overlays localStorage with remote state if available
+  useEffect(() => {
+    loadLive().then(remote => {
+      if (remote) dispatch({ type: 'RESTORE', customizations: remote })
+    })
+  }, [])
 
   const data = buildEffectiveData(state.customizations)
 
