@@ -25,6 +25,7 @@ export interface Customizations {
   descriptions: Record<string, string>
   owners: Record<string, string>
   stageOverrides: Record<string, string[]>
+  links: Record<string, { url: string; label: string }[]>
 }
 
 interface ChainState {
@@ -54,6 +55,8 @@ type Action =
   | { type: 'SET_DESCRIPTION'; nodeId: string; text: string }
   | { type: 'SET_OWNER'; nodeId: string; owner: string }
   | { type: 'SET_STAGE_OVERRIDE'; nodeId: string; stageIds: string[] }
+  | { type: 'ADD_LINK'; nodeId: string; url: string; label: string }
+  | { type: 'REMOVE_LINK'; nodeId: string; index: number }
   | { type: 'RESTORE'; customizations: Customizations }
   | { type: 'RESET' }
 
@@ -81,8 +84,11 @@ interface ChainContextValue {
   setDescription: (nodeId: string, text: string) => void
   setOwner: (nodeId: string, owner: string) => void
   setStageOverride: (nodeId: string, stageIds: string[]) => void
+  addLink: (nodeId: string, url: string, label: string) => void
+  removeLink: (nodeId: string, index: number) => void
   positions: Record<string, { x: number; y: number }>
   stageOverrides: Record<string, string[]>
+  links: Record<string, { url: string; label: string }[]>
   sizes: Record<string, { width: number; height: number }>
   notes: Record<string, Note[]>
   statuses: Record<string, 'live' | 'wip' | 'planned'>
@@ -128,6 +134,7 @@ const defaultCustomizations: Customizations = {
   descriptions: {},
   owners: {},
   stageOverrides: {},
+  links: {},
 }
 
 // ─── reducer ──────────────────────────────────────────────────────────────────
@@ -228,6 +235,16 @@ function reducer(state: ChainState, action: Action): ChainState {
 
     case 'SET_STAGE_OVERRIDE':
       return { ...state, customizations: { ...c, stageOverrides: { ...(c.stageOverrides ?? {}), [action.nodeId]: action.stageIds } } }
+
+    case 'ADD_LINK': {
+      const existing = (c.links ?? {})[action.nodeId] ?? []
+      return { ...state, customizations: { ...c, links: { ...(c.links ?? {}), [action.nodeId]: [...existing, { url: action.url, label: action.label }] } } }
+    }
+
+    case 'REMOVE_LINK': {
+      const existing = (c.links ?? {})[action.nodeId] ?? []
+      return { ...state, customizations: { ...c, links: { ...(c.links ?? {}), [action.nodeId]: existing.filter((_, i) => i !== action.index) } } }
+    }
 
     case 'RESTORE':
       // merge with defaults so new fields don't break on old stored data
@@ -333,6 +350,7 @@ export function ChainProvider({ children }: { children: ReactNode }) {
     descriptions: state.customizations.descriptions ?? {},
     owners: state.customizations.owners ?? {},
     stageOverrides: state.customizations.stageOverrides ?? {},
+    links: state.customizations.links ?? {},
     toggleEditing: () => dispatch({ type: 'TOGGLE_EDIT' }),
     addAgent: (stageId, name, description, category) =>
       dispatch({ type: 'ADD_AGENT', agent: { id: `agent-custom-${Date.now()}`, name, description, stageIds: [stageId], status: 'unknown', category } }),
@@ -358,6 +376,8 @@ export function ChainProvider({ children }: { children: ReactNode }) {
     setDescription: (nodeId, text) => dispatch({ type: 'SET_DESCRIPTION', nodeId, text }),
     setOwner: (nodeId, owner) => dispatch({ type: 'SET_OWNER', nodeId, owner }),
     setStageOverride: (nodeId, stageIds) => dispatch({ type: 'SET_STAGE_OVERRIDE', nodeId, stageIds }),
+    addLink: (nodeId, url, label) => dispatch({ type: 'ADD_LINK', nodeId, url, label }),
+    removeLink: (nodeId, index) => dispatch({ type: 'REMOVE_LINK', nodeId, index }),
     reset: () => dispatch({ type: 'RESET' }),
   }
 

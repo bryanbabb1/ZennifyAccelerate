@@ -24,6 +24,9 @@ interface Props {
   isEditing?: boolean
   allStages?: Stage[]
   onSetStageOverride?: (stageIds: string[]) => void
+  nodeLinks?: { url: string; label: string }[]
+  onAddLink?: (url: string, label: string) => void
+  onRemoveLink?: (index: number) => void
 }
 
 // ─── colour tokens ────────────────────────────────────────────────────────────
@@ -445,12 +448,54 @@ function OrchestrationBody({ orch, nodeId, taggedPersonas, descriptions, onSetDe
 }
 
 // ─── links + notes ────────────────────────────────────────────────────────────
-function LinksSection() {
+function LinksSection({ links = [], onAdd, onRemove }: {
+  links?: { url: string; label: string }[]
+  onAdd?: (url: string, label: string) => void
+  onRemove?: (index: number) => void
+}) {
+  const [url, setUrl] = useState('')
+  const [label, setLabel] = useState('')
+
+  function submit() {
+    const trimmed = url.trim()
+    if (!trimmed) return
+    const safe = trimmed.startsWith('http://') || trimmed.startsWith('https://') ? trimmed : `https://${trimmed}`
+    onAdd?.(safe, label.trim() || safe)
+    setUrl(''); setLabel('')
+  }
+
   return (
     <div style={{ marginBottom: 14 }}>
       <SectionLabel text="Links & Resources" color={Z.slate} />
-      <div style={{ fontSize: 11.5, color: '#94a3b8', fontStyle: 'italic', padding: '4px 0' }}>
-        No links added — attach Notion docs, Miro boards, or Confluence pages here.
+      {links.length === 0 && (
+        <div style={{ fontSize: 11.5, color: '#94a3b8', fontStyle: 'italic', padding: '2px 0 8px' }}>
+          No links yet — attach Notion docs, Miro boards, Confluence pages, etc.
+        </div>
+      )}
+      {links.map((link, i) => (
+        <div key={i} style={{ display: 'flex', alignItems: 'center', gap: 8, padding: '5px 8px', background: Z.bg, border: `1px solid ${Z.border}`, borderRadius: 6, marginBottom: 5 }}>
+          <a href={link.url} target="_blank" rel="noopener noreferrer"
+            style={{ flex: 1, fontSize: 12, color: Z.teal, textDecoration: 'none', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}
+            title={link.url}>
+            🔗 {link.label}
+          </a>
+          {onRemove && (
+            <button onClick={() => onRemove(i)}
+              style={{ background: 'none', border: 'none', color: '#94a3b8', cursor: 'pointer', fontSize: 14, padding: 0, lineHeight: 1, flexShrink: 0 }}>×</button>
+          )}
+        </div>
+      ))}
+      <div style={{ display: 'flex', gap: 6, marginTop: 6 }}>
+        <input value={url} onChange={e => setUrl(e.target.value)} onKeyDown={e => e.key === 'Enter' && submit()}
+          placeholder="https://…"
+          style={{ flex: 2, padding: '6px 9px', borderRadius: 6, border: `1px solid ${Z.border}`, fontSize: 12, fontFamily: 'DM Sans, Inter, sans-serif', outline: 'none' }} />
+        <input value={label} onChange={e => setLabel(e.target.value)} onKeyDown={e => e.key === 'Enter' && submit()}
+          placeholder="Label (optional)"
+          style={{ flex: 1, padding: '6px 9px', borderRadius: 6, border: `1px solid ${Z.border}`, fontSize: 12, fontFamily: 'DM Sans, Inter, sans-serif', outline: 'none' }} />
+        <button onClick={submit} disabled={!url.trim()}
+          style={{ padding: '6px 12px', borderRadius: 6, background: url.trim() ? Z.teal : '#e2e8f0', color: url.trim() ? '#fff' : '#9ca3af', border: 'none', fontSize: 11, fontWeight: 600, cursor: url.trim() ? 'pointer' : 'default', fontFamily: 'DM Sans, Inter, sans-serif', flexShrink: 0 }}>
+          Add
+        </button>
       </div>
     </div>
   )
@@ -493,6 +538,7 @@ export default function DetailPanel({
   activePersonaId, activePersonaName, personaNote, onPersonaNoteChange,
   personaInteractions, allPersonas, descriptions, owners, onSetDescription, onSetOwner, onRename,
   isEditing, allStages, onSetStageOverride,
+  nodeLinks, onAddLink, onRemoveLink,
 }: Props) {
   const [editingName, setEditingName] = useState(false)
   const [nameDraft, setNameDraft] = useState('')
@@ -607,7 +653,7 @@ export default function DetailPanel({
             </Card>
           )}
 
-          <LinksSection />
+          <LinksSection links={nodeLinks} onAdd={onAddLink} onRemove={onRemoveLink} />
 
           {nodeId && <NotesSection notes={notes} onAdd={onAddNote} onRemove={onRemoveNote} />}
         </div>

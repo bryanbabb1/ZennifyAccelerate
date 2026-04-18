@@ -13,7 +13,6 @@ export default function RailNode({ data, selected }: Props) {
   const { orch } = data
   const { isEditing, removeOrchestration, rename, setSize, setPosition, flagged, toggleFlag } = useChain()
   const [hovered, setHovered] = useState(false)
-  const [showInfo, setShowInfo] = useState(false)
 
   const showDelete = isEditing && hovered
   const isSales = orch.id === 'sales-brain'
@@ -35,7 +34,7 @@ export default function RailNode({ data, selected }: Props) {
       />
       <div
         onMouseEnter={() => setHovered(true)}
-        onMouseLeave={() => { setHovered(false); setShowInfo(false) }}
+        onMouseLeave={() => setHovered(false)}
         style={{
           width: '100%', minHeight: 40,
           background: '#FAC775',
@@ -71,11 +70,6 @@ export default function RailNode({ data, selected }: Props) {
             style={{ fontSize: 11, fontWeight: 700, color: '#78350f', letterSpacing: '0.02em', fontFamily: 'DM Sans, Inter, sans-serif', wordBreak: 'break-word', whiteSpace: 'normal' }}
             inputStyle={{ fontSize: 11, fontWeight: 700, color: '#78350f' }}
           />
-          {orch.description && (
-            <span style={{ fontFamily: 'DM Sans, Inter, sans-serif', fontSize: 9.5, color: '#92400e', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
-              {orch.description}
-            </span>
-          )}
         </div>
 
         {!showDelete && <span style={{ marginLeft: 'auto', fontSize: 10, color: '#92400e', flexShrink: 0 }}>◀ ▶</span>}
@@ -89,23 +83,8 @@ export default function RailNode({ data, selected }: Props) {
           </button>
         )}
 
-        {!isEditing && !showDelete && hovered && orch.description && (
-          <button
-            onClick={e => { e.stopPropagation(); setShowInfo(v => !v) }}
-            style={{ marginLeft: 'auto', flexShrink: 0, width: 16, height: 16, borderRadius: '50%', background: 'rgba(255,255,255,0.4)', border: '1px solid rgba(133,79,11,0.4)', color: '#78350f', fontSize: 9, fontWeight: 700, cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', fontFamily: 'serif' }}
-          >i</button>
-        )}
       </div>
 
-      {showInfo && orch.description && (
-        <div
-          onClick={e => e.stopPropagation()}
-          style={{ position: 'absolute', top: '100%', left: 0, marginTop: 6, zIndex: 20, background: '#fff', border: '1px solid #e2e8f0', borderRadius: 8, padding: '10px 12px', boxShadow: '0 4px 16px rgba(0,0,0,0.12)', minWidth: 200, maxWidth: 280, fontFamily: 'DM Sans, Inter, sans-serif' }}
-        >
-          <div style={{ fontSize: 11, fontWeight: 600, color: '#0f172a', marginBottom: 4 }}>{orch.name}</div>
-          <div style={{ fontSize: 11, color: '#475569', lineHeight: 1.5 }}>{orch.description}</div>
-        </div>
-      )}
     </>
   )
 }

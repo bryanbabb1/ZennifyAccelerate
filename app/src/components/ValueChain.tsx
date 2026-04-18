@@ -55,7 +55,7 @@ export default function ValueChain() {
           addAgent, addDeliverable, addOrchestration, addStage, notes, addNote, removeNote, reset,
           statuses, togglePersonaNode, setPersonaNote, personaInteractions,
           descriptions, owners, setDescription, setOwner, rename,
-          setStageOverride } = useChain()
+          setStageOverride, links, addLink, removeLink } = useChain()
 
   function handleExport() {
     const raw = localStorage.getItem('zennify-chain-v2') ?? '{}'
@@ -304,8 +304,7 @@ export default function ValueChain() {
 
         <button onClick={() => {
             if (isEditing) { toggleEditing(); return }
-            const pwd = import.meta.env.VITE_EDIT_PASSWORD as string | undefined
-            if (!pwd || sessionStorage.getItem('zennify-edit-auth') === '1') { toggleEditing() }
+            if (sessionStorage.getItem('zennify-edit-auth') === '1') { toggleEditing() }
             else { setShowPasswordModal(true) }
           }}
           style={{ background: isEditing ? '#0F6E56' : 'rgba(255,255,255,0.95)', color: isEditing ? '#fff' : '#374151', border: `1px solid ${isEditing ? '#0F6E56' : '#e2e8f0'}`, borderRadius: 8, padding: '8px 14px', fontFamily: 'DM Sans, Inter, sans-serif', fontSize: 12, fontWeight: 600, cursor: 'pointer', display: 'flex', alignItems: 'center', gap: 6 }}>
@@ -406,9 +405,17 @@ export default function ValueChain() {
           allStages={data.stages}
           onSetStageOverride={(stageIds) => {
             if (!selectedNodeId || !selected) return
-            const entityId = selected.data.id
-            setStageOverride(entityId, stageIds)
+            setStageOverride(selected.data.id, stageIds)
+            if (selected.kind === 'agent')
+              // eslint-disable-next-line @typescript-eslint/no-explicit-any
+              setSelected({ kind: 'agent', data: { ...selected.data, stageIds } } as any)
+            else if (selected.kind === 'orchestration')
+              // eslint-disable-next-line @typescript-eslint/no-explicit-any
+              setSelected({ kind: 'orchestration', data: { ...selected.data, spansStageIds: stageIds } } as any)
           }}
+          nodeLinks={selectedNodeId ? (links[selectedNodeId] ?? []) : []}
+          onAddLink={(url, label) => selectedNodeId && addLink(selectedNodeId, url, label)}
+          onRemoveLink={(index) => selectedNodeId && removeLink(selectedNodeId, index)}
         />
       )}
 
