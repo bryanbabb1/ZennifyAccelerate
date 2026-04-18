@@ -398,7 +398,8 @@ export default function ValueChain() {
           onSetOwner={(owner) => selectedNodeId && setOwner(selectedNodeId, owner)}
           onRename={(id, name) => {
             rename(id, name)
-            if (selected) setSelected({ ...selected, data: { ...selected.data, name } })
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
+            if (selected) setSelected({ ...selected, data: { ...selected.data, name } } as any)
           }}
         />
       )}

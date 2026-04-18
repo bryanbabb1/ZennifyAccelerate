@@ -290,7 +290,8 @@ export function ChainProvider({ children }: { children: ReactNode }) {
   // Load from Supabase on mount — overlays localStorage with remote state if available
   useEffect(() => {
     loadLive().then(remote => {
-      if (remote) dispatch({ type: 'RESTORE', customizations: remote })
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      if (remote) dispatch({ type: 'RESTORE', customizations: remote as any })
     })
   }, [])
 
