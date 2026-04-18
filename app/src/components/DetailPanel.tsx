@@ -276,11 +276,9 @@ function StageBody({ stage, nodeId, taggedPersonas, descriptions, onSetDescripti
           <SectionLabel text={`Deliverables (${delivs.length})`} color={Z.goldDark} />
           <div style={{ display: 'flex', flexDirection: 'column', gap: 5 }}>
             {delivs.map(d => (
-              <div key={d.id} style={{ display: 'flex', alignItems: 'center', gap: 8, padding: '6px 10px', background: d.buildStatus === 'likely-gap' ? Z.redLight : Z.goldLight, border: `1px solid ${d.buildStatus === 'likely-gap' ? Z.redBorder : Z.goldBorder}`, borderRadius: 6, fontSize: 12, color: d.buildStatus === 'likely-gap' ? '#b91c1c' : Z.dark }}>
-                <span style={{ flexShrink: 0 }}>{d.buildStatus === 'likely-gap' ? '⚑' : '▸'}</span>
+              <div key={d.id} style={{ display: 'flex', alignItems: 'center', gap: 8, padding: '6px 10px', background: Z.tealLight, border: `1px solid ${Z.tealBorder}`, borderRadius: 6, fontSize: 12, color: Z.dark }}>
+                <span style={{ flexShrink: 0, color: Z.teal }}>▸</span>
                 <span style={{ flex: 1 }}>{d.name}</span>
-                {d.buildStatus === 'likely-gap' && <span style={{ fontSize: 10, fontStyle: 'italic', color: '#b91c1c', whiteSpace: 'nowrap' }}>likely gap</span>}
-                {d.ws4DocMapping && <Chip label={`WS4 · ${d.ws4DocMapping}`} color={Z.purple} bg={Z.purpleLight} border={Z.purpleBorder} />}
               </div>
             ))}
           </div>
@@ -364,12 +362,6 @@ function DeliverableBody({ deliv, nodeId, taggedPersonas, descriptions, onSetDes
 
   return (
     <>
-      {deliv.buildStatus === 'likely-gap' && (
-        <Card bg={Z.redLight} border={Z.redBorder} mb={14}>
-          <div style={{ fontSize: 12, color: '#b91c1c', fontWeight: 600 }}>⚑ Flagged: Likely Gap — needs validation before use</div>
-        </Card>
-      )}
-
       <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 10, marginBottom: 14 }}>
         <Card bg={Z.tealLight} border={Z.tealBorder} mb={0}>
           <div style={{ fontSize: 9, fontWeight: 700, color: Z.teal, textTransform: 'uppercase', letterSpacing: '0.09em', marginBottom: 5 }}>Produced At</div>
@@ -385,13 +377,6 @@ function DeliverableBody({ deliv, nodeId, taggedPersonas, descriptions, onSetDes
 
       <DescriptionField nodeId={nodeId} descriptions={descriptions} onSetDescription={onSetDescription}
         placeholder={`What is this deliverable? What does it contain and who uses it?`} />
-
-      {deliv.ws4DocMapping && (
-        <div style={{ marginBottom: 14 }}>
-          <SectionLabel text="WS4 Framework Mapping" color={Z.purple} />
-          <Chip label={deliv.ws4DocMapping} color={Z.purple} bg={Z.purpleLight} border={Z.purpleBorder} />
-        </div>
-      )}
 
       {taggedPersonas.length > 0 && (
         <div style={{ marginBottom: 14 }}>

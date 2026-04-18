@@ -9,15 +9,32 @@ interface Props {
   selected: boolean
 }
 
+type Status = 'live' | 'wip' | 'planned'
+const STATUS_CYCLE: Status[] = ['planned', 'wip', 'live']
+const STATUS_STYLE: Record<Status, { label: string; dot: string; bg: string; text: string }> = {
+  live:    { label: 'Live',    dot: '#10b981', bg: '#d1fae5', text: '#065f46' },
+  wip:     { label: 'WIP',     dot: '#f59e0b', bg: '#fef3c7', text: '#78350f' },
+  planned: { label: 'Planned', dot: '#94a3b8', bg: '#f1f5f9', text: '#475569' },
+}
+
 export default function DeliverableNode({ data, selected }: Props) {
   const { deliv } = data
-  const { isEditing, removeDeliverable, rename, setSize, setPosition, flagged, toggleFlag } = useChain()
+  const { isEditing, removeDeliverable, rename, setSize, setPosition, flagged, toggleFlag, statuses, setStatus } = useChain()
   const [hovered, setHovered] = useState(false)
 
-  const isGap = deliv.buildStatus === 'likely-gap'
   const showDelete = isEditing && hovered
   const nodeId = `deliv-${deliv.id}`
   const isFlagged = flagged.includes(nodeId)
+
+  const currentStatus: Status = statuses[nodeId] ?? 'planned'
+  const ss = STATUS_STYLE[currentStatus]
+
+  function cycleStatus(e: React.MouseEvent) {
+    e.stopPropagation()
+    if (!isEditing) return
+    const next = STATUS_CYCLE[(STATUS_CYCLE.indexOf(currentStatus) + 1) % STATUS_CYCLE.length]
+    setStatus(nodeId, next)
+  }
 
   return (
     <>
@@ -25,8 +42,8 @@ export default function DeliverableNode({ data, selected }: Props) {
         isVisible={isEditing}
         minWidth={60}
         minHeight={22}
-        handleStyle={{ width: 7, height: 7, borderRadius: 2, background: '#FAC775', border: '1px solid #854F0B' }}
-        lineStyle={{ borderColor: '#FAC775', borderWidth: 1 }}
+        handleStyle={{ width: 7, height: 7, borderRadius: 2, background: '#0e7490', border: '1px solid #0e7490' }}
+        lineStyle={{ borderColor: '#0e7490', borderWidth: 1 }}
         onResizeEnd={(_, { x, y, width, height }) => {
           setSize(nodeId, { width, height })
           setPosition(nodeId, { x, y })
@@ -37,12 +54,12 @@ export default function DeliverableNode({ data, selected }: Props) {
         onMouseLeave={() => setHovered(false)}
         style={{
           width: '100%', minHeight: 30,
-          background: isGap ? '#fff5f5' : '#f8fafc',
-          border: `1px solid ${selected ? '#FAC775' : isGap ? '#ef4444' : '#e2e8f0'}`,
+          background: '#ecfeff',
+          border: `1px solid ${selected ? '#0e7490' : '#67e8f9'}`,
           borderRadius: 5,
-          boxShadow: selected ? '0 0 0 2px #FAC775' : 'none',
-          display: 'flex', alignItems: 'center',
-          padding: '0 7px', cursor: 'pointer', userSelect: 'none', gap: 5,
+          boxShadow: selected ? '0 0 0 2px #a5f3fc' : 'none',
+          display: 'flex', flexDirection: 'column',
+          padding: '4px 7px', cursor: 'pointer', userSelect: 'none',
           boxSizing: 'border-box', overflow: 'visible', position: 'relative',
         }}
       >
@@ -60,28 +77,44 @@ export default function DeliverableNode({ data, selected }: Props) {
         <Handle type="source" position={Position.Bottom} style={{ opacity: 0, pointerEvents: 'none' }} />
         <Handle type="source" position={Position.Right} style={{ opacity: 0, pointerEvents: 'none' }} />
 
-        <span style={{ fontSize: 10, flexShrink: 0, color: isGap ? '#ef4444' : '#64748b' }}>
-          {isGap ? '⚑' : '▸'}
-        </span>
+        {/* name row */}
+        <div style={{ display: 'flex', alignItems: 'center', gap: 5, minHeight: 20 }}>
+          <span style={{ fontSize: 10, flexShrink: 0, color: '#0e7490' }}>▸</span>
+          <EditableText
+            value={deliv.name}
+            onSave={val => rename(deliv.id, val)}
+            isEditing={isEditing}
+            style={{ fontSize: 10.5, fontWeight: 500, color: '#164e63', flex: 1, wordBreak: 'break-word', whiteSpace: 'normal', fontFamily: 'DM Sans, Inter, sans-serif' }}
+            inputStyle={{ fontSize: 10.5, color: '#164e63' }}
+          />
+          {showDelete && (
+            <button
+              onClick={e => { e.stopPropagation(); removeDeliverable(deliv.id) }}
+              style={{ flexShrink: 0, width: 16, height: 16, borderRadius: '50%', background: '#ef4444', border: 'none', color: '#fff', fontSize: 10, cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: 700 }}
+            >×</button>
+          )}
+        </div>
 
-        <EditableText
-          value={deliv.name}
-          onSave={val => rename(deliv.id, val)}
-          isEditing={isEditing}
-          style={{ fontSize: 10.5, fontWeight: 400, color: isGap ? '#b91c1c' : '#334155', flex: 1, wordBreak: 'break-word', whiteSpace: 'normal', fontFamily: 'DM Sans, Inter, sans-serif' }}
-          inputStyle={{ fontSize: 10.5, color: '#334155' }}
-        />
-
-        {!showDelete && deliv.ws4DocMapping && (
-          <span style={{ fontSize: 9, fontWeight: 600, color: '#534AB7', background: '#ede9fe', borderRadius: 3, padding: '1px 4px', flexShrink: 0 }}>WS4</span>
-        )}
-
-        {showDelete && (
-          <button
-            onClick={e => { e.stopPropagation(); removeDeliverable(deliv.id) }}
-            style={{ flexShrink: 0, width: 16, height: 16, borderRadius: '50%', background: '#ef4444', border: 'none', color: '#fff', fontSize: 10, cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: 700 }}
-          >×</button>
-        )}
+        {/* status badge */}
+        <div style={{ display: 'flex', alignItems: 'center', marginTop: 3 }}>
+          <span
+            onClick={cycleStatus}
+            title={isEditing ? 'Click to change status' : currentStatus}
+            style={{
+              display: 'inline-flex', alignItems: 'center', gap: 4,
+              fontSize: 9, fontWeight: 600, letterSpacing: '0.04em', textTransform: 'uppercase',
+              color: ss.text, background: ss.bg,
+              borderRadius: 20, padding: '1px 7px 1px 5px',
+              cursor: isEditing ? 'pointer' : 'default',
+              userSelect: 'none', fontFamily: 'DM Sans, Inter, sans-serif',
+              border: `1px solid ${ss.dot}33`,
+            }}
+          >
+            <span style={{ width: 6, height: 6, borderRadius: '50%', background: ss.dot, flexShrink: 0, display: 'inline-block' }} />
+            {ss.label}
+            {isEditing && <span style={{ opacity: 0.5, fontSize: 8 }}>▸</span>}
+          </span>
+        </div>
       </div>
     </>
   )

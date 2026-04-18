@@ -11,13 +11,30 @@ interface Props {
 
 export default function RailNode({ data, selected }: Props) {
   const { orch } = data
-  const { isEditing, removeOrchestration, rename, setSize, setPosition, flagged, toggleFlag } = useChain()
+  const { isEditing, removeOrchestration, rename, setSize, setPosition, flagged, toggleFlag, statuses, setStatus } = useChain()
   const [hovered, setHovered] = useState(false)
 
   const showDelete = isEditing && hovered
   const isSales = orch.id === 'sales-brain'
   const nodeId = `rail-${orch.id}`
   const isFlagged = flagged.includes(nodeId)
+
+  type Status = 'live' | 'wip' | 'planned'
+  const STATUS_CYCLE: Status[] = ['planned', 'wip', 'live']
+  const STATUS_STYLE: Record<Status, { label: string; dot: string; bg: string; text: string }> = {
+    live:    { label: 'Live',    dot: '#10b981', bg: '#d1fae5', text: '#065f46' },
+    wip:     { label: 'WIP',     dot: '#f59e0b', bg: '#fef3c7', text: '#78350f' },
+    planned: { label: 'Planned', dot: '#94a3b8', bg: '#f1f5f9', text: '#475569' },
+  }
+  const currentStatus: Status = statuses[nodeId] ?? 'planned'
+  const ss = STATUS_STYLE[currentStatus]
+
+  function cycleStatus(e: React.MouseEvent) {
+    e.stopPropagation()
+    if (!isEditing) return
+    const next = STATUS_CYCLE[(STATUS_CYCLE.indexOf(currentStatus) + 1) % STATUS_CYCLE.length]
+    setStatus(nodeId, next)
+  }
 
   return (
     <>
@@ -72,7 +89,23 @@ export default function RailNode({ data, selected }: Props) {
           />
         </div>
 
-        {!showDelete && <span style={{ marginLeft: 'auto', fontSize: 10, color: '#92400e', flexShrink: 0 }}>◀ ▶</span>}
+        {!showDelete && (
+          <span
+            onClick={cycleStatus}
+            title={isEditing ? 'Click to change status' : currentStatus}
+            style={{
+              marginLeft: 'auto', display: 'inline-flex', alignItems: 'center', gap: 3, flexShrink: 0,
+              fontSize: 8.5, fontWeight: 600, letterSpacing: '0.04em', textTransform: 'uppercase',
+              color: ss.text, background: ss.bg, borderRadius: 20, padding: '1px 6px 1px 4px',
+              cursor: isEditing ? 'pointer' : 'default', userSelect: 'none', fontFamily: 'DM Sans, Inter, sans-serif',
+              border: `1px solid ${ss.dot}33`,
+            }}
+          >
+            <span style={{ width: 5, height: 5, borderRadius: '50%', background: ss.dot, display: 'inline-block', flexShrink: 0 }} />
+            {ss.label}
+            {isEditing && <span style={{ opacity: 0.5, fontSize: 7 }}>▸</span>}
+          </span>
+        )}
 
         {showDelete && (
           <button
