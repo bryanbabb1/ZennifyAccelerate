@@ -372,6 +372,8 @@ export default function ValueChain() {
           onPersonaNoteChange={(text) => {
             if (activePersonaId && selectedNodeId) setPersonaNote(activePersonaId, selectedNodeId, text)
           }}
+          personaInteractions={personaInteractions}
+          allPersonas={data.personas}
         />
       )}
 

@@ -24,8 +24,12 @@ const RAIL_Y = -185
 const SHARED_TOOL_Y = -148
 const AGENT_ROW_BASE = -310
 const SPANNING_AGENT_Y = -390
-const PERSONA_Y = -510
 const DELIV_ROW_BASE = STAGE_Y + STAGE_H + 12
+
+const PERSONA_PANEL_W = 118
+const PERSONA_PANEL_H = 720
+const PERSONA_PANEL_X = -(PERSONA_PANEL_W + 24)
+const PERSONA_PANEL_Y = SPANNING_AGENT_Y - 20
 
 // ─── stage X map ──────────────────────────────────────────────────────────────
 const STAGE_ORDER = ['s1', 's2', 's3', 's4', 's5', 'd1', 'd2', 'd3']
@@ -78,12 +82,12 @@ export function buildLayout(
     return { width: defaultW, minHeight: defaultH }
   }
 
-  // ── personas band ──────────────────────────────────────────────────────────
+  // ── personas panel (left side, vertical) ──────────────────────────────────
   nodes.push({
     id: 'persona-band',
     type: 'personaBand',
-    position: pos('persona-band', { x: 0, y: PERSONA_Y }),
-    data: { personas: data.personas, width: canvasW },
+    position: pos('persona-band', { x: PERSONA_PANEL_X, y: PERSONA_PANEL_Y }),
+    data: { personas: data.personas, height: PERSONA_PANEL_H },
     draggable: isEditing,
     selectable: true,
   })
