@@ -14,7 +14,8 @@ const AGENT_ROW_STEP = 80
 const AGENT_SPANNING_W_PAD = 20
 
 const DELIV_W = 148
-const DELIV_ROW_STEP = 38
+const DELIV_H = 50
+const DELIV_ROW_STEP = 62
 
 const RAIL_H = 40
 const SHARED_TOOL_H = 30
@@ -241,7 +242,7 @@ export function buildLayout(
         id: nodeId,
         type: 'deliverableNode',
         position: pos(nodeId, { x: dX, y }),
-        style: sizeStyle(nodeId, DELIV_W, 30),
+        style: sizeStyle(nodeId, DELIV_W, DELIV_H),
         data: { deliv, width: DELIV_W },
         draggable: isEditing,
         selectable: true,
@@ -290,19 +291,13 @@ export function buildLayout(
   for (const deliv of data.deliverables) {
     const ingestStageId = deliv.ingestedByStageId
     if (!stageXMap[ingestStageId]) continue
-    const isGap = deliv.buildStatus === 'likely-gap'
     edges.push({
       id: `flow-${deliv.id}`,
       source: `deliv-${deliv.id}`,
       target: `stage-${ingestStageId}`,
       type: 'smoothstep',
-      style: {
-        stroke: isGap ? '#ef4444' : '#FAC775',
-        strokeWidth: 1.5,
-        opacity: 0.7,
-        strokeDasharray: isGap ? '5,3' : undefined,
-      },
-      markerEnd: { type: 'arrowclosed' as const, color: isGap ? '#ef4444' : '#FAC775', width: 10, height: 10 },
+      style: { stroke: '#67e8f9', strokeWidth: 1.5, opacity: 0.6 },
+      markerEnd: { type: 'arrowclosed' as const, color: '#67e8f9', width: 10, height: 10 },
     })
   }
 
