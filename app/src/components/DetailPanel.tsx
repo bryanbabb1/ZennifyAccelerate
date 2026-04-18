@@ -16,33 +16,27 @@ interface Props {
   onPersonaNoteChange?: (text: string) => void
   personaInteractions?: Record<string, { nodeIds: string[]; notes: Record<string, string> }>
   allPersonas?: Persona[]
+  descriptions?: Record<string, string>
+  owners?: Record<string, string>
+  onSetDescription?: (text: string) => void
+  onSetOwner?: (owner: string) => void
 }
 
-// ─── Zennify colour tokens ────────────────────────────────────────────────────
+// ─── colour tokens ────────────────────────────────────────────────────────────
 const Z = {
-  green:       '#0F6E56',
-  greenMid:    '#1a8a6f',
-  greenDark:   '#064E3B',
-  greenLight:  '#F0FDFA',
-  greenBorder: '#a7f3d0',
-  purple:      '#534AB7',
-  purpleMid:   '#6B63D0',
-  purpleLight: '#FAF5FF',
-  purpleBorder:'#c4b5fd',
-  gold:        '#FAC775',
-  goldDark:    '#854F0B',
-  goldLight:   '#fffbeb',
-  goldBorder:  '#fde68a',
-  red:         '#ef4444',
-  redLight:    '#fff5f5',
-  redBorder:   '#fca5a5',
-  slate:       '#64748b',
-  dark:        '#0f172a',
-  border:      '#e2e8f0',
-  bg:          '#f8fafc',
+  green: '#0F6E56', greenMid: '#1a8a6f', greenDark: '#064E3B',
+  greenLight: '#F0FDFA', greenBorder: '#a7f3d0',
+  purple: '#534AB7', purpleMid: '#6B63D0',
+  purpleLight: '#FAF5FF', purpleBorder: '#c4b5fd',
+  teal: '#0e7490', tealMid: '#0891b2',
+  tealLight: '#ecfeff', tealBorder: '#a5f3fc',
+  gold: '#FAC775', goldDark: '#854F0B',
+  goldLight: '#fffbeb', goldBorder: '#fde68a',
+  red: '#ef4444', redLight: '#fff5f5', redBorder: '#fca5a5',
+  slate: '#64748b', dark: '#0f172a', border: '#e2e8f0', bg: '#f8fafc',
 }
 
-// ─── helpers ──────────────────────────────────────────────────────────────────
+// ─── small primitives ─────────────────────────────────────────────────────────
 function SectionLabel({ text, color = Z.slate }: { text: string; color?: string }) {
   return (
     <div style={{ display: 'flex', alignItems: 'center', gap: 6, marginBottom: 8 }}>
@@ -60,24 +54,25 @@ function Chip({ label, color, bg, border }: { label: string; color: string; bg: 
   )
 }
 
-function Card({ children, bg = '#fff', border = Z.border }: { children: React.ReactNode; bg?: string; border?: string }) {
+function Card({ children, bg = '#fff', border = Z.border, mb = 14 }: { children: React.ReactNode; bg?: string; border?: string; mb?: number }) {
   return (
-    <div style={{ background: bg, border: `1px solid ${border}`, borderRadius: 8, padding: '12px 14px', marginBottom: 14 }}>
+    <div style={{ background: bg, border: `1px solid ${border}`, borderRadius: 8, padding: '12px 14px', marginBottom: mb }}>
       {children}
     </div>
   )
 }
 
-function getHeaderStyle(item: SelectedItem): string {
+// ─── helpers ──────────────────────────────────────────────────────────────────
+function getHeaderGradient(item: SelectedItem): string {
   switch (item.kind) {
-    case 'stage':      return item.data.type === 'presales'
-                         ? `linear-gradient(135deg, ${Z.green} 0%, ${Z.greenMid} 100%)`
-                         : `linear-gradient(135deg, ${Z.purple} 0%, ${Z.purpleMid} 100%)`
-    case 'agent':      return item.data.category === 'platform'
-                         ? `linear-gradient(135deg, ${Z.purple} 0%, ${Z.purpleMid} 100%)`
-                         : `linear-gradient(135deg, ${Z.green} 0%, ${Z.greenMid} 100%)`
+    case 'stage':         return item.data.type === 'presales'
+                            ? `linear-gradient(135deg, ${Z.green} 0%, ${Z.greenMid} 100%)`
+                            : `linear-gradient(135deg, ${Z.purple} 0%, ${Z.purpleMid} 100%)`
+    case 'agent':         return item.data.category === 'platform'
+                            ? `linear-gradient(135deg, ${Z.purple} 0%, ${Z.purpleMid} 100%)`
+                            : `linear-gradient(135deg, ${Z.green} 0%, ${Z.greenMid} 100%)`
     case 'orchestration': return `linear-gradient(135deg, ${Z.goldDark} 0%, #B45309 100%)`
-    case 'deliverable':   return `linear-gradient(135deg, #1e293b 0%, #334155 100%)`
+    case 'deliverable':   return `linear-gradient(135deg, ${Z.teal} 0%, ${Z.tealMid} 100%)`
     default:              return `linear-gradient(135deg, ${Z.green} 0%, ${Z.greenMid} 100%)`
   }
 }
@@ -92,20 +87,13 @@ function getKindLabel(item: SelectedItem): string {
   }
 }
 
-function getOwner(item: SelectedItem): { name: string; wsName: string } | null {
+function getDerivedOwner(item: SelectedItem): { name: string; wsName: string } | null {
   const ws = seed.workstreamsMapping.workstreams
   let matches = [] as typeof ws
-
-  if (item.kind === 'stage') {
-    matches = ws.filter(w => w.coversStageIds?.includes(item.data.id))
-  } else if (item.kind === 'agent') {
-    matches = ws.filter(w => w.coversElements?.includes('agents'))
-  } else if (item.kind === 'deliverable') {
-    matches = ws.filter(w => w.coversElements?.includes('deliverables'))
-  } else if (item.kind === 'orchestration') {
-    matches = ws.filter(w => w.coversElements?.includes('orchestration'))
-  }
-
+  if (item.kind === 'stage')         matches = ws.filter(w => w.coversStageIds?.includes(item.data.id))
+  else if (item.kind === 'agent')    matches = ws.filter(w => w.coversElements?.includes('agents'))
+  else if (item.kind === 'deliverable') matches = ws.filter(w => w.coversElements?.includes('deliverables'))
+  else if (item.kind === 'orchestration') matches = ws.filter(w => w.coversElements?.includes('orchestration'))
   const real = matches.find(w => w.owner && w.owner !== 'TBD')
   if (!real) return null
   return { name: real.owner, wsName: real.name }
@@ -113,38 +101,100 @@ function getOwner(item: SelectedItem): { name: string; wsName: string } | null {
 
 function statusStyle(status: string): { color: string; bg: string; label: string } {
   switch (status) {
-    case 'production':    return { color: Z.greenDark, bg: Z.greenLight, label: '● Live' }
-    case 'in-development':return { color: '#92400e',   bg: Z.goldLight,  label: '◐ In Development' }
-    case 'concept':       return { color: Z.purple,    bg: Z.purpleLight, label: '○ Concept' }
-    default:              return { color: Z.slate,     bg: Z.bg,          label: '? Unknown' }
+    case 'production':     return { color: Z.greenDark, bg: Z.greenLight, label: '● Live' }
+    case 'in-development': return { color: '#92400e',   bg: Z.goldLight,  label: '◐ In Development' }
+    case 'concept':        return { color: Z.purple,    bg: Z.purpleLight, label: '○ Concept' }
+    default:               return { color: Z.slate,     bg: Z.bg,          label: '? Unknown' }
   }
 }
 
+// ─── editable description ─────────────────────────────────────────────────────
+function DescriptionField({ nodeId, descriptions, onSetDescription, placeholder }: {
+  nodeId: string | null; descriptions?: Record<string, string>;
+  onSetDescription?: (t: string) => void; placeholder: string
+}) {
+  const value = nodeId ? (descriptions?.[nodeId] ?? '') : ''
+  return (
+    <div style={{ marginBottom: 14 }}>
+      <SectionLabel text="Description" color={Z.slate} />
+      <textarea
+        value={value}
+        onChange={e => onSetDescription?.(e.target.value)}
+        placeholder={placeholder}
+        rows={3}
+        style={{ width: '100%', padding: '8px 10px', borderRadius: 7, border: `1px solid ${Z.border}`, fontSize: 12, fontFamily: 'DM Sans, Inter, sans-serif', resize: 'vertical', outline: 'none', lineHeight: 1.5, boxSizing: 'border-box', color: Z.dark, background: '#fafafa' }}
+      />
+    </div>
+  )
+}
+
+// ─── editable owner ───────────────────────────────────────────────────────────
+function OwnerField({ nodeId, savedOwner, derivedOwner, onSetOwner }: {
+  nodeId: string | null; savedOwner?: string; derivedOwner?: string | null; onSetOwner?: (o: string) => void
+}) {
+  const [editing, setEditing] = useState(false)
+  const [draft, setDraft] = useState('')
+  const display = savedOwner || derivedOwner || null
+
+  if (editing) {
+    return (
+      <div style={{ marginBottom: 14 }}>
+        <SectionLabel text="Owner" color={Z.slate} />
+        <div style={{ display: 'flex', gap: 6 }}>
+          <input autoFocus value={draft} onChange={e => setDraft(e.target.value)}
+            onKeyDown={e => { if (e.key === 'Enter') { onSetOwner?.(draft.trim()); setEditing(false) } if (e.key === 'Escape') setEditing(false) }}
+            placeholder="Name or team…"
+            style={{ flex: 1, padding: '6px 9px', borderRadius: 6, border: `1px solid ${Z.green}`, fontSize: 12, fontFamily: 'DM Sans, Inter, sans-serif', outline: 'none' }} />
+          <button onClick={() => { onSetOwner?.(draft.trim()); setEditing(false) }}
+            style={{ padding: '6px 12px', borderRadius: 6, background: Z.green, color: '#fff', border: 'none', fontSize: 11, fontWeight: 600, cursor: 'pointer', fontFamily: 'DM Sans, Inter, sans-serif' }}>Save</button>
+          <button onClick={() => setEditing(false)}
+            style={{ padding: '6px 10px', borderRadius: 6, background: Z.bg, color: Z.slate, border: `1px solid ${Z.border}`, fontSize: 11, cursor: 'pointer', fontFamily: 'DM Sans, Inter, sans-serif' }}>Cancel</button>
+        </div>
+      </div>
+    )
+  }
+
+  return (
+    <div style={{ marginBottom: 14 }}>
+      <SectionLabel text="Owner" color={Z.slate} />
+      <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+        {display
+          ? <span style={{ fontSize: 12.5, fontWeight: 600, color: Z.dark }}>{display}</span>
+          : <span style={{ fontSize: 12, color: '#94a3b8', fontStyle: 'italic' }}>No owner set</span>}
+        <button onClick={() => { setDraft(display ?? ''); setEditing(true) }}
+          style={{ fontSize: 10, color: Z.green, background: 'none', border: `1px solid ${Z.greenBorder}`, borderRadius: 4, padding: '2px 7px', cursor: 'pointer', fontFamily: 'DM Sans, Inter, sans-serif', fontWeight: 600 }}>
+          Edit
+        </button>
+        {savedOwner && (
+          <button onClick={() => onSetOwner?.('')}
+            style={{ fontSize: 10, color: Z.slate, background: 'none', border: `1px solid ${Z.border}`, borderRadius: 4, padding: '2px 7px', cursor: 'pointer', fontFamily: 'DM Sans, Inter, sans-serif' }}>
+            Reset
+          </button>
+        )}
+      </div>
+    </div>
+  )
+}
+
 // ─── node-type bodies ─────────────────────────────────────────────────────────
-function StageBody({ stage, taggedPersonas }: { stage: import('../types').Stage; taggedPersonas: Persona[] }) {
+function StageBody({ stage, nodeId, taggedPersonas, descriptions, onSetDescription }: {
+  stage: import('../types').Stage; nodeId: string | null
+  taggedPersonas: Persona[]; descriptions?: Record<string, string>; onSetDescription?: (t: string) => void
+}) {
   const agents     = seed.agents.filter(a => a.stageIds.includes(stage.id))
   const delivs     = seed.deliverables.filter(d => d.producedAtStageId === stage.id)
   const frameworks = seed.frameworks.filter(f => f.stageIds.includes(stage.id))
 
   return (
     <>
-      {(stage.value || stage.outcomes.length > 0) && (
+      <DescriptionField nodeId={nodeId} descriptions={descriptions} onSetDescription={onSetDescription}
+        placeholder={`What is the primary purpose of ${stage.name}? What does the team do here?`} />
+
+      {stage.outcomes.length > 0 && (
         <Card bg={Z.greenLight} border={Z.greenBorder}>
-          {stage.value && (
-            <div style={{ marginBottom: stage.outcomes.length ? 10 : 0 }}>
-              <SectionLabel text="Value Delivered" color={Z.green} />
-              <div style={{ fontSize: 13, color: Z.greenDark, fontWeight: 600 }}>{stage.value}</div>
-            </div>
-          )}
-          {stage.outcomes.length > 0 && (
-            <div>
-              <SectionLabel text="Outcomes" color={Z.green} />
-              {stage.outcomes.map(o => <Chip key={o} label={o} color={Z.greenDark} bg="#d1fae5" border={Z.greenBorder} />)}
-            </div>
-          )}
-          {stage.cadence && (
-            <div style={{ marginTop: 8, fontSize: 11.5, color: Z.green, fontWeight: 500 }}>Cadence: {stage.cadence}</div>
-          )}
+          <SectionLabel text="Outcomes" color={Z.green} />
+          {stage.outcomes.map(o => <Chip key={o} label={o} color={Z.greenDark} bg="#d1fae5" border={Z.greenBorder} />)}
+          {stage.cadence && <div style={{ marginTop: 8, fontSize: 11.5, color: Z.green, fontWeight: 500 }}>Cadence: {stage.cadence}</div>}
         </Card>
       )}
 
@@ -187,9 +237,7 @@ function StageBody({ stage, taggedPersonas }: { stage: import('../types').Stage;
       {frameworks.length > 0 && (
         <div style={{ marginBottom: 14 }}>
           <SectionLabel text={`Frameworks (${frameworks.length})`} color={Z.purple} />
-          <div>
-            {frameworks.map(f => <Chip key={f.id} label={f.name} color={Z.purple} bg={Z.purpleLight} border={Z.purpleBorder} />)}
-          </div>
+          <div>{frameworks.map(f => <Chip key={f.id} label={f.name} color={Z.purple} bg={Z.purpleLight} border={Z.purpleBorder} />)}</div>
         </div>
       )}
 
@@ -203,7 +251,10 @@ function StageBody({ stage, taggedPersonas }: { stage: import('../types').Stage;
   )
 }
 
-function AgentBody({ agent, taggedPersonas }: { agent: import('../types').Agent; taggedPersonas: Persona[] }) {
+function AgentBody({ agent, nodeId, taggedPersonas, descriptions, onSetDescription }: {
+  agent: import('../types').Agent; nodeId: string | null
+  taggedPersonas: Persona[]; descriptions?: Record<string, string>; onSetDescription?: (t: string) => void
+}) {
   const stages = seed.stages.filter(s => agent.stageIds.includes(s.id))
   const ss = statusStyle(agent.status)
 
@@ -214,9 +265,12 @@ function AgentBody({ agent, taggedPersonas }: { agent: import('../types').Agent;
           <div style={{ fontSize: 12.5, fontWeight: 600, color: agent.category === 'platform' ? Z.purple : Z.green }}>
             {agent.category === 'platform' ? '◈ Platform / Core Technology' : '⬡ Custom-Built Agent'}
           </div>
-          <span style={{ fontSize: 11, fontWeight: 700, color: ss.color, background: ss.bg, borderRadius: 10, padding: '3px 10px', border: `1px solid ${ss.bg}` }}>{ss.label}</span>
+          <span style={{ fontSize: 11, fontWeight: 700, color: ss.color, background: ss.bg, borderRadius: 10, padding: '3px 10px' }}>{ss.label}</span>
         </div>
       </Card>
+
+      <DescriptionField nodeId={nodeId} descriptions={descriptions} onSetDescription={onSetDescription}
+        placeholder={`What does ${agent.name} do? What inputs does it take and what does it produce?`} />
 
       {stages.length > 0 && (
         <div style={{ marginBottom: 14 }}>
@@ -242,30 +296,36 @@ function AgentBody({ agent, taggedPersonas }: { agent: import('../types').Agent;
   )
 }
 
-function DeliverableBody({ deliv, taggedPersonas }: { deliv: import('../types').Deliverable; taggedPersonas: Persona[] }) {
+function DeliverableBody({ deliv, nodeId, taggedPersonas, descriptions, onSetDescription }: {
+  deliv: import('../types').Deliverable; nodeId: string | null
+  taggedPersonas: Persona[]; descriptions?: Record<string, string>; onSetDescription?: (t: string) => void
+}) {
   const producedAt = seed.stages.find(s => s.id === deliv.producedAtStageId)
   const ingestedBy = seed.stages.find(s => s.id === deliv.ingestedByStageId)
 
   return (
     <>
       {deliv.buildStatus === 'likely-gap' && (
-        <Card bg={Z.redLight} border={Z.redBorder}>
-          <div style={{ fontSize: 12, color: '#b91c1c', fontWeight: 600 }}>⚑ Flagged: Likely Gap — needs validation before production use</div>
+        <Card bg={Z.redLight} border={Z.redBorder} mb={14}>
+          <div style={{ fontSize: 12, color: '#b91c1c', fontWeight: 600 }}>⚑ Flagged: Likely Gap — needs validation before use</div>
         </Card>
       )}
 
       <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 10, marginBottom: 14 }}>
-        <Card bg={Z.greenLight} border={Z.greenBorder}>
-          <div style={{ fontSize: 9, fontWeight: 700, color: Z.green, textTransform: 'uppercase', letterSpacing: '0.09em', marginBottom: 5 }}>Produced At</div>
+        <Card bg={Z.tealLight} border={Z.tealBorder} mb={0}>
+          <div style={{ fontSize: 9, fontWeight: 700, color: Z.teal, textTransform: 'uppercase', letterSpacing: '0.09em', marginBottom: 5 }}>Produced At</div>
           <div style={{ fontSize: 12.5, fontWeight: 700, color: Z.dark }}>Stage {producedAt?.number}</div>
           <div style={{ fontSize: 11, color: Z.slate, marginTop: 2 }}>{producedAt?.name}</div>
         </Card>
-        <Card bg={Z.purpleLight} border={Z.purpleBorder}>
+        <Card bg={Z.purpleLight} border={Z.purpleBorder} mb={0}>
           <div style={{ fontSize: 9, fontWeight: 700, color: Z.purple, textTransform: 'uppercase', letterSpacing: '0.09em', marginBottom: 5 }}>{ingestedBy ? 'Ingested By' : 'Flows To'}</div>
           <div style={{ fontSize: 12.5, fontWeight: 700, color: Z.dark }}>{ingestedBy ? `Stage ${ingestedBy.number}` : 'IP Loop'}</div>
           <div style={{ fontSize: 11, color: Z.slate, marginTop: 2 }}>{ingestedBy?.name ?? 'Institutional knowledge'}</div>
         </Card>
       </div>
+
+      <DescriptionField nodeId={nodeId} descriptions={descriptions} onSetDescription={onSetDescription}
+        placeholder={`What is this deliverable? What does it contain and who uses it?`} />
 
       {deliv.ws4DocMapping && (
         <div style={{ marginBottom: 14 }}>
@@ -284,7 +344,10 @@ function DeliverableBody({ deliv, taggedPersonas }: { deliv: import('../types').
   )
 }
 
-function OrchestrationBody({ orch, taggedPersonas }: { orch: import('../types').Orchestration; taggedPersonas: Persona[] }) {
+function OrchestrationBody({ orch, nodeId, taggedPersonas, descriptions, onSetDescription }: {
+  orch: import('../types').Orchestration; nodeId: string | null
+  taggedPersonas: Persona[]; descriptions?: Record<string, string>; onSetDescription?: (t: string) => void
+}) {
   const stages = seed.stages.filter(s => orch.spansStageIds.includes(s.id))
 
   return (
@@ -294,6 +357,9 @@ function OrchestrationBody({ orch, taggedPersonas }: { orch: import('../types').
           {orch.type === 'rail' ? '🧠 Orchestration Rail — persistent context & knowledge layer' : '⚙ Shared Tool — cross-stage capability'}
         </div>
       </Card>
+
+      <DescriptionField nodeId={nodeId} descriptions={descriptions} onSetDescription={onSetDescription}
+        placeholder={`What does ${orch.name} do? What does it provide across stages?`} />
 
       {stages.length > 0 && (
         <div style={{ marginBottom: 14 }}>
@@ -319,11 +385,12 @@ function OrchestrationBody({ orch, taggedPersonas }: { orch: import('../types').
   )
 }
 
+// ─── links + notes ────────────────────────────────────────────────────────────
 function LinksSection() {
   return (
     <div style={{ marginBottom: 14 }}>
       <SectionLabel text="Links & Resources" color={Z.slate} />
-      <div style={{ fontSize: 11.5, color: '#94a3b8', fontStyle: 'italic', padding: '6px 0' }}>
+      <div style={{ fontSize: 11.5, color: '#94a3b8', fontStyle: 'italic', padding: '4px 0' }}>
         No links added — attach Notion docs, Miro boards, or Confluence pages here.
       </div>
     </div>
@@ -332,42 +399,29 @@ function LinksSection() {
 
 function NotesSection({ notes, onAdd, onRemove }: { notes: Note[]; onAdd: (t: string) => void; onRemove: (i: number) => void }) {
   const [draft, setDraft] = useState('')
-
-  function submit() {
-    const t = draft.trim()
-    if (!t) return
-    onAdd(t)
-    setDraft('')
-  }
+  function submit() { const t = draft.trim(); if (!t) return; onAdd(t); setDraft('') }
 
   return (
     <div style={{ borderTop: `1px solid ${Z.border}`, paddingTop: 14 }}>
       <SectionLabel text={`Notes${notes.length > 0 ? ` (${notes.length})` : ''}`} color={Z.slate} />
-
       <div style={{ display: 'flex', gap: 6, marginBottom: 10 }}>
-        <textarea
-          value={draft}
-          onChange={e => setDraft(e.target.value)}
+        <textarea value={draft} onChange={e => setDraft(e.target.value)}
           onKeyDown={e => { if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); submit() } }}
-          placeholder="Add a note… (Enter to save)"
-          rows={2}
-          style={{ flex: 1, padding: '7px 9px', borderRadius: 6, border: `1px solid ${Z.border}`, fontSize: 12, fontFamily: 'DM Sans, Inter, sans-serif', resize: 'vertical', outline: 'none', lineHeight: 1.4 }}
-        />
+          placeholder="Add a note… (Enter to save)" rows={2}
+          style={{ flex: 1, padding: '7px 9px', borderRadius: 6, border: `1px solid ${Z.border}`, fontSize: 12, fontFamily: 'DM Sans, Inter, sans-serif', resize: 'vertical', outline: 'none', lineHeight: 1.4 }} />
         <button onClick={submit} disabled={!draft.trim()}
           style={{ alignSelf: 'flex-end', padding: '7px 14px', borderRadius: 6, background: draft.trim() ? Z.green : '#e2e8f0', color: draft.trim() ? '#fff' : '#9ca3af', border: 'none', fontSize: 12, fontWeight: 600, cursor: draft.trim() ? 'pointer' : 'default', fontFamily: 'DM Sans, Inter, sans-serif' }}>
           Add
         </button>
       </div>
-
       {notes.length === 0 && <div style={{ fontSize: 12, color: '#94a3b8', fontStyle: 'italic' }}>No notes yet.</div>}
-
       {notes.map((note, i) => (
         <div key={i} style={{ background: Z.goldLight, border: `1px solid ${Z.goldBorder}`, borderRadius: 6, padding: '8px 10px', marginBottom: 7, position: 'relative' }}>
           <div style={{ fontSize: 12, color: Z.dark, lineHeight: 1.5, whiteSpace: 'pre-wrap', paddingRight: 20 }}>{note.text}</div>
           <div style={{ fontSize: 10, color: '#94a3b8', marginTop: 4 }}>
             {new Date(note.timestamp).toLocaleDateString(undefined, { month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' })}
           </div>
-          <button onClick={() => onRemove(i)} style={{ position: 'absolute', top: 6, right: 7, background: 'none', border: 'none', color: '#94a3b8', fontSize: 14, cursor: 'pointer', padding: 0, lineHeight: 1 }} title="Remove">×</button>
+          <button onClick={() => onRemove(i)} style={{ position: 'absolute', top: 6, right: 7, background: 'none', border: 'none', color: '#94a3b8', fontSize: 14, cursor: 'pointer', padding: 0, lineHeight: 1 }}>×</button>
         </div>
       ))}
     </div>
@@ -378,11 +432,12 @@ function NotesSection({ notes, onAdd, onRemove }: { notes: Note[]; onAdd: (t: st
 export default function DetailPanel({
   item, nodeId, notes, onAddNote, onRemoveNote, onClose,
   activePersonaId, activePersonaName, personaNote, onPersonaNoteChange,
-  personaInteractions, allPersonas,
+  personaInteractions, allPersonas, descriptions, owners, onSetDescription, onSetOwner,
 }: Props) {
   if (!item) return null
 
-  const owner = getOwner(item)
+  const derivedOwner = getDerivedOwner(item)
+  const savedOwner = nodeId ? (owners?.[nodeId] ?? '') : ''
   const taggedPersonas = allPersonas
     ? allPersonas.filter(p => (personaInteractions?.[p.id]?.nodeIds ?? []).includes(nodeId ?? ''))
     : []
@@ -395,7 +450,7 @@ export default function DetailPanel({
       <div style={{ background: '#ffffff', borderRadius: 16, boxShadow: '0 32px 80px rgba(0,0,0,0.24)', width: '90%', maxWidth: 700, maxHeight: '88vh', display: 'flex', flexDirection: 'column', overflow: 'hidden' }}>
 
         {/* ── Header ── */}
-        <div style={{ background: getHeaderStyle(item), padding: '22px 26px 18px', flexShrink: 0 }}>
+        <div style={{ background: getHeaderGradient(item), padding: '22px 26px 18px', flexShrink: 0 }}>
           <div style={{ display: 'flex', alignItems: 'flex-start', justifyContent: 'space-between', gap: 16 }}>
             <div style={{ flex: 1 }}>
               <div style={{ fontSize: 9.5, fontWeight: 700, color: 'rgba(255,255,255,0.6)', letterSpacing: '0.12em', textTransform: 'uppercase', marginBottom: 6 }}>
@@ -411,7 +466,6 @@ export default function DetailPanel({
                 <div style={{ fontSize: 13, color: 'rgba(255,255,255,0.72)', marginTop: 7, lineHeight: 1.45 }}>{item.data.description}</div>
               )}
             </div>
-
             <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-end', gap: 8, flexShrink: 0 }}>
               <button onClick={onClose}
                 style={{ background: 'rgba(255,255,255,0.15)', border: '1px solid rgba(255,255,255,0.3)', cursor: 'pointer', fontSize: 18, color: 'rgba(255,255,255,0.85)', lineHeight: 1, padding: '4px 9px', borderRadius: 7 }}>
@@ -424,38 +478,40 @@ export default function DetailPanel({
               )}
             </div>
           </div>
-
-          {/* Owner strip */}
-          {owner && (
-            <div style={{ marginTop: 14, paddingTop: 12, borderTop: '1px solid rgba(255,255,255,0.15)', display: 'flex', alignItems: 'center', gap: 10, flexWrap: 'wrap' }}>
-              <span style={{ fontSize: 9.5, fontWeight: 700, color: 'rgba(255,255,255,0.5)', textTransform: 'uppercase', letterSpacing: '0.09em' }}>Owner</span>
-              <span style={{ fontSize: 11.5, fontWeight: 700, color: '#fff', background: 'rgba(255,255,255,0.18)', borderRadius: 20, padding: '2px 12px' }}>{owner.name}</span>
-              <span style={{ fontSize: 10.5, color: 'rgba(255,255,255,0.55)' }}>{owner.wsName}</span>
-            </div>
-          )}
         </div>
 
         {/* ── Body ── */}
         <div style={{ flex: 1, overflowY: 'auto', padding: '20px 24px 24px' }}>
 
-          {item.kind === 'stage'         && <StageBody         stage={item.data}  taggedPersonas={taggedPersonas} />}
-          {item.kind === 'agent'         && <AgentBody         agent={item.data}  taggedPersonas={taggedPersonas} />}
-          {item.kind === 'deliverable'   && <DeliverableBody   deliv={item.data}  taggedPersonas={taggedPersonas} />}
-          {item.kind === 'orchestration' && <OrchestrationBody orch={item.data}   taggedPersonas={taggedPersonas} />}
+          <OwnerField nodeId={nodeId} savedOwner={savedOwner || undefined} derivedOwner={derivedOwner?.name} onSetOwner={onSetOwner} />
+
+          {item.kind === 'stage' && (
+            <StageBody stage={item.data} nodeId={nodeId} taggedPersonas={taggedPersonas}
+              descriptions={descriptions} onSetDescription={onSetDescription} />
+          )}
+          {item.kind === 'agent' && (
+            <AgentBody agent={item.data} nodeId={nodeId} taggedPersonas={taggedPersonas}
+              descriptions={descriptions} onSetDescription={onSetDescription} />
+          )}
+          {item.kind === 'deliverable' && (
+            <DeliverableBody deliv={item.data} nodeId={nodeId} taggedPersonas={taggedPersonas}
+              descriptions={descriptions} onSetDescription={onSetDescription} />
+          )}
+          {item.kind === 'orchestration' && (
+            <OrchestrationBody orch={item.data} nodeId={nodeId} taggedPersonas={taggedPersonas}
+              descriptions={descriptions} onSetDescription={onSetDescription} />
+          )}
           {item.kind === 'persona' && (
             <div style={{ fontSize: 13, color: Z.slate, marginBottom: 14 }}>This persona engages all stages in the value chain.</div>
           )}
 
-          {/* Persona interaction note */}
           {activePersonaId && activePersonaName && nodeId && item.kind !== 'persona' && (
             <Card bg={Z.goldLight} border={Z.goldBorder}>
               <SectionLabel text={`How ${activePersonaName} Interacts Here`} color="#92400e" />
               <textarea
-                value={personaNote ?? ''}
-                onChange={e => onPersonaNoteChange?.(e.target.value)}
+                value={personaNote ?? ''} onChange={e => onPersonaNoteChange?.(e.target.value)}
                 onBlur={e => onPersonaNoteChange?.(e.target.value)}
-                placeholder={`Describe how ${activePersonaName} engages with this node…`}
-                rows={3}
+                placeholder={`Describe how ${activePersonaName} engages with this node…`} rows={3}
                 style={{ width: '100%', padding: '7px 9px', borderRadius: 6, border: `1px solid ${Z.goldBorder}`, fontSize: 12, fontFamily: 'DM Sans, Inter, sans-serif', resize: 'vertical', outline: 'none', lineHeight: 1.4, boxSizing: 'border-box', background: '#fff' }}
               />
             </Card>

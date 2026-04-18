@@ -9,8 +9,8 @@ const STAGE_GAP = 24
 const HANDOFF_GAP = 88
 
 const AGENT_W = 148
-const AGENT_H = 56       // min height with status badge row
-const AGENT_ROW_STEP = 68 // AGENT_H + 12px gap
+const AGENT_H = 56
+const AGENT_ROW_STEP = 80
 const AGENT_SPANNING_W_PAD = 20
 
 const DELIV_W = 148
@@ -20,14 +20,14 @@ const RAIL_H = 40
 const SHARED_TOOL_H = 30
 
 const STAGE_Y = 0
-const RAIL_Y = -185
-const SHARED_TOOL_Y = -148
-const AGENT_ROW_BASE = -310
-const SPANNING_AGENT_Y = -390
-const DELIV_ROW_BASE = STAGE_Y + STAGE_H + 12
+const RAIL_Y = -200
+const SHARED_TOOL_Y = -160
+const AGENT_ROW_BASE = -350
+const SPANNING_AGENT_Y = -570
+const DELIV_ROW_BASE = STAGE_Y + STAGE_H + 20
 
 const PERSONA_PANEL_W = 118
-const PERSONA_PANEL_H = 720
+const PERSONA_PANEL_H = 1000
 const PERSONA_PANEL_X = -(PERSONA_PANEL_W + 24)
 const PERSONA_PANEL_Y = SPANNING_AGENT_Y - 20
 

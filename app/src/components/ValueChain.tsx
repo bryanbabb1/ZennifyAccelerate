@@ -52,7 +52,8 @@ function nodeIdForItem(item: SelectedItem): string {
 export default function ValueChain() {
   const { data, isEditing, toggleEditing, positions, setPosition, sizes,
           addAgent, addDeliverable, addOrchestration, addStage, notes, addNote, removeNote, reset,
-          statuses, togglePersonaNode, setPersonaNote, personaInteractions } = useChain()
+          statuses, togglePersonaNode, setPersonaNote, personaInteractions,
+          descriptions, owners, setDescription, setOwner } = useChain()
 
   function handleExport() {
     const raw = localStorage.getItem('zennify-chain-v2') ?? '{}'
@@ -232,6 +233,7 @@ export default function ValueChain() {
     setAddForm(null); setNewName(''); setNewDesc(''); setNewStageNumber('')
   }
 
+  const sidebarOpen = addForm !== null || personaConfigId !== null
   const selectedNodeId = selected ? nodeIdForItem(selected) : null
   const selectedNotes = selectedNodeId ? (notes[selectedNodeId] ?? []) : []
   const activePersonaName = activePersonaId ? (data.personas.find(p => p.id === activePersonaId)?.name ?? null) : null
@@ -265,7 +267,7 @@ export default function ValueChain() {
       </div>
 
       {/* ── Top-right controls ── */}
-      <div style={{ position: 'absolute', top: 16, right: 16, zIndex: 5, display: 'flex', alignItems: 'center', gap: 8 }}>
+      <div style={{ position: 'absolute', top: 16, right: sidebarOpen ? 336 : 16, zIndex: 5, display: 'flex', alignItems: 'center', gap: 8, transition: 'right 0.2s ease' }}>
 
         {isEditing && (
           <>
@@ -374,6 +376,10 @@ export default function ValueChain() {
           }}
           personaInteractions={personaInteractions}
           allPersonas={data.personas}
+          descriptions={descriptions}
+          owners={owners}
+          onSetDescription={(text) => selectedNodeId && setDescription(selectedNodeId, text)}
+          onSetOwner={(owner) => selectedNodeId && setOwner(selectedNodeId, owner)}
         />
       )}
 

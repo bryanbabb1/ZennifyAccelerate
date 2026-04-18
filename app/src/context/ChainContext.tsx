@@ -21,6 +21,8 @@ export interface Customizations {
   statuses: Record<string, 'live' | 'wip' | 'planned'>
   flagged: string[]
   personaInteractions: Record<string, { nodeIds: string[]; notes: Record<string, string> }>
+  descriptions: Record<string, string>
+  owners: Record<string, string>
 }
 
 interface ChainState {
@@ -47,6 +49,8 @@ type Action =
   | { type: 'TOGGLE_FLAG'; nodeId: string }
   | { type: 'TOGGLE_PERSONA_NODE'; personaId: string; nodeId: string }
   | { type: 'SET_PERSONA_NOTE'; personaId: string; nodeId: string; text: string }
+  | { type: 'SET_DESCRIPTION'; nodeId: string; text: string }
+  | { type: 'SET_OWNER'; nodeId: string; owner: string }
   | { type: 'RESTORE'; customizations: Customizations }
   | { type: 'RESET' }
 
@@ -71,12 +75,16 @@ interface ChainContextValue {
   toggleFlag: (nodeId: string) => void
   togglePersonaNode: (personaId: string, nodeId: string) => void
   setPersonaNote: (personaId: string, nodeId: string, text: string) => void
+  setDescription: (nodeId: string, text: string) => void
+  setOwner: (nodeId: string, owner: string) => void
   positions: Record<string, { x: number; y: number }>
   sizes: Record<string, { width: number; height: number }>
   notes: Record<string, Note[]>
   statuses: Record<string, 'live' | 'wip' | 'planned'>
   flagged: string[]
   personaInteractions: Record<string, { nodeIds: string[]; notes: Record<string, string> }>
+  descriptions: Record<string, string>
+  owners: Record<string, string>
   reset: () => void
 }
 
@@ -101,6 +109,8 @@ const defaultCustomizations: Customizations = {
   statuses: {},
   flagged: [],
   personaInteractions: {},
+  descriptions: {},
+  owners: {},
 }
 
 // ─── reducer ──────────────────────────────────────────────────────────────────
@@ -193,6 +203,12 @@ function reducer(state: ChainState, action: Action): ChainState {
       return { ...state, customizations: { ...c, personaInteractions: { ...(c.personaInteractions ?? {}), [action.personaId]: { ...existing, notes: { ...existing.notes, [action.nodeId]: action.text } } } } }
     }
 
+    case 'SET_DESCRIPTION':
+      return { ...state, customizations: { ...c, descriptions: { ...(c.descriptions ?? {}), [action.nodeId]: action.text } } }
+
+    case 'SET_OWNER':
+      return { ...state, customizations: { ...c, owners: { ...(c.owners ?? {}), [action.nodeId]: action.owner } } }
+
     case 'RESTORE':
       // merge with defaults so new fields don't break on old stored data
       return { ...state, customizations: { ...defaultCustomizations, ...action.customizations } }
@@ -266,6 +282,8 @@ export function ChainProvider({ children }: { children: ReactNode }) {
     statuses: state.customizations.statuses ?? {},
     flagged: state.customizations.flagged ?? [],
     personaInteractions: state.customizations.personaInteractions ?? {},
+    descriptions: state.customizations.descriptions ?? {},
+    owners: state.customizations.owners ?? {},
     toggleEditing: () => dispatch({ type: 'TOGGLE_EDIT' }),
     addAgent: (stageId, name, description, category) =>
       dispatch({ type: 'ADD_AGENT', agent: { id: `agent-custom-${Date.now()}`, name, description, stageIds: [stageId], status: 'unknown', category } }),
@@ -288,6 +306,8 @@ export function ChainProvider({ children }: { children: ReactNode }) {
     toggleFlag: (nodeId) => dispatch({ type: 'TOGGLE_FLAG', nodeId }),
     togglePersonaNode: (personaId, nodeId) => dispatch({ type: 'TOGGLE_PERSONA_NODE', personaId, nodeId }),
     setPersonaNote: (personaId, nodeId, text) => dispatch({ type: 'SET_PERSONA_NOTE', personaId, nodeId, text }),
+    setDescription: (nodeId, text) => dispatch({ type: 'SET_DESCRIPTION', nodeId, text }),
+    setOwner: (nodeId, owner) => dispatch({ type: 'SET_OWNER', nodeId, owner }),
     reset: () => dispatch({ type: 'RESET' }),
   }
 
