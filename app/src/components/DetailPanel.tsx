@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react'
-import type { SelectedItem, Persona } from '../types'
+import type { SelectedItem, Persona, Stage } from '../types'
 import type { Note } from '../context/ChainContext'
 import seed from '../data/seed'
 
@@ -21,6 +21,9 @@ interface Props {
   onSetDescription?: (text: string) => void
   onSetOwner?: (owner: string) => void
   onRename?: (id: string, name: string) => void
+  isEditing?: boolean
+  allStages?: Stage[]
+  onSetStageOverride?: (stageIds: string[]) => void
 }
 
 // ─── colour tokens ────────────────────────────────────────────────────────────
@@ -59,6 +62,49 @@ function Card({ children, bg = '#fff', border = Z.border, mb = 14 }: { children:
   return (
     <div style={{ background: bg, border: `1px solid ${border}`, borderRadius: 8, padding: '12px 14px', marginBottom: mb }}>
       {children}
+    </div>
+  )
+}
+
+// ─── stage picker ─────────────────────────────────────────────────────────────
+function StagePicker({ selectedIds, allStages, onChange }: {
+  selectedIds: string[]
+  allStages: Stage[]
+  onChange: (ids: string[]) => void
+}) {
+  function toggle(id: string) {
+    onChange(selectedIds.includes(id) ? selectedIds.filter(s => s !== id) : [...selectedIds, id])
+  }
+  const presales = allStages.filter(s => s.type === 'presales')
+  const delivery = allStages.filter(s => s.type === 'delivery')
+
+  function row(stages: typeof allStages, active: { color: string; bg: string; border: string }, inactive: { color: string; bg: string; border: string }) {
+    return stages.map(s => {
+      const on = selectedIds.includes(s.id)
+      const c = on ? active : inactive
+      return (
+        <button key={s.id} onClick={() => toggle(s.id)}
+          style={{ fontSize: 10.5, fontWeight: on ? 700 : 500, cursor: 'pointer', borderRadius: 20, padding: '4px 11px', fontFamily: 'DM Sans, Inter, sans-serif', border: `1.5px solid ${c.border}`, background: c.bg, color: c.color, outline: 'none' }}>
+          {s.number} · {s.name}
+        </button>
+      )
+    })
+  }
+
+  return (
+    <div style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
+      <div style={{ display: 'flex', flexWrap: 'wrap', gap: 5 }}>
+        {row(presales,
+          { color: Z.greenDark, bg: Z.greenLight, border: Z.green },
+          { color: Z.slate, bg: '#f8fafc', border: Z.border }
+        )}
+      </div>
+      <div style={{ display: 'flex', flexWrap: 'wrap', gap: 5 }}>
+        {row(delivery,
+          { color: Z.purple, bg: Z.purpleLight, border: Z.purple },
+          { color: Z.slate, bg: '#f8fafc', border: Z.border }
+        )}
+      </div>
     </div>
   )
 }
@@ -252,9 +298,10 @@ function StageBody({ stage, nodeId, taggedPersonas, descriptions, onSetDescripti
   )
 }
 
-function AgentBody({ agent, nodeId, taggedPersonas, descriptions, onSetDescription }: {
+function AgentBody({ agent, nodeId, taggedPersonas, descriptions, onSetDescription, isEditing, allStages, onSetStageOverride }: {
   agent: import('../types').Agent; nodeId: string | null
   taggedPersonas: Persona[]; descriptions?: Record<string, string>; onSetDescription?: (t: string) => void
+  isEditing?: boolean; allStages?: Stage[]; onSetStageOverride?: (ids: string[]) => void
 }) {
   const stages = seed.stages.filter(s => agent.stageIds.includes(s.id))
   const ss = statusStyle(agent.status)
@@ -274,9 +321,11 @@ function AgentBody({ agent, nodeId, taggedPersonas, descriptions, onSetDescripti
         placeholder={`What does ${agent.name} do? What inputs does it take and what does it produce?`}
         defaultValue={agent.description} />
 
-      {stages.length > 0 && (
-        <div style={{ marginBottom: 14 }}>
-          <SectionLabel text="Active In Stages" color={Z.green} />
+      <div style={{ marginBottom: 14 }}>
+        <SectionLabel text="Active In Stages" color={Z.green} />
+        {isEditing && allStages ? (
+          <StagePicker selectedIds={agent.stageIds} allStages={allStages} onChange={ids => onSetStageOverride?.(ids)} />
+        ) : stages.length > 0 ? (
           <div>
             {stages.map(s => (
               <Chip key={s.id} label={`${s.number} · ${s.name}`}
@@ -285,8 +334,10 @@ function AgentBody({ agent, nodeId, taggedPersonas, descriptions, onSetDescripti
                 border={s.type === 'presales' ? Z.greenBorder : Z.purpleBorder} />
             ))}
           </div>
-        </div>
-      )}
+        ) : (
+          <div style={{ fontSize: 12, color: '#94a3b8', fontStyle: 'italic' }}>No stages assigned</div>
+        )}
+      </div>
 
       {taggedPersonas.length > 0 && (
         <div style={{ marginBottom: 14 }}>
@@ -346,9 +397,10 @@ function DeliverableBody({ deliv, nodeId, taggedPersonas, descriptions, onSetDes
   )
 }
 
-function OrchestrationBody({ orch, nodeId, taggedPersonas, descriptions, onSetDescription }: {
+function OrchestrationBody({ orch, nodeId, taggedPersonas, descriptions, onSetDescription, isEditing, allStages, onSetStageOverride }: {
   orch: import('../types').Orchestration; nodeId: string | null
   taggedPersonas: Persona[]; descriptions?: Record<string, string>; onSetDescription?: (t: string) => void
+  isEditing?: boolean; allStages?: Stage[]; onSetStageOverride?: (ids: string[]) => void
 }) {
   const stages = seed.stages.filter(s => orch.spansStageIds.includes(s.id))
 
@@ -364,9 +416,11 @@ function OrchestrationBody({ orch, nodeId, taggedPersonas, descriptions, onSetDe
         placeholder={`What does ${orch.name} do? What does it provide across stages?`}
         defaultValue={orch.description} />
 
-      {stages.length > 0 && (
-        <div style={{ marginBottom: 14 }}>
-          <SectionLabel text="Spans Stages" color={Z.goldDark} />
+      <div style={{ marginBottom: 14 }}>
+        <SectionLabel text="Spans Stages" color={Z.goldDark} />
+        {isEditing && allStages ? (
+          <StagePicker selectedIds={orch.spansStageIds} allStages={allStages} onChange={ids => onSetStageOverride?.(ids)} />
+        ) : stages.length > 0 ? (
           <div>
             {stages.map(s => (
               <Chip key={s.id} label={`${s.number} · ${s.name}`}
@@ -375,8 +429,10 @@ function OrchestrationBody({ orch, nodeId, taggedPersonas, descriptions, onSetDe
                 border={s.type === 'presales' ? Z.greenBorder : Z.purpleBorder} />
             ))}
           </div>
-        </div>
-      )}
+        ) : (
+          <div style={{ fontSize: 12, color: '#94a3b8', fontStyle: 'italic' }}>No stages assigned</div>
+        )}
+      </div>
 
       {taggedPersonas.length > 0 && (
         <div style={{ marginBottom: 14 }}>
@@ -436,6 +492,7 @@ export default function DetailPanel({
   item, nodeId, notes, onAddNote, onRemoveNote, onClose,
   activePersonaId, activePersonaName, personaNote, onPersonaNoteChange,
   personaInteractions, allPersonas, descriptions, owners, onSetDescription, onSetOwner, onRename,
+  isEditing, allStages, onSetStageOverride,
 }: Props) {
   const [editingName, setEditingName] = useState(false)
   const [nameDraft, setNameDraft] = useState('')
@@ -522,7 +579,8 @@ export default function DetailPanel({
           )}
           {item.kind === 'agent' && (
             <AgentBody agent={item.data} nodeId={nodeId} taggedPersonas={taggedPersonas}
-              descriptions={descriptions} onSetDescription={onSetDescription} />
+              descriptions={descriptions} onSetDescription={onSetDescription}
+              isEditing={isEditing} allStages={allStages} onSetStageOverride={onSetStageOverride} />
           )}
           {item.kind === 'deliverable' && (
             <DeliverableBody deliv={item.data} nodeId={nodeId} taggedPersonas={taggedPersonas}
@@ -530,7 +588,8 @@ export default function DetailPanel({
           )}
           {item.kind === 'orchestration' && (
             <OrchestrationBody orch={item.data} nodeId={nodeId} taggedPersonas={taggedPersonas}
-              descriptions={descriptions} onSetDescription={onSetDescription} />
+              descriptions={descriptions} onSetDescription={onSetDescription}
+              isEditing={isEditing} allStages={allStages} onSetStageOverride={onSetStageOverride} />
           )}
           {item.kind === 'persona' && (
             <div style={{ fontSize: 13, color: Z.slate, marginBottom: 14 }}>This persona engages all stages in the value chain.</div>

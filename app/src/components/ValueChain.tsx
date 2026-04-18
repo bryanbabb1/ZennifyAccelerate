@@ -54,7 +54,8 @@ export default function ValueChain() {
   const { data, isEditing, toggleEditing, positions, setPosition, sizes,
           addAgent, addDeliverable, addOrchestration, addStage, notes, addNote, removeNote, reset,
           statuses, togglePersonaNode, setPersonaNote, personaInteractions,
-          descriptions, owners, setDescription, setOwner, rename } = useChain()
+          descriptions, owners, setDescription, setOwner, rename,
+          setStageOverride } = useChain()
 
   function handleExport() {
     const raw = localStorage.getItem('zennify-chain-v2') ?? '{}'
@@ -400,6 +401,13 @@ export default function ValueChain() {
             rename(id, name)
             // eslint-disable-next-line @typescript-eslint/no-explicit-any
             if (selected) setSelected({ ...selected, data: { ...selected.data, name } } as any)
+          }}
+          isEditing={isEditing}
+          allStages={data.stages}
+          onSetStageOverride={(stageIds) => {
+            if (!selectedNodeId || !selected) return
+            const entityId = selected.data.id
+            setStageOverride(entityId, stageIds)
           }}
         />
       )}

@@ -24,6 +24,7 @@ export interface Customizations {
   personaInteractions: Record<string, { nodeIds: string[]; notes: Record<string, string> }>
   descriptions: Record<string, string>
   owners: Record<string, string>
+  stageOverrides: Record<string, string[]>
 }
 
 interface ChainState {
@@ -52,6 +53,7 @@ type Action =
   | { type: 'SET_PERSONA_NOTE'; personaId: string; nodeId: string; text: string }
   | { type: 'SET_DESCRIPTION'; nodeId: string; text: string }
   | { type: 'SET_OWNER'; nodeId: string; owner: string }
+  | { type: 'SET_STAGE_OVERRIDE'; nodeId: string; stageIds: string[] }
   | { type: 'RESTORE'; customizations: Customizations }
   | { type: 'RESET' }
 
@@ -78,7 +80,9 @@ interface ChainContextValue {
   setPersonaNote: (personaId: string, nodeId: string, text: string) => void
   setDescription: (nodeId: string, text: string) => void
   setOwner: (nodeId: string, owner: string) => void
+  setStageOverride: (nodeId: string, stageIds: string[]) => void
   positions: Record<string, { x: number; y: number }>
+  stageOverrides: Record<string, string[]>
   sizes: Record<string, { width: number; height: number }>
   notes: Record<string, Note[]>
   statuses: Record<string, 'live' | 'wip' | 'planned'>
@@ -123,6 +127,7 @@ const defaultCustomizations: Customizations = {
   },
   descriptions: {},
   owners: {},
+  stageOverrides: {},
 }
 
 // ─── reducer ──────────────────────────────────────────────────────────────────
@@ -221,6 +226,9 @@ function reducer(state: ChainState, action: Action): ChainState {
     case 'SET_OWNER':
       return { ...state, customizations: { ...c, owners: { ...(c.owners ?? {}), [action.nodeId]: action.owner } } }
 
+    case 'SET_STAGE_OVERRIDE':
+      return { ...state, customizations: { ...c, stageOverrides: { ...(c.stageOverrides ?? {}), [action.nodeId]: action.stageIds } } }
+
     case 'RESTORE':
       // merge with defaults so new fields don't break on old stored data
       return { ...state, customizations: { ...defaultCustomizations, ...action.customizations } }
@@ -247,8 +255,16 @@ function buildEffectiveData(c: Customizations): SeedData {
     agents: [
       ...baseSeed.agents
         .filter(a => !c.removedAgentIds.includes(a.id))
-        .map(a => r[a.id] ? { ...a, name: r[a.id] } : a),
-      ...c.addedAgents.map(a => r[a.id] ? { ...a, name: r[a.id] } : a),
+        .map(a => {
+          let result = r[a.id] ? { ...a, name: r[a.id] } : a
+          if (c.stageOverrides?.[a.id]) result = { ...result, stageIds: c.stageOverrides[a.id] }
+          return result
+        }),
+      ...c.addedAgents.map(a => {
+        let result = r[a.id] ? { ...a, name: r[a.id] } : a
+        if (c.stageOverrides?.[a.id]) result = { ...result, stageIds: c.stageOverrides[a.id] }
+        return result
+      }),
     ],
     deliverables: [
       ...baseSeed.deliverables
@@ -259,8 +275,16 @@ function buildEffectiveData(c: Customizations): SeedData {
     orchestration: [
       ...baseSeed.orchestration
         .filter(o => !c.removedOrchestrationIds.includes(o.id))
-        .map(o => r[o.id] ? { ...o, name: r[o.id] } : o),
-      ...c.addedOrchestration.map(o => r[o.id] ? { ...o, name: r[o.id] } : o),
+        .map(o => {
+          let result = r[o.id] ? { ...o, name: r[o.id] } : o
+          if (c.stageOverrides?.[o.id]) result = { ...result, spansStageIds: c.stageOverrides[o.id] }
+          return result
+        }),
+      ...c.addedOrchestration.map(o => {
+        let result = r[o.id] ? { ...o, name: r[o.id] } : o
+        if (c.stageOverrides?.[o.id]) result = { ...result, spansStageIds: c.stageOverrides[o.id] }
+        return result
+      }),
     ],
   }
 }
@@ -308,6 +332,7 @@ export function ChainProvider({ children }: { children: ReactNode }) {
     personaInteractions: state.customizations.personaInteractions ?? {},
     descriptions: state.customizations.descriptions ?? {},
     owners: state.customizations.owners ?? {},
+    stageOverrides: state.customizations.stageOverrides ?? {},
     toggleEditing: () => dispatch({ type: 'TOGGLE_EDIT' }),
     addAgent: (stageId, name, description, category) =>
       dispatch({ type: 'ADD_AGENT', agent: { id: `agent-custom-${Date.now()}`, name, description, stageIds: [stageId], status: 'unknown', category } }),
@@ -332,6 +357,7 @@ export function ChainProvider({ children }: { children: ReactNode }) {
     setPersonaNote: (personaId, nodeId, text) => dispatch({ type: 'SET_PERSONA_NOTE', personaId, nodeId, text }),
     setDescription: (nodeId, text) => dispatch({ type: 'SET_DESCRIPTION', nodeId, text }),
     setOwner: (nodeId, owner) => dispatch({ type: 'SET_OWNER', nodeId, owner }),
+    setStageOverride: (nodeId, stageIds) => dispatch({ type: 'SET_STAGE_OVERRIDE', nodeId, stageIds }),
     reset: () => dispatch({ type: 'RESET' }),
   }
 
