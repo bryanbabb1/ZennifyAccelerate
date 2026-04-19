@@ -277,10 +277,6 @@ export default function ValueChain() {
             <span style={{ color: '#374151' }}>{label}</span>
           </span>
         ))}
-        <span style={{ display: 'flex', alignItems: 'center', gap: 4, color: '#ef4444' }}>
-          <span style={{ width: 11, height: 11, borderRadius: 2, background: '#fff5f5', border: '1px solid #ef4444', display: 'inline-block' }} />
-          Likely gap
-        </span>
       </div>
 
       {/* ── Top-right controls ── */}

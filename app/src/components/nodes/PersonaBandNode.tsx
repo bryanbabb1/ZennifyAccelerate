@@ -22,8 +22,8 @@ export default function PersonaBandNode({ data }: Props) {
     <div style={{
       width: 118,
       height: height ?? 720,
-      background: inConfigMode ? '#fffbeb' : '#f8fafc',
-      border: `1.5px solid ${inConfigMode ? '#fde68a' : '#e2e8f0'}`,
+      background: inConfigMode ? '#fffbeb' : '#1e293b',
+      border: `1.5px solid ${inConfigMode ? '#fde68a' : '#334155'}`,
       borderRadius: 10,
       display: 'flex',
       flexDirection: 'column',

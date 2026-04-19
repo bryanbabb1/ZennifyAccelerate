@@ -4,11 +4,9 @@ const seed: SeedData = {
   personas: [
     { id: 'portfolio-leader', name: 'Portfolio Leader', engagesAllStages: true },
     { id: 'ssa', name: 'SSA', engagesAllStages: true },
-    { id: 'sa', name: 'SA / Solution Architect', engagesAllStages: true },
-    { id: 'architect', name: 'Architect', engagesAllStages: true },
+    { id: 'sa', name: 'Solution Architect', engagesAllStages: true },
     { id: 'developer', name: 'Developer', engagesAllStages: true },
     { id: 'qa', name: 'QA', engagesAllStages: true },
-    { id: 'legal', name: 'Legal', engagesAllStages: true },
     { id: 'delivery-lead', name: 'Delivery Lead', engagesAllStages: true },
     { id: 'consultant', name: 'Consultant', engagesAllStages: true },
     { id: 'client', name: 'Client', engagesAllStages: true },
