@@ -256,14 +256,15 @@ function StageBody({ stage, nodeId, taggedPersonas, descriptions, onSetDescripti
           <SectionLabel text={`AI Agents (${agents.length})`} color={Z.green} />
           <div style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
             {agents.map(a => {
-              const ss = statusStyle(a.status)
+              const knownStatuses = ['production', 'in-development', 'concept']
+              const ss = knownStatuses.includes(a.status) ? statusStyle(a.status) : null
               return (
                 <div key={a.id} style={{ background: '#fff', border: `1px solid ${Z.border}`, borderRadius: 7, padding: '8px 12px', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
                   <div>
                     <div style={{ fontSize: 12, fontWeight: 600, color: Z.dark }}>{a.name}</div>
                     {a.description && <div style={{ fontSize: 11, color: Z.slate, marginTop: 1 }}>{a.description}</div>}
                   </div>
-                  <span style={{ fontSize: 9.5, fontWeight: 700, color: ss.color, background: ss.bg, borderRadius: 10, padding: '2px 8px', whiteSpace: 'nowrap', marginLeft: 10, flexShrink: 0 }}>{ss.label}</span>
+                  {ss && <span style={{ fontSize: 9.5, fontWeight: 700, color: ss.color, background: ss.bg, borderRadius: 10, padding: '2px 8px', whiteSpace: 'nowrap', marginLeft: 10, flexShrink: 0 }}>{ss.label}</span>}
                 </div>
               )
             })}
@@ -308,7 +309,8 @@ function AgentBody({ agent, nodeId, taggedPersonas, descriptions, onSetDescripti
   isEditing?: boolean; allStages?: Stage[]; onSetStageOverride?: (ids: string[]) => void
 }) {
   const stages = seed.stages.filter(s => agent.stageIds.includes(s.id))
-  const ss = statusStyle(agent.status)
+  const knownStatuses = ['production', 'in-development', 'concept']
+  const ss = knownStatuses.includes(agent.status) ? statusStyle(agent.status) : null
 
   return (
     <>
@@ -317,7 +319,7 @@ function AgentBody({ agent, nodeId, taggedPersonas, descriptions, onSetDescripti
           <div style={{ fontSize: 12.5, fontWeight: 600, color: agent.category === 'platform' ? Z.purple : Z.green }}>
             {agent.category === 'platform' ? '◈ Platform / Core Technology' : '⬡ Custom-Built Agent'}
           </div>
-          <span style={{ fontSize: 11, fontWeight: 700, color: ss.color, background: ss.bg, borderRadius: 10, padding: '3px 10px' }}>{ss.label}</span>
+          {ss && <span style={{ fontSize: 11, fontWeight: 700, color: ss.color, background: ss.bg, borderRadius: 10, padding: '3px 10px' }}>{ss.label}</span>}
         </div>
       </Card>
 
