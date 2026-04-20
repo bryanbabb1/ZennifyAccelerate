@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react'
-import type { SelectedItem, Persona, Stage } from '../types'
+import type { SelectedItem, Persona, Skill, Stage } from '../types'
 import type { Note } from '../context/ChainContext'
 import { useChain } from '../context/ChainContext'
 import seed from '../data/seed'
@@ -31,6 +31,7 @@ interface Props {
   nodeStatus?: 'live' | 'wip' | 'planned' | null
   nodeStatusFields?: { sopUrl?: string; sopLabel?: string; done?: string; inProgress?: string; outstanding?: string; plan?: string }
   onSetStatusField?: (field: string, value: string) => void
+  allSkills?: Skill[]
 }
 
 // ─── colour tokens ────────────────────────────────────────────────────────────
@@ -637,6 +638,7 @@ export default function DetailPanel({
   isEditing, allStages, onSetStageOverride,
   nodeLinks, onAddLink, onRemoveLink,
   nodeStatus, nodeStatusFields, onSetStatusField,
+  allSkills,
 }: Props) {
   const { removeAgent, removeDeliverable, removeOrchestration, removeStage } = useChain()
   const [editingName, setEditingName] = useState(false)
@@ -756,6 +758,49 @@ export default function DetailPanel({
               />
             </Card>
           )}
+
+          {allSkills && allSkills.length > 0 && (() => {
+            // derive which stage IDs apply to this node
+            const nodeStageIds: string[] = (() => {
+              if (item.kind === 'stage') return [item.data.id]
+              if (item.kind === 'agent') return item.data.stageIds
+              if (item.kind === 'deliverable') return [item.data.producedAtStageId]
+              if (item.kind === 'orchestration') return item.data.spansStageIds
+              return []
+            })()
+            const stageMatched = allSkills.filter(s => s.stageIds.some(sid => nodeStageIds.includes(sid)))
+            const personaMatched = activePersonaId
+              ? stageMatched.filter(s => s.personaIds.includes(activePersonaId))
+              : stageMatched
+            if (personaMatched.length === 0) return null
+            return (
+              <Card bg="#FAFBFF" border="#C7D2FE" mb={14}>
+                <SectionLabel text={activePersonaName ? `Auctor Skills for ${activePersonaName}` : 'Auctor Skills'} color="#4338CA" />
+                {!activePersonaId && (
+                  <div style={{ fontSize: 11, color: '#94A3B8', marginBottom: 10 }}>Select a persona to filter to your role.</div>
+                )}
+                <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
+                  {personaMatched.map(skill => (
+                    <div key={skill.id} style={{ background: '#fff', border: '1px solid #E0E7FF', borderRadius: 7, padding: '9px 11px' }}>
+                      <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 5 }}>
+                        <code style={{ fontSize: 11, fontWeight: 700, color: '#0F172A', background: '#F1F5F9', border: '1px solid #E2E8F0', borderRadius: 4, padding: '2px 7px', fontFamily: 'ui-monospace, SFMono-Regular, monospace' }}>
+                          {skill.command}
+                        </code>
+                        <span style={{ fontSize: 12, fontWeight: 600, color: '#1E293B' }}>{skill.name}</span>
+                      </div>
+                      {skill.description && (
+                        <div style={{ fontSize: 11.5, color: '#475569', lineHeight: 1.5, marginBottom: 5 }}>{skill.description}</div>
+                      )}
+                      <div style={{ fontSize: 11, color: '#64748B' }}>
+                        <span style={{ fontWeight: 600, color: '#94A3B8', textTransform: 'uppercase', fontSize: 10, letterSpacing: '0.04em' }}>Produces · </span>
+                        {skill.output}
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </Card>
+            )
+          })()}
 
           <LinksSection links={nodeLinks} onAdd={onAddLink} onRemove={onRemoveLink} />
 

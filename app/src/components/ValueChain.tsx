@@ -472,6 +472,7 @@ export default function ValueChain() {
           nodeStatus={nodeStatus}
           nodeStatusFields={selectedNodeId ? (statusFields[selectedNodeId] ?? {}) : {}}
           onSetStatusField={(field, value) => selectedNodeId && setStatusField(selectedNodeId, field, value)}
+          allSkills={data.skills}
         />
       )}
 
