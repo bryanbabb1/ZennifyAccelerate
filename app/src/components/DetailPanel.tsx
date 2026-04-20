@@ -527,11 +527,6 @@ function LinksSection({ links = [], onAdd, onRemove }: {
   return (
     <div style={{ marginBottom: 14 }}>
       <SectionLabel text="Links & Resources" color={Z.slate} />
-      {links.length === 0 && (
-        <div style={{ fontSize: 11.5, color: '#94a3b8', fontStyle: 'italic', padding: '2px 0 8px' }}>
-          No links yet — attach Notion docs, Miro boards, Confluence pages, etc.
-        </div>
-      )}
       {links.map((link, i) => (
         <div key={i} style={{ display: 'flex', alignItems: 'center', gap: 8, padding: '5px 8px', background: Z.bg, border: `1px solid ${Z.border}`, borderRadius: 6, marginBottom: 5 }}>
           <a href={link.url} target="_blank" rel="noopener noreferrer"
