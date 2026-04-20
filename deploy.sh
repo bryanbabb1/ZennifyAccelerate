@@ -1,8 +1,14 @@
 #!/usr/bin/env bash
-# Manually trigger a Vercel production deployment.
-# Run this from the repo root when the GitHub auto-deploy doesn't fire.
+# Push to GitHub and trigger a Vercel production deployment.
 # Usage: bash deploy.sh
+# Replaces: git push
 
+set -e
+
+echo "Pushing to GitHub..."
+git push
+
+echo "Triggering Vercel deployment..."
 TOKEN=$(python3 -c "import json; print(json.load(open(r'C:\Users\bryan\AppData\Roaming\com.vercel.cli\Data\auth.json'))['token'])")
 
 RESULT=$(curl -s -X POST "https://api.vercel.com/v13/deployments?teamId=team_7VwrjylCTvt300pqYvF7MGu5" \
