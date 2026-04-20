@@ -185,6 +185,34 @@ const seed: SeedData = {
       { id: 'ws9', name: 'GTM & External Positioning', owner: 'Kevin Murray / Carlie Welsh', tier: 3 },
     ],
   },
+
+  skills: [
+    // ── D1: Initiate ─────────────────────────────────────────────────────────
+    { id: 'sk-onboard', name: 'Onboard Client', command: '/onboard-client', stageIds: ['d1'], personaIds: ['project-manager', 'delivery-lead'], tool: 'auctor', output: 'Internal Kickoff Pack', status: 'draft' },
+    { id: 'sk-charter', name: 'Charter Draft', command: '/charter-draft', stageIds: ['d1'], personaIds: ['delivery-lead', 'sa'], tool: 'auctor', output: 'Charter & Governance', ws4DocId: 'ws4-doc1', status: 'draft' },
+    // ── D2: Discovery & Analysis ─────────────────────────────────────────────
+    { id: 'sk-discovery-prep', name: 'Discovery Prep', command: '/discovery-prep', stageIds: ['d2'], personaIds: ['sa', 'consultant'], tool: 'auctor', output: 'Discovery session agenda + notes', status: 'draft' },
+    { id: 'sk-brd', name: 'BRD Draft', command: '/brd-draft', stageIds: ['d2'], personaIds: ['sa', 'ssa'], tool: 'auctor', output: 'Business Requirements Document', ws4DocId: 'ws4-doc2', status: 'draft' },
+    { id: 'sk-traceability', name: 'Traceability Check', command: '/traceability-check', stageIds: ['d2'], personaIds: ['project-manager', 'sa'], tool: 'auctor', output: 'SOW→Story gap report', status: 'draft' },
+    // ── D3: Sprint 0 ─────────────────────────────────────────────────────────
+    { id: 'sk-design', name: 'Solution Design', command: '/design-doc', stageIds: ['d3'], personaIds: ['sa', 'technical-lead'], tool: 'auctor', output: 'Solution Design Document', ws4DocId: 'ws4-doc3', status: 'draft' },
+    { id: 'sk-arch', name: 'Architecture Overview', command: '/arch-overview', stageIds: ['d3'], personaIds: ['technical-lead', 'sa'], tool: 'auctor', output: 'Architecture Overview', ws4DocId: 'ws4-doc4', status: 'draft' },
+    // ── D4: Sprint Cycles ────────────────────────────────────────────────────
+    { id: 'sk-status', name: 'Status Report', command: '/status-report', stageIds: ['d4'], personaIds: ['project-manager'], tool: 'auctor', output: 'Sprint status report', status: 'draft' },
+    { id: 'sk-scope-drift', name: 'Scope Drift Check', command: '/scope-drift', stageIds: ['d4'], personaIds: ['project-manager', 'delivery-lead'], tool: 'auctor', output: 'Scope drift flag + SOW delta', status: 'draft' },
+    // ── D5: UAT & SIT ────────────────────────────────────────────────────────
+    { id: 'sk-test-strategy', name: 'Test Strategy', command: '/test-strategy', stageIds: ['d5'], personaIds: ['qa', 'sa'], tool: 'auctor', output: 'Test Strategy & UAT Plan', ws4DocId: 'ws4-doc5', status: 'draft' },
+    { id: 'sk-uat', name: 'UAT Report', command: '/uat-report', stageIds: ['d5'], personaIds: ['qa', 'project-manager'], tool: 'auctor', output: 'UAT sign-off summary', status: 'draft' },
+    // ── D6: Training ─────────────────────────────────────────────────────────
+    { id: 'sk-training', name: 'Training Plan', command: '/training-plan', stageIds: ['d6'], personaIds: ['consultant', 'delivery-lead'], tool: 'auctor', output: 'Training plan + materials outline', status: 'draft' },
+    // ── D7: Deploy & Go-Live ─────────────────────────────────────────────────
+    { id: 'sk-runbook', name: 'Deployment Runbook', command: '/deployment-runbook', stageIds: ['d7'], personaIds: ['technical-lead', 'developer'], tool: 'auctor', output: 'Deployment Runbook', ws4DocId: 'ws4-doc6', status: 'draft' },
+    { id: 'sk-release', name: 'Release Impact', command: '/release-impact', stageIds: ['d7'], personaIds: ['technical-lead'], tool: 'auctor', output: 'Release impact assessment', status: 'draft' },
+    // ── D8: Project Close ────────────────────────────────────────────────────
+    { id: 'sk-close', name: 'Project Close', command: '/project-close', stageIds: ['d8'], personaIds: ['project-manager', 'delivery-lead'], tool: 'auctor', output: 'Close pack + lessons captured', status: 'draft' },
+    { id: 'sk-post-golive', name: 'Post-GoLive Model', command: '/post-golive', stageIds: ['d8'], personaIds: ['sa', 'delivery-lead'], tool: 'auctor', output: 'Post-GoLive Operating Model', ws4DocId: 'ws4-doc7', status: 'draft' },
+    { id: 'sk-change-mgmt', name: 'Change Mgmt Plan', command: '/change-mgmt', stageIds: ['d8'], personaIds: ['consultant', 'delivery-lead'], tool: 'auctor', output: 'Change Mgmt & Enablement', ws4DocId: 'ws4-doc8', status: 'draft' },
+  ],
 }
 
 export default seed

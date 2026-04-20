@@ -66,6 +66,18 @@ export interface Workstream {
   gap?: string
 }
 
+export interface Skill {
+  id: string
+  name: string
+  command: string
+  stageIds: string[]
+  personaIds: string[]
+  tool: 'auctor' | 'claude-code' | 'claude-project'
+  output: string
+  ws4DocId?: string
+  status: 'active' | 'draft' | 'planned'
+}
+
 export interface SeedData {
   personas: Persona[]
   stages: Stage[]
@@ -75,6 +87,7 @@ export interface SeedData {
   deliverables: Deliverable[]
   ws4EightDocFramework: { note: string; docs: Ws4Doc[] }
   workstreamsMapping: { note: string; workstreams: Workstream[] }
+  skills: Skill[]
 }
 
 export type SelectedItem =
