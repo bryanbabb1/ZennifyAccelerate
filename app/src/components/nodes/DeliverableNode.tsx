@@ -19,10 +19,9 @@ const STATUS_STYLE: Record<Status, { label: string; dot: string; bg: string; tex
 
 export default function DeliverableNode({ data, selected }: Props) {
   const { deliv } = data
-  const { isEditing, removeDeliverable, rename, setSize, setPosition, flagged, toggleFlag, statuses, setStatus } = useChain()
+  const { isEditing, rename, setSize, setPosition, flagged, toggleFlag, statuses, setStatus } = useChain()
   const [hovered, setHovered] = useState(false)
 
-  const showDelete = isEditing && hovered
   const nodeId = `deliv-${deliv.id}`
   const isFlagged = flagged.includes(nodeId)
 
@@ -87,12 +86,6 @@ export default function DeliverableNode({ data, selected }: Props) {
             style={{ fontSize: 10.5, fontWeight: 500, color: '#164e63', flex: 1, wordBreak: 'break-word', whiteSpace: 'normal', fontFamily: 'DM Sans, Inter, sans-serif' }}
             inputStyle={{ fontSize: 10.5, color: '#164e63' }}
           />
-          {showDelete && (
-            <button
-              onClick={e => { e.stopPropagation(); removeDeliverable(deliv.id) }}
-              style={{ flexShrink: 0, width: 16, height: 16, borderRadius: '50%', background: '#ef4444', border: 'none', color: '#fff', fontSize: 10, cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: 700 }}
-            >×</button>
-          )}
         </div>
 
         {/* status badge */}

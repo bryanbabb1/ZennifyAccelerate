@@ -16,12 +16,11 @@ function getStyle(id: string) {
 
 export default function SharedToolNode({ data, selected }: Props) {
   const { orch } = data
-  const { isEditing, removeOrchestration, rename, setSize, setPosition, flagged, toggleFlag, statuses, setStatus } = useChain()
+  const { isEditing, rename, setSize, setPosition, flagged, toggleFlag, statuses, setStatus } = useChain()
   const [hovered, setHovered] = useState(false)
   const [showInfo, setShowInfo] = useState(false)
 
   const s = getStyle(orch.id)
-  const showDelete = isEditing && hovered
   const nodeId = `shared-${orch.id}`
 
   type Status = 'live' | 'wip' | 'planned'
@@ -61,7 +60,7 @@ export default function SharedToolNode({ data, selected }: Props) {
         style={{
           width: '100%', minHeight: 30,
           background: s.bg,
-          border: `1px dashed ${showDelete ? '#ef4444' : s.border}`,
+          border: `1px dashed ${s.border}`,
           borderRadius: 4,
           boxShadow: selected ? '0 0 0 2px #FAC775' : 'none',
           display: 'flex', alignItems: 'center',
@@ -93,32 +92,23 @@ export default function SharedToolNode({ data, selected }: Props) {
           inputStyle={{ fontSize: 10, fontWeight: 600, color: s.text }}
         />
 
-        {!showDelete && (
-          <span
-            onClick={cycleStatus}
-            title={isEditing ? 'Click to change status' : currentStatus}
-            style={{
-              display: 'inline-flex', alignItems: 'center', gap: 3, flexShrink: 0,
-              fontSize: 8, fontWeight: 600, letterSpacing: '0.04em', textTransform: 'uppercase',
-              color: ss.text, background: ss.bg, borderRadius: 20, padding: '1px 5px 1px 4px',
-              cursor: isEditing ? 'pointer' : 'default', userSelect: 'none', fontFamily: 'DM Sans, Inter, sans-serif',
-              border: `1px solid ${ss.dot}33`,
-            }}
-          >
-            <span style={{ width: 5, height: 5, borderRadius: '50%', background: ss.dot, display: 'inline-block', flexShrink: 0 }} />
-            {ss.label}
-            {isEditing && <span style={{ opacity: 0.5, fontSize: 7 }}>▸</span>}
-          </span>
-        )}
+        <span
+          onClick={cycleStatus}
+          title={isEditing ? 'Click to change status' : currentStatus}
+          style={{
+            display: 'inline-flex', alignItems: 'center', gap: 3, flexShrink: 0,
+            fontSize: 8, fontWeight: 600, letterSpacing: '0.04em', textTransform: 'uppercase',
+            color: ss.text, background: ss.bg, borderRadius: 20, padding: '1px 5px 1px 4px',
+            cursor: isEditing ? 'pointer' : 'default', userSelect: 'none', fontFamily: 'DM Sans, Inter, sans-serif',
+            border: `1px solid ${ss.dot}33`,
+          }}
+        >
+          <span style={{ width: 5, height: 5, borderRadius: '50%', background: ss.dot, display: 'inline-block', flexShrink: 0 }} />
+          {ss.label}
+          {isEditing && <span style={{ opacity: 0.5, fontSize: 7 }}>▸</span>}
+        </span>
 
-        {showDelete && (
-          <button
-            onClick={e => { e.stopPropagation(); removeOrchestration(orch.id) }}
-            style={{ flexShrink: 0, padding: '1px 7px', borderRadius: 4, background: '#ef4444', border: 'none', color: '#fff', fontSize: 10, cursor: 'pointer', fontWeight: 700, fontFamily: 'DM Sans, Inter, sans-serif' }}
-          >× Remove</button>
-        )}
-
-        {!isEditing && !showDelete && hovered && orch.description && (
+        {!isEditing && hovered && orch.description && (
           <button
             onClick={e => { e.stopPropagation(); setShowInfo(v => !v) }}
             style={{ flexShrink: 0, width: 14, height: 14, borderRadius: '50%', background: 'rgba(255,255,255,0.5)', border: `1px solid ${s.border}`, color: s.text, fontSize: 9, fontWeight: 700, cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', fontFamily: 'serif' }}

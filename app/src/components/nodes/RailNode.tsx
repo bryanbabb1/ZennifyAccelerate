@@ -11,10 +11,9 @@ interface Props {
 
 export default function RailNode({ data, selected }: Props) {
   const { orch } = data
-  const { isEditing, removeOrchestration, rename, setSize, setPosition, flagged, toggleFlag, statuses, setStatus } = useChain()
+  const { isEditing, rename, setSize, setPosition, flagged, toggleFlag, statuses, setStatus } = useChain()
   const [hovered, setHovered] = useState(false)
 
-  const showDelete = isEditing && hovered
   const isSales = orch.id === 'sales-brain'
   const nodeId = `rail-${orch.id}`
   const isFlagged = flagged.includes(nodeId)
@@ -55,7 +54,7 @@ export default function RailNode({ data, selected }: Props) {
         style={{
           width: '100%', minHeight: 40,
           background: '#FAC775',
-          border: `1.5px solid ${showDelete ? '#ef4444' : '#854F0B'}`,
+          border: '1.5px solid #854F0B',
           borderRadius: 6,
           boxShadow: selected ? '0 0 0 2px #FAC775' : 'none',
           display: 'flex', alignItems: 'center',
@@ -89,32 +88,21 @@ export default function RailNode({ data, selected }: Props) {
           />
         </div>
 
-        {!showDelete && (
-          <span
-            onClick={cycleStatus}
-            title={isEditing ? 'Click to change status' : currentStatus}
-            style={{
-              marginLeft: 'auto', display: 'inline-flex', alignItems: 'center', gap: 3, flexShrink: 0,
-              fontSize: 8.5, fontWeight: 600, letterSpacing: '0.04em', textTransform: 'uppercase',
-              color: ss.text, background: ss.bg, borderRadius: 20, padding: '1px 6px 1px 4px',
-              cursor: isEditing ? 'pointer' : 'default', userSelect: 'none', fontFamily: 'DM Sans, Inter, sans-serif',
-              border: `1px solid ${ss.dot}33`,
-            }}
-          >
-            <span style={{ width: 5, height: 5, borderRadius: '50%', background: ss.dot, display: 'inline-block', flexShrink: 0 }} />
-            {ss.label}
-            {isEditing && <span style={{ opacity: 0.5, fontSize: 7 }}>▸</span>}
-          </span>
-        )}
-
-        {showDelete && (
-          <button
-            onClick={e => { e.stopPropagation(); removeOrchestration(orch.id) }}
-            style={{ marginLeft: 'auto', flexShrink: 0, padding: '2px 10px', borderRadius: 5, background: '#ef4444', border: 'none', color: '#fff', fontSize: 11, cursor: 'pointer', fontWeight: 700, fontFamily: 'DM Sans, Inter, sans-serif' }}
-          >
-            × Remove
-          </button>
-        )}
+        <span
+          onClick={cycleStatus}
+          title={isEditing ? 'Click to change status' : currentStatus}
+          style={{
+            marginLeft: 'auto', display: 'inline-flex', alignItems: 'center', gap: 3, flexShrink: 0,
+            fontSize: 8.5, fontWeight: 600, letterSpacing: '0.04em', textTransform: 'uppercase',
+            color: ss.text, background: ss.bg, borderRadius: 20, padding: '1px 6px 1px 4px',
+            cursor: isEditing ? 'pointer' : 'default', userSelect: 'none', fontFamily: 'DM Sans, Inter, sans-serif',
+            border: `1px solid ${ss.dot}33`,
+          }}
+        >
+          <span style={{ width: 5, height: 5, borderRadius: '50%', background: ss.dot, display: 'inline-block', flexShrink: 0 }} />
+          {ss.label}
+          {isEditing && <span style={{ opacity: 0.5, fontSize: 7 }}>▸</span>}
+        </span>
 
       </div>
 

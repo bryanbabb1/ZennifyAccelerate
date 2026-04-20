@@ -30,12 +30,11 @@ function defaultStatus(agentStatus: string): Status {
 
 export default function AgentNode({ data, selected }: Props) {
   const { agent, spanning } = data
-  const { isEditing, removeAgent, rename, setSize, setPosition, statuses, setStatus, flagged, toggleFlag } = useChain()
+  const { isEditing, rename, setSize, setPosition, statuses, setStatus, flagged, toggleFlag } = useChain()
   const [hovered, setHovered] = useState(false)
   const [showInfo, setShowInfo] = useState(false)
 
   const style = AGENT_STYLES[agent.category === 'platform' ? 'platform' : 'custom']
-  const showDelete = isEditing && hovered
   const nodeId = `agent-${agent.id}`
   const isFlagged = flagged.includes(nodeId)
 
@@ -101,11 +100,9 @@ export default function AgentNode({ data, selected }: Props) {
             inputStyle={{ fontSize: 11, fontWeight: 500, color: style.text }}
           />
 
-          {!showDelete && (
-            <span style={{ fontSize: 8.5, fontWeight: 600, color: style.labelColor, background: style.labelBg, borderRadius: 4, padding: '1px 5px', flexShrink: 0, letterSpacing: '0.03em', textTransform: 'uppercase' }}>
-              {style.label}
-            </span>
-          )}
+          <span style={{ fontSize: 8.5, fontWeight: 600, color: style.labelColor, background: style.labelBg, borderRadius: 4, padding: '1px 5px', flexShrink: 0, letterSpacing: '0.03em', textTransform: 'uppercase' }}>
+            {style.label}
+          </span>
 
           {!isEditing && hovered && agent.description && (
             <button
@@ -115,12 +112,6 @@ export default function AgentNode({ data, selected }: Props) {
             >i</button>
           )}
 
-          {showDelete && (
-            <button
-              onClick={e => { e.stopPropagation(); removeAgent(agent.id) }}
-              style={{ flexShrink: 0, width: 18, height: 18, borderRadius: '50%', background: '#ef4444', border: 'none', color: '#fff', fontSize: 11, cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: 700 }}
-            >×</button>
-          )}
         </div>
 
         {/* info popover */}

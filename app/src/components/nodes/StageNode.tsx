@@ -11,7 +11,7 @@ interface Props {
 
 export default function StageNode({ data, selected }: Props) {
   const { stage } = data
-  const { isEditing, rename, setSize, setPosition, removeStage, flagged, toggleFlag } = useChain()
+  const { isEditing, rename, setSize, setPosition, flagged, toggleFlag } = useChain()
   const [hovered, setHovered] = useState(false)
   const [showInfo, setShowInfo] = useState(false)
 
@@ -21,7 +21,6 @@ export default function StageNode({ data, selected }: Props) {
   const subtleColor = isPresales ? '#99f6e0' : '#c4b5fd'
   const nodeId = `stage-${stage.id}`
   const isCustom = stage.id.startsWith('stage-custom-')
-  const showDelete = isEditing && hovered && isCustom
   const isFlagged = flagged.includes(nodeId)
 
   return (
@@ -43,7 +42,7 @@ export default function StageNode({ data, selected }: Props) {
         style={{
           width: '100%', minHeight: 90,
           background: bg,
-          border: `1.5px solid ${showDelete ? '#ef4444' : selected ? '#FAC775' : border}`,
+          border: `1.5px solid ${selected ? '#FAC775' : border}`,
           borderRadius: 8,
           boxShadow: selected ? '0 0 0 2px #FAC775' : 'none',
           display: 'flex', flexDirection: 'column', justifyContent: 'center',
@@ -70,12 +69,6 @@ export default function StageNode({ data, selected }: Props) {
           <span style={{ fontFamily: 'DM Sans, Inter, sans-serif', fontSize: 10, fontWeight: 600, color: subtleColor, letterSpacing: '0.06em', textTransform: 'uppercase' }}>
             {isPresales ? 'Pre-Sales' : 'Delivery'} {stage.number}
           </span>
-          {showDelete && (
-            <button
-              onClick={e => { e.stopPropagation(); removeStage(stage.id) }}
-              style={{ padding: '1px 6px', borderRadius: 4, background: '#ef4444', border: 'none', color: '#fff', fontSize: 10, cursor: 'pointer', fontWeight: 700, fontFamily: 'DM Sans, Inter, sans-serif', flexShrink: 0 }}
-            >× Remove</button>
-          )}
         </div>
 
         <EditableText

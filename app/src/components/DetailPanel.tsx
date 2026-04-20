@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react'
 import type { SelectedItem, Persona, Stage } from '../types'
 import type { Note } from '../context/ChainContext'
+import { useChain } from '../context/ChainContext'
 import seed from '../data/seed'
 
 interface Props {
@@ -600,9 +601,11 @@ export default function DetailPanel({
   nodeLinks, onAddLink, onRemoveLink,
   nodeStatus, nodeStatusFields, onSetStatusField,
 }: Props) {
+  const { removeAgent, removeDeliverable, removeOrchestration, removeStage } = useChain()
   const [editingName, setEditingName] = useState(false)
   const [nameDraft, setNameDraft] = useState('')
-  useEffect(() => { setEditingName(false) }, [nodeId])
+  const [confirmRemove, setConfirmRemove] = useState(false)
+  useEffect(() => { setEditingName(false); setConfirmRemove(false) }, [nodeId])
 
   if (!item) return null
 
@@ -720,6 +723,44 @@ export default function DetailPanel({
           <LinksSection links={nodeLinks} onAdd={onAddLink} onRemove={onRemoveLink} />
 
           {nodeId && <NotesSection notes={notes} onAdd={onAddNote} onRemove={onRemoveNote} />}
+
+          {isEditing && item.kind !== 'persona' && !(item.kind === 'stage' && !item.data.id.startsWith('stage-custom-')) && (
+            <div style={{ marginTop: 20, paddingTop: 16, borderTop: '1px solid #fee2e2' }}>
+              {!confirmRemove ? (
+                <button
+                  onClick={() => setConfirmRemove(true)}
+                  style={{ background: 'none', border: '1px solid #fca5a5', borderRadius: 7, padding: '7px 14px', color: '#ef4444', fontSize: 12, fontWeight: 600, cursor: 'pointer', fontFamily: 'DM Sans, Inter, sans-serif' }}
+                >
+                  Remove this node
+                </button>
+              ) : (
+                <div style={{ background: '#fff5f5', border: '1px solid #fca5a5', borderRadius: 8, padding: '12px 14px', display: 'flex', flexDirection: 'column', gap: 10 }}>
+                  <span style={{ fontSize: 12.5, fontWeight: 600, color: '#b91c1c', fontFamily: 'DM Sans, Inter, sans-serif' }}>Remove this node permanently?</span>
+                  <span style={{ fontSize: 11.5, color: '#6b7280', fontFamily: 'DM Sans, Inter, sans-serif' }}>This cannot be undone. All notes, links, and customizations for this node will be lost.</span>
+                  <div style={{ display: 'flex', gap: 8 }}>
+                    <button
+                      onClick={() => {
+                        if (item.kind === 'agent') removeAgent(item.data.id)
+                        else if (item.kind === 'deliverable') removeDeliverable(item.data.id)
+                        else if (item.kind === 'orchestration') removeOrchestration(item.data.id)
+                        else if (item.kind === 'stage') removeStage(item.data.id)
+                        onClose()
+                      }}
+                      style={{ background: '#ef4444', border: 'none', borderRadius: 7, padding: '7px 16px', color: '#fff', fontSize: 12, fontWeight: 700, cursor: 'pointer', fontFamily: 'DM Sans, Inter, sans-serif' }}
+                    >
+                      Yes, remove
+                    </button>
+                    <button
+                      onClick={() => setConfirmRemove(false)}
+                      style={{ background: 'none', border: '1px solid #e2e8f0', borderRadius: 7, padding: '7px 14px', color: '#374151', fontSize: 12, fontWeight: 600, cursor: 'pointer', fontFamily: 'DM Sans, Inter, sans-serif' }}
+                    >
+                      Cancel
+                    </button>
+                  </div>
+                </div>
+              )}
+            </div>
+          )}
         </div>
       </div>
     </div>
