@@ -105,6 +105,26 @@ interface ChainContextValue {
 
 const ChainContext = createContext<ChainContextValue | null>(null)
 
+// ─── persona merge (safe union — saved notes always win) ──────────────────────
+function mergePersonaInteractions(
+  saved: Record<string, { nodeIds: string[]; notes: Record<string, string> }>,
+  defaults: Record<string, { nodeIds: string[]; notes: Record<string, string> }>
+): Record<string, { nodeIds: string[]; notes: Record<string, string> }> {
+  const result = { ...saved }
+  for (const [personaId, defaultEntry] of Object.entries(defaults)) {
+    if (!result[personaId]) {
+      result[personaId] = defaultEntry
+    } else {
+      const s = result[personaId]
+      result[personaId] = {
+        nodeIds: Array.from(new Set([...s.nodeIds, ...defaultEntry.nodeIds])),
+        notes: { ...defaultEntry.notes, ...s.notes },
+      }
+    }
+  }
+  return result
+}
+
 // ─── defaults ─────────────────────────────────────────────────────────────────
 const STORAGE_KEY = 'zennify-chain-v2'
 
@@ -124,14 +144,314 @@ const defaultCustomizations: Customizations = {
   statuses: {},
   flagged: [],
   personaInteractions: {
-    'delivery-lead':    { nodeIds: ['stage-d1','stage-d2','stage-d3','stage-d4','stage-d5','stage-d6','stage-d7','stage-d8'], notes: {} },
-    'sa':               { nodeIds: ['stage-s2','stage-s3','stage-s4','stage-s5','stage-d2','stage-d3','stage-d4','stage-d5'], notes: {} },
-    'developer':        { nodeIds: ['stage-d3','stage-d4','stage-d5'], notes: {} },
-    'qa':               { nodeIds: ['stage-d4','stage-d5'], notes: {} },
-    'consultant':       { nodeIds: ['stage-d2','stage-d3','stage-d4','stage-d5','stage-d6'], notes: {} },
-    'client':           { nodeIds: ['stage-d1','stage-d2','stage-d5','stage-d6','stage-d7'], notes: {} },
-    'ssa':              { nodeIds: ['stage-s1','stage-s2','stage-s3','stage-s4','stage-s5'], notes: {} },
-    'portfolio-leader': { nodeIds: ['stage-s1','stage-s2','stage-s3','stage-s4','stage-s5','stage-d1','stage-d2','stage-d3','stage-d4','stage-d5','stage-d6','stage-d7','stage-d8'], notes: {} },
+    'portfolio-leader': {
+      nodeIds: [
+        'stage-s1','stage-s2','stage-s3','stage-s4','stage-s5',
+        'stage-d1','stage-d2','stage-d3','stage-d4','stage-d5','stage-d6','stage-d7','stage-d8',
+        'agent-transition-asst','agent-auctor-listening',
+        'deliv-engagement-brief','deliv-charter-governance','deliv-brd-delivery',
+        'deliv-solution-design-doc','deliv-test-strategy-uat','deliv-deployment-runbook-doc',
+        'deliv-post-golive-model','deliv-change-mgmt-enablement',
+        'rail-auctor-rail',
+      ],
+      notes: {
+        'stage-s1': 'Tracks presales pipeline health and ensures qualification rigor is applied before resources are committed.',
+        'stage-d1': 'Reviews governance structure and sponsor alignment — ensures the project is set up to succeed from day one.',
+        'agent-transition-asst': 'Ensures deal context is cleanly transferred into delivery so strategic intent is never lost at handoff.',
+        'agent-auctor-listening': 'Monitors decision and action capture at a portfolio level — key input for retrospective IP extraction.',
+        'deliv-charter-governance': 'Reviews the charter for alignment to commercial commitments and escalation paths.',
+        'deliv-brd-delivery': 'Spot-checks BRD scope against SOW to confirm delivery is within agreed boundaries.',
+        'deliv-solution-design-doc': 'Reviews solution design for reusability and IP capture opportunities across the portfolio.',
+        'deliv-test-strategy-uat': 'Confirms UAT scope and sign-off criteria align with the client success definition.',
+        'deliv-deployment-runbook-doc': 'Reviews deployment readiness and go/no-go criteria before launch.',
+        'deliv-post-golive-model': 'Approves post-go-live operating model and confirms knowledge is captured for reuse.',
+        'deliv-change-mgmt-enablement': 'Reviews change management and enablement quality — critical for client satisfaction and referenceability.',
+        'rail-auctor-rail': 'Periodically reviews Auctor-captured insights for portfolio-level IP extraction and delivery pattern identification.',
+      },
+    },
+    'ssa': {
+      nodeIds: [
+        'stage-s1','stage-s2','stage-s3','stage-s4','stage-s5',
+        'agent-glengarry','agent-dma-agent','agent-hubbl','agent-opp-brief-agent',
+        'agent-serena','agent-pre-sales-factory','agent-maverick','agent-elle',
+        'agent-rfp-ralph','agent-slack-sf-agent','agent-transition-asst',
+        'deliv-account-brief','deliv-dma-deck','deliv-hubbl-health-check','deliv-opp-brief',
+        'deliv-proposal-deck','deliv-brd-scope','deliv-risk-flag-report','deliv-redline-guide',
+        'deliv-engagement-brief','deliv-handoff-pack',
+        'shared-claude-project','shared-estimating-factory',
+      ],
+      notes: {
+        'stage-s1': 'Leads prospect qualification — validates fit, assigns pursuit tier, and commits presales resources.',
+        'stage-s2': 'Runs research and scoping — directs DMA, Hubbl scan, and opportunity brief creation.',
+        'stage-s3': 'Owns solution narrative and proposal quality — final review and approval before client delivery.',
+        'stage-s4': 'Reviews SOW and risk posture — approves commercial terms and risk mitigation.',
+        'stage-s5': 'Signs off on the handoff pack and ensures the delivery team has full context on what was sold.',
+        'agent-glengarry': 'Directs Glengarry\'s research output — sets the strategic framing for account intelligence.',
+        'agent-dma-agent': 'Commissions and reviews the DMA — key input to qualification and positioning.',
+        'agent-hubbl': 'Reviews Hubbl org scan for maturity signals and whitespace opportunities.',
+        'agent-opp-brief-agent': 'Reviews the Opp Brief for accuracy and strategic alignment before proposal work begins.',
+        'agent-serena': 'Oversees Serena\'s proposal output — ensures Zennify IP and win themes are properly expressed.',
+        'agent-pre-sales-factory': 'Reviews Pre-Sales Factory output for completeness and commercial alignment.',
+        'agent-maverick': 'Reviews Maverick\'s SOW risk flags and determines which items require negotiation or escalation.',
+        'agent-elle': 'Relies on Elle for contract risk identification — approves redline guidance before client engagement.',
+        'agent-rfp-ralph': 'Oversees RFP Ralph output — ensures response quality, compliance, and win-theme alignment.',
+        'agent-slack-sf-agent': 'Uses the Slack↔SF agent to keep the deal room synchronized as the opportunity moves to close.',
+        'agent-transition-asst': 'Reviews the Transition Assistant output to confirm the handoff pack captures strategic deal context.',
+        'deliv-account-brief': 'Consumes the account brief as the primary intelligence artifact for qualification decisions.',
+        'deliv-dma-deck': 'Reviews the DMA deck for maturity scoring accuracy and presentation quality.',
+        'deliv-hubbl-health-check': 'Reviews the Hubbl Health Check for org scan completeness and actionable insights.',
+        'deliv-opp-brief': 'Reviews and approves the Opp Brief before solution and proposal work begins.',
+        'deliv-proposal-deck': 'Final approver of the proposal deck — ensures quality, differentiation, and commercial viability.',
+        'deliv-brd-scope': 'Reviews the BRD + Scope Definition for completeness and alignment to client expectations.',
+        'deliv-risk-flag-report': 'Reviews the Risk Flag Report and determines escalation path for any critical items.',
+        'deliv-redline-guide': 'Reviews the Redline Management Guide and aligns with legal and commercial stakeholders.',
+        'deliv-engagement-brief': 'Authors or approves the Engagement Brief — the definitive presales-to-delivery handoff document.',
+        'deliv-handoff-pack': 'Reviews the full handoff pack to confirm nothing is lost in translation to delivery.',
+        'shared-claude-project': 'Uses Claude Project as the persistent knowledge layer for deal context, proposals, and SOW content.',
+        'shared-estimating-factory': 'Reviews Estimating Factory outputs to validate LOE assumptions and commercial model.',
+      },
+    },
+    'sa': {
+      nodeIds: [
+        'stage-s2','stage-s3','stage-s4','stage-s5',
+        'stage-d2','stage-d3','stage-d4','stage-d5',
+        'agent-opp-brief-agent','agent-serena','agent-pre-sales-factory','agent-maverick',
+        'agent-solution-design-asst','agent-windsurf','agent-traceability-agent',
+        'deliv-opp-brief','deliv-proposal-deck','deliv-brd-scope','deliv-engagement-brief',
+        'deliv-brd-delivery','deliv-user-story-backlog','deliv-solution-design-doc',
+        'deliv-architecture-overview','deliv-sprint-reports',
+        'rail-auctor-rail',
+        'shared-claude-project','shared-estimating-factory','shared-jira','shared-salesforce-devops',
+      ],
+      notes: {
+        'stage-s2': 'Leads technical scoping — translates client context into a workable solution hypothesis.',
+        'stage-s3': 'Drives solution design and proposal narrative — owns the technical credibility of the sale.',
+        'stage-s4': 'Reviews SOW technical accuracy and flags scope risks before commercial commitment.',
+        'stage-s5': 'Authors key sections of the Engagement Brief — ensures technical intent survives the handoff.',
+        'stage-d2': 'Leads discovery sessions and validates that requirements are traceable to SOW commitments.',
+        'stage-d3': 'Authors solution design and architecture documents — sets the technical foundation for build.',
+        'stage-d4': 'Reviews sprint outputs for alignment to the architecture and technical design.',
+        'stage-d5': 'Supports UAT from a technical perspective — resolves complex defects and confirms design intent.',
+        'agent-opp-brief-agent': 'Uses the Opp Brief Agent to structure the opportunity context into a technical framing.',
+        'agent-serena': 'Contributes solution content to Serena\'s proposal generation process.',
+        'agent-pre-sales-factory': 'Directs Pre-Sales Factory for BRD structure and technical scope definition.',
+        'agent-maverick': 'Reviews Maverick\'s SOW risk flags through a technical lens for feasibility and scope creep risk.',
+        'agent-solution-design-asst': 'Primary user of Solution Design Asst — generates architecture patterns and design documentation.',
+        'agent-windsurf': 'Reviews Windsurf-generated code for alignment to architecture and technical specifications.',
+        'agent-traceability-agent': 'Uses the Traceability Agent to validate that user stories map cleanly to SOW line items.',
+        'deliv-opp-brief': 'Authors technical sections of the Opp Brief — solution approach, dependencies, and constraints.',
+        'deliv-proposal-deck': 'Owns the solution design slide and technical approach narrative in the proposal.',
+        'deliv-brd-scope': 'Primary author of the BRD + Scope Definition — the presales technical anchor document.',
+        'deliv-engagement-brief': 'Contributes technical delivery context to the Engagement Brief before handoff.',
+        'deliv-brd-delivery': 'Reviews the delivery BRD for completeness and alignment to the presales scope.',
+        'deliv-user-story-backlog': 'Reviews user stories for technical feasibility and alignment to the proposed architecture.',
+        'deliv-solution-design-doc': 'Primary author — defines solution architecture, integration patterns, and technical boundaries.',
+        'deliv-architecture-overview': 'Produces the Architecture Overview — the visual and narrative representation of the technical design.',
+        'deliv-sprint-reports': 'Reviews sprint reports to monitor whether technical delivery matches design intent.',
+        'rail-auctor-rail': 'Uses Auctor to maintain a running record of technical decisions and architecture change justifications.',
+        'shared-claude-project': 'Uses Claude Project to maintain consistent technical context across proposal and delivery phases.',
+        'shared-estimating-factory': 'Validates LOE estimates from a technical complexity standpoint.',
+        'shared-jira': 'Reviews and refines the user story backlog for technical feasibility and completeness.',
+        'shared-salesforce-devops': 'Monitors environment configuration and pipeline health to ensure architecture is correctly implemented.',
+      },
+    },
+    'developer': {
+      nodeIds: [
+        'stage-d3','stage-d4','stage-d5',
+        'agent-solution-design-asst','agent-windsurf','agent-testing-quality',
+        'deliv-solution-design-doc','deliv-architecture-overview',
+        'deliv-sprint-reports','deliv-show-and-tell-outputs',
+        'rail-auctor-rail',
+        'shared-jira','shared-salesforce-devops',
+      ],
+      notes: {
+        'stage-d3': 'Sets up the dev environment, reviews the solution design, and validates build readiness.',
+        'stage-d4': 'Primary build contributor — delivering working software in 2-week sprint cycles.',
+        'stage-d5': 'Resolves defects from UAT and supports production deployment readiness.',
+        'agent-solution-design-asst': 'Consults Solution Design Asst for architecture guidance and documentation during Sprint 0.',
+        'agent-windsurf': 'Uses Windsurf as the AI-powered coding companion — accelerates feature development and code review.',
+        'agent-testing-quality': 'Consumes Testing & Quality Agent outputs for automated test generation and defect triage.',
+        'deliv-solution-design-doc': 'Reads the Solution Design Document as the authoritative spec for build decisions.',
+        'deliv-architecture-overview': 'References the Architecture Overview to ensure implementation aligns with the agreed design.',
+        'deliv-sprint-reports': 'Contributes sprint velocity and story completion data to Sprint Reports.',
+        'deliv-show-and-tell-outputs': 'Participates in show-and-tell to demo working software and collect client feedback.',
+        'rail-auctor-rail': 'Auctor captures sprint decisions and technical debt notes without developer overhead.',
+        'shared-jira': 'Primary tool for story pickup, status updates, and defect management throughout sprint cycles.',
+        'shared-salesforce-devops': 'Manages deployments across environments — promotes code from dev to staging to production.',
+      },
+    },
+    'qa': {
+      nodeIds: [
+        'stage-d4','stage-d5',
+        'agent-testing-quality',
+        'deliv-sprint-reports','deliv-show-and-tell-outputs',
+        'deliv-test-strategy-uat','deliv-uat-sign-off',
+        'rail-auctor-rail',
+        'shared-jira','shared-salesforce-devops',
+      ],
+      notes: {
+        'stage-d4': 'Executes sprint-level testing — validates that each story meets acceptance criteria before show-and-tell.',
+        'stage-d5': 'Owns UAT coordination and defect management — drives the client to sign-off.',
+        'agent-testing-quality': 'Relies on Testing & Quality Agents to generate test cases, automate regression coverage, and triage defects.',
+        'deliv-sprint-reports': 'Contributes defect counts and test coverage metrics to sprint reports.',
+        'deliv-show-and-tell-outputs': 'Reviews show-and-tell outputs for quality signals and client feedback requiring follow-up.',
+        'deliv-test-strategy-uat': 'Co-authors the Test Strategy & UAT Plan — defines scope, entry/exit criteria, and defect prioritization.',
+        'deliv-uat-sign-off': 'Manages the UAT sign-off process — tracks outstanding defects and coordinates client approval.',
+        'rail-auctor-rail': 'Uses Auctor to capture test decisions, defect triage outcomes, and UAT meeting notes.',
+        'shared-jira': 'Manages the defect backlog — tracks bugs, acceptance criteria failures, and UAT blockers.',
+        'shared-salesforce-devops': 'Validates that environment promotions are clean and defect fixes are deployed correctly.',
+      },
+    },
+    'delivery-lead': {
+      nodeIds: [
+        'stage-d1','stage-d2','stage-d3','stage-d4','stage-d5','stage-d6','stage-d7','stage-d8',
+        'agent-transition-asst','agent-discovery-helper','agent-traceability-agent',
+        'agent-auctor-listening','agent-solution-design-asst','agent-windsurf',
+        'agent-testing-quality','agent-enablement-agent','agent-doc-agent',
+        'deliv-charter-governance','deliv-internal-kickoff-pack','deliv-brd-delivery',
+        'deliv-user-story-backlog','deliv-scope-review-deck','deliv-solution-design-doc',
+        'deliv-architecture-overview','deliv-sprint-reports','deliv-show-and-tell-outputs',
+        'deliv-test-strategy-uat','deliv-uat-sign-off','deliv-deployment-runbook-doc',
+        'deliv-post-golive-model','deliv-change-mgmt-enablement',
+        'rail-auctor-rail',
+        'shared-jira','shared-salesforce-devops',
+      ],
+      notes: {
+        'stage-d1': 'Owns project initiation — establishes governance structure, confirms team, and runs kickoff.',
+        'stage-d2': 'Facilitates discovery and ensures requirements are captured, traced, and scope-confirmed.',
+        'stage-d3': 'Oversees Sprint 0 setup — validates architecture, environment readiness, and build plan.',
+        'stage-d4': 'Runs sprint ceremonies, reviews velocity, and manages scope and client communication.',
+        'stage-d5': 'Coordinates UAT logistics, manages defect resolution, and drives client sign-off.',
+        'stage-d6': 'Oversees training delivery and ensures the client team is enabled for adoption.',
+        'stage-d7': 'Manages go-live execution — coordinates deployment, monitors stability, and handles early issues.',
+        'stage-d8': 'Leads project close — captures lessons, archives IP, and confirms clean handoff.',
+        'agent-transition-asst': 'Uses the Transition Assistant to ingest deal context so nothing is lost at handoff.',
+        'agent-discovery-helper': 'Uses Discovery Helper to prep sessions, capture facilitation notes, and generate follow-ups.',
+        'agent-traceability-agent': 'Uses the Traceability Agent to monitor scope drift and keep stories tied to SOW commitments.',
+        'agent-auctor-listening': 'Relies on Auctor to passively capture decisions and actions throughout the engagement.',
+        'agent-solution-design-asst': 'Reviews Solution Design Asst output to confirm architecture is well documented before build.',
+        'agent-windsurf': 'Monitors Windsurf productivity metrics as an input to sprint velocity reporting.',
+        'agent-testing-quality': 'Reviews Testing & Quality Agent outputs to assess defect trends and UAT readiness.',
+        'agent-enablement-agent': 'Oversees Enablement Agent output to ensure training content meets client needs.',
+        'agent-doc-agent': 'Uses Doc Agent to generate the project close pack and preserve delivery IP.',
+        'deliv-charter-governance': 'Primary author of the Charter & Governance document — the anchor for the entire delivery.',
+        'deliv-internal-kickoff-pack': 'Produces the Internal Kickoff Pack to align the delivery team before client engagement.',
+        'deliv-brd-delivery': 'Reviews the BRD for completeness and confirms scope before the build phase begins.',
+        'deliv-user-story-backlog': 'Reviews the User Story Backlog for quality, traceability, and estimation completeness.',
+        'deliv-scope-review-deck': 'Presents the Scope Review Deck to client stakeholders to confirm alignment before Sprint 0.',
+        'deliv-solution-design-doc': 'Reviews the Solution Design Document to confirm the delivery team is aligned on architecture.',
+        'deliv-architecture-overview': 'Reviews the Architecture Overview to ensure it is suitable for client and stakeholder communication.',
+        'deliv-sprint-reports': 'Reviews and distributes Sprint Reports — key communication artifact for client visibility.',
+        'deliv-show-and-tell-outputs': 'Facilitates show-and-tell sessions and ensures client feedback is captured and actioned.',
+        'deliv-test-strategy-uat': 'Reviews and approves the Test Strategy & UAT Plan before the UAT phase begins.',
+        'deliv-uat-sign-off': 'Manages the UAT sign-off milestone — coordinates between QA, client, and leadership.',
+        'deliv-deployment-runbook-doc': 'Reviews the Deployment Runbook to confirm go-live readiness and risk mitigation.',
+        'deliv-post-golive-model': 'Reviews the Post-GoLive Operating Model to confirm support structure and knowledge transfer.',
+        'deliv-change-mgmt-enablement': 'Oversees Change Mgmt & Enablement delivery to ensure adoption readiness.',
+        'rail-auctor-rail': "Auctor is the delivery lead's operating backbone — all context, memory, and IP flows through it.",
+        'shared-jira': 'Tracks sprint progress, surfaces blockers, and maintains delivery rhythm.',
+        'shared-salesforce-devops': 'Monitors environment pipeline health and manages deployment sequencing across environments.',
+      },
+    },
+    'project-manager': {
+      nodeIds: [
+        'stage-d1','stage-d2','stage-d3','stage-d4','stage-d5','stage-d6','stage-d7','stage-d8',
+        'agent-transition-asst','agent-discovery-helper','agent-traceability-agent',
+        'agent-auctor-listening','agent-enablement-agent','agent-doc-agent',
+        'deliv-charter-governance','deliv-internal-kickoff-pack','deliv-brd-delivery',
+        'deliv-user-story-backlog','deliv-scope-review-deck','deliv-sprint-reports',
+        'deliv-show-and-tell-outputs','deliv-test-strategy-uat','deliv-uat-sign-off',
+        'deliv-deployment-runbook-doc','deliv-post-golive-model','deliv-change-mgmt-enablement',
+        'rail-auctor-rail',
+        'shared-jira',
+      ],
+      notes: {
+        'stage-d1': 'Sets up project infrastructure, confirms RACI, and aligns team on delivery cadence and communication norms.',
+        'stage-d2': 'Manages discovery logistics and ensures stakeholder availability for all sessions.',
+        'stage-d3': 'Tracks Sprint 0 readiness criteria and confirms the team is unblocked for build.',
+        'stage-d4': 'Manages sprint ceremonies, velocity tracking, scope change requests, and status reporting.',
+        'stage-d5': 'Coordinates UAT scheduling, tracks defect resolution, and manages client sign-off logistics.',
+        'stage-d6': 'Manages training logistics — scheduling, attendance tracking, and feedback collection.',
+        'stage-d7': 'Coordinates go-live logistics — confirms readiness criteria, manages cutover plan, and monitors stability.',
+        'stage-d8': 'Manages project close — collects lessons learned, coordinates IP capture, and confirms client acceptance.',
+        'agent-transition-asst': 'Reviews Transition Assistant output to understand project context and delivery commitments inherited from presales.',
+        'agent-discovery-helper': 'Uses Discovery Helper outputs to track session completion and open action items from requirements work.',
+        'agent-traceability-agent': 'Uses Traceability Agent to monitor scope creep and flag items requiring change order consideration.',
+        'agent-auctor-listening': 'Uses Auctor to maintain a decision log and auto-capture meeting actions without manual overhead.',
+        'agent-enablement-agent': 'Coordinates with the Enablement Agent to ensure training content is ready before D6.',
+        'agent-doc-agent': 'Uses Doc Agent to generate project close documentation and lessons-learned artifacts.',
+        'deliv-charter-governance': 'Reviews and co-authors the charter — owns the governance model and escalation paths.',
+        'deliv-internal-kickoff-pack': 'Produces the Internal Kickoff Pack and runs the internal team kickoff session.',
+        'deliv-brd-delivery': 'Reviews the BRD to confirm scope boundaries and flag any changes requiring commercial approval.',
+        'deliv-user-story-backlog': 'Reviews the User Story Backlog for completeness and tracks story-level progress throughout sprints.',
+        'deliv-scope-review-deck': 'Co-presents the Scope Review Deck to client — manages Q&A and documents scope decisions.',
+        'deliv-sprint-reports': 'Distributes Sprint Reports to stakeholders and tracks delivery against committed scope and schedule.',
+        'deliv-show-and-tell-outputs': 'Manages show-and-tell logistics and ensures feedback is documented and triaged.',
+        'deliv-test-strategy-uat': 'Reviews the UAT plan for scheduling feasibility and confirms client resourcing for test execution.',
+        'deliv-uat-sign-off': 'Manages UAT sign-off milestone coordination — tracks outstanding items and gets client acceptance.',
+        'deliv-deployment-runbook-doc': 'Reviews the Deployment Runbook for completeness and coordinates go-live stakeholder communication.',
+        'deliv-post-golive-model': 'Distributes the Post-GoLive Operating Model to client and confirms support transition is in place.',
+        'deliv-change-mgmt-enablement': 'Tracks change management adoption and escalates adoption gaps to the delivery lead.',
+        'rail-auctor-rail': 'Uses Auctor output to generate status reports and maintain the project decision log.',
+        'shared-jira': 'Primary Jira board owner — grooms backlog, tracks velocity, flags scope changes, and manages sprint health.',
+      },
+    },
+    'consultant': {
+      nodeIds: [
+        'stage-d2','stage-d3','stage-d4','stage-d5','stage-d6',
+        'agent-discovery-helper','agent-traceability-agent','agent-auctor-listening',
+        'agent-solution-design-asst','agent-enablement-agent',
+        'deliv-brd-delivery','deliv-user-story-backlog','deliv-scope-review-deck',
+        'deliv-solution-design-doc','deliv-sprint-reports','deliv-show-and-tell-outputs',
+        'deliv-test-strategy-uat',
+        'rail-auctor-rail',
+        'shared-jira','shared-swantide',
+      ],
+      notes: {
+        'stage-d2': 'Leads discovery sessions — facilitates workshops, captures requirements, and ensures stakeholder alignment.',
+        'stage-d3': 'Reviews Sprint 0 deliverables for accuracy and confirms requirements are properly reflected in the design.',
+        'stage-d4': 'Participates in sprint cycles — reviews stories, attends demos, and captures client feedback.',
+        'stage-d5': 'Supports UAT coordination and validates that test scenarios reflect real business use cases.',
+        'stage-d6': 'Contributes to training design and may facilitate end-user sessions for domain-specific topics.',
+        'agent-discovery-helper': 'Uses Discovery Helper for session prep, facilitation notes, and follow-up action tracking.',
+        'agent-traceability-agent': 'Uses the Traceability Agent to confirm that business requirements are correctly reflected in user stories.',
+        'agent-auctor-listening': 'Benefits from Auctor capturing session decisions and actions — reduces manual note-taking overhead.',
+        'agent-solution-design-asst': 'Consults Solution Design Asst to validate that functional requirements are properly expressed in the design.',
+        'agent-enablement-agent': 'Contributes domain knowledge to the Enablement Agent for training asset creation.',
+        'deliv-brd-delivery': 'Primary author of the Business Requirements Document — the definitive requirements artifact for delivery.',
+        'deliv-user-story-backlog': 'Authors and refines user stories — responsible for acceptance criteria quality and business clarity.',
+        'deliv-scope-review-deck': 'Contributes scope validation content and presents business requirements to client stakeholders.',
+        'deliv-solution-design-doc': 'Reviews the Solution Design Document to confirm it accurately reflects functional requirements.',
+        'deliv-sprint-reports': 'Reviews sprint reports to confirm stories were built as defined and acceptance criteria were met.',
+        'deliv-show-and-tell-outputs': 'Participates in show-and-tell as the business SME — validates completed stories against requirements.',
+        'deliv-test-strategy-uat': 'Contributes business scenarios to the UAT plan and validates test cases reflect real user workflows.',
+        'rail-auctor-rail': 'Auctor reduces consultant overhead on documentation by capturing meeting content automatically.',
+        'shared-jira': 'References Jira to track story status and validate that backlog priorities reflect business need.',
+        'shared-swantide': 'Uses Swantide for org analysis during Discovery — surfaces configuration complexity and technical debt.',
+      },
+    },
+    'client': {
+      nodeIds: [
+        'stage-d1','stage-d2','stage-d5','stage-d6','stage-d7',
+        'agent-auctor-listening','agent-enablement-agent',
+        'deliv-charter-governance','deliv-scope-review-deck','deliv-show-and-tell-outputs',
+        'deliv-uat-sign-off','deliv-change-mgmt-enablement',
+      ],
+      notes: {
+        'stage-d1': 'Participates in kickoff — reviews charter, confirms success criteria, and aligns on governance expectations.',
+        'stage-d2': 'Participates in discovery sessions — provides business context, validates requirements, and reviews scope.',
+        'stage-d5': 'Executes UAT testing — validates that the solution meets business requirements and signs off for go-live.',
+        'stage-d6': 'Attends training sessions and identifies super-users who will support internal adoption.',
+        'stage-d7': 'Participates in go-live — confirms cutover, validates production stability, and acknowledges launch.',
+        'agent-auctor-listening': 'May participate in Auctor-facilitated meetings — actions and decisions are captured on their behalf.',
+        'agent-enablement-agent': 'Receives training materials generated by the Enablement Agent — key input to adoption readiness.',
+        'deliv-charter-governance': 'Reviews and signs the Charter & Governance document — formally confirms scope and governance agreement.',
+        'deliv-scope-review-deck': 'Reviews the Scope Review Deck to confirm the proposed solution matches their business needs.',
+        'deliv-show-and-tell-outputs': 'Attends show-and-tell sessions — primary audience for sprint demos and provides approval/feedback.',
+        'deliv-uat-sign-off': 'Provides the UAT Sign-Off — the single most important client action that gates production deployment.',
+        'deliv-change-mgmt-enablement': 'Receives the Change Mgmt & Enablement doc to support internal adoption and super-user enablement.',
+      },
+    },
   },
   descriptions: {},
   owners: {},
@@ -256,7 +576,14 @@ function reducer(state: ChainState, action: Action): ChainState {
 
     case 'RESTORE':
       // merge with defaults so new fields don't break on old stored data
-      return { ...state, customizations: { ...defaultCustomizations, ...action.customizations } }
+      return { ...state, customizations: {
+        ...defaultCustomizations,
+        ...action.customizations,
+        personaInteractions: mergePersonaInteractions(
+          action.customizations.personaInteractions ?? {},
+          defaultCustomizations.personaInteractions
+        ),
+      }}
 
     case 'RESET':
       return { ...state, customizations: defaultCustomizations }
@@ -321,7 +648,15 @@ export function ChainProvider({ children }: { children: ReactNode }) {
     customizations: (() => {
       try {
         const raw = localStorage.getItem(STORAGE_KEY)
-        if (raw) return { ...defaultCustomizations, ...JSON.parse(raw) }
+        if (raw) {
+          const parsed = JSON.parse(raw)
+          return { ...defaultCustomizations, ...parsed,
+            personaInteractions: mergePersonaInteractions(
+              parsed.personaInteractions ?? {},
+              defaultCustomizations.personaInteractions
+            ),
+          }
+        }
       } catch {}
       return defaultCustomizations
     })(),

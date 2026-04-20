@@ -8,6 +8,7 @@ const seed: SeedData = {
     { id: 'developer', name: 'Developer', engagesAllStages: true },
     { id: 'qa', name: 'QA', engagesAllStages: true },
     { id: 'delivery-lead', name: 'Delivery Lead', engagesAllStages: true },
+    { id: 'project-manager', name: 'Project Manager', engagesAllStages: true },
     { id: 'consultant', name: 'Consultant', engagesAllStages: true },
     { id: 'client', name: 'Client', engagesAllStages: true },
   ],
