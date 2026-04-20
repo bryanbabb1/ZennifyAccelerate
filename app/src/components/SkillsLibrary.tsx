@@ -9,12 +9,11 @@ const STATUS_COLORS: Record<string, { bg: string; text: string; label: string }>
   planned: { bg: '#EDE9FE', text: '#4C1D95', label: 'Planned' },
 }
 const TOOL_TAGS: Record<string, { label: string; bg: string; text: string; border: string }> = {
-  'auctor':         { label: 'Auctor',         bg: '#FFF7ED', text: '#9A3412', border: '#FDBA74' },
-  'claude-code':    { label: 'Claude Code',    bg: '#EEF2FF', text: '#3730A3', border: '#A5B4FC' },
-  'claude-project': { label: 'Claude Project', bg: '#F0FDFA', text: '#0F766E', border: '#5EEAD4' },
+  'auctor': { label: 'Auctor', bg: '#FFF7ED', text: '#9A3412', border: '#FDBA74' },
+  'claude': { label: 'Claude', bg: '#EEF2FF', text: '#3730A3', border: '#A5B4FC' },
 }
 const SKILL_STATUSES: Array<'active' | 'draft' | 'planned'> = ['active', 'draft', 'planned']
-const SKILL_TOOLS: Array<'auctor' | 'claude-code' | 'claude-project'> = ['auctor', 'claude-code', 'claude-project']
+const SKILL_TOOLS: Array<'auctor' | 'claude'> = ['auctor', 'claude']
 
 const FONT = 'DM Sans, Inter, sans-serif'
 

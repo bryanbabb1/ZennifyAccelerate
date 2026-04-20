@@ -49,9 +49,8 @@ const Z = {
 }
 
 const TOOL_TAGS: Record<string, { label: string; bg: string; text: string; border: string }> = {
-  'auctor':         { label: 'Auctor',         bg: '#FFF7ED', text: '#9A3412', border: '#FDBA74' },
-  'claude-code':    { label: 'Claude Code',    bg: '#EEF2FF', text: '#3730A3', border: '#A5B4FC' },
-  'claude-project': { label: 'Claude Project', bg: '#F0FDFA', text: '#0F766E', border: '#5EEAD4' },
+  'auctor': { label: 'Auctor', bg: '#FFF7ED', text: '#9A3412', border: '#FDBA74' },
+  'claude': { label: 'Claude', bg: '#EEF2FF', text: '#3730A3', border: '#A5B4FC' },
 }
 
 // ─── small primitives ─────────────────────────────────────────────────────────
