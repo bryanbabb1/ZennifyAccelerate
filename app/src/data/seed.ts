@@ -2,16 +2,17 @@ import type { SeedData } from '../types'
 
 const seed: SeedData = {
   personas: [
-    { id: 'portfolio-leader', name: 'Portfolio Leader', engagesAllStages: true },
-    { id: 'ssa', name: 'SSA', engagesAllStages: true },
-    { id: 'sa', name: 'Solution Architect', engagesAllStages: true },
-    { id: 'technical-lead', name: 'Technical Lead', engagesAllStages: true },
-    { id: 'developer', name: 'Developer', engagesAllStages: true },
-    { id: 'qa', name: 'QA', engagesAllStages: true },
-    { id: 'delivery-lead', name: 'Delivery Lead', engagesAllStages: true },
-    { id: 'project-manager', name: 'Project Manager', engagesAllStages: true },
-    { id: 'consultant', name: 'Consultant', engagesAllStages: true },
     { id: 'client', name: 'Client', engagesAllStages: true },
+    { id: 'consultant', name: 'Consultant', engagesAllStages: true },
+    { id: 'delivery-lead', name: 'Delivery Lead', engagesAllStages: true },
+    { id: 'developer', name: 'Developer', engagesAllStages: true },
+    { id: 'portfolio-leader', name: 'Portfolio Leader', engagesAllStages: true },
+    { id: 'principal-consultant', name: 'Principal Consultant', engagesAllStages: true },
+    { id: 'project-manager', name: 'Project Manager', engagesAllStages: true },
+    { id: 'qa', name: 'QA', engagesAllStages: true },
+    { id: 'sa', name: 'Solution Architect', engagesAllStages: true },
+    { id: 'ssa', name: 'SSA', engagesAllStages: true },
+    { id: 'technical-lead', name: 'Technical Lead', engagesAllStages: true },
   ],
 
   stages: [
