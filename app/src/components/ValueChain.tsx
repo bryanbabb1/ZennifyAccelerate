@@ -294,13 +294,23 @@ export default function ValueChain() {
             </button>
             <button
               onClick={() => { setSelected(null); setAddForm({ stageId: '', kind: 'agent' }); setNewName(''); setNewDesc(''); setNewCategory('custom') }}
-              style={{ background: 'rgba(255,255,255,0.95)', color: '#374151', border: '1px solid #e2e8f0', borderRadius: 8, padding: '7px 12px', fontFamily: 'DM Sans, Inter, sans-serif', fontSize: 11, fontWeight: 600, cursor: 'pointer' }}>
-              + Agent
+              style={{ background: 'rgba(255,255,255,0.95)', color: '#064E3B', border: '1px solid #6ee7b7', borderRadius: 8, padding: '7px 12px', fontFamily: 'DM Sans, Inter, sans-serif', fontSize: 11, fontWeight: 600, cursor: 'pointer' }}>
+              + Custom Agent
+            </button>
+            <button
+              onClick={() => { setSelected(null); setAddForm({ stageId: '', kind: 'agent' }); setNewName(''); setNewDesc(''); setNewCategory('platform') }}
+              style={{ background: 'rgba(255,255,255,0.95)', color: '#3B0764', border: '1px solid #c4b5fd', borderRadius: 8, padding: '7px 12px', fontFamily: 'DM Sans, Inter, sans-serif', fontSize: 11, fontWeight: 600, cursor: 'pointer' }}>
+              + Platform
+            </button>
+            <button
+              onClick={() => { setAddForm({ stageId: 's1', kind: 'orchestration' }); setNewName(''); setNewDesc(''); setNewOrchType('rail'); setNewOrchStages([]) }}
+              style={{ background: 'rgba(255,255,255,0.95)', color: '#78350f', border: '1px solid #fcd34d', borderRadius: 8, padding: '7px 12px', fontFamily: 'DM Sans, Inter, sans-serif', fontSize: 11, fontWeight: 600, cursor: 'pointer' }}>
+              + Rail
             </button>
             <button
               onClick={() => { setAddForm({ stageId: 's1', kind: 'orchestration' }); setNewName(''); setNewDesc(''); setNewOrchType('shared-tool'); setNewOrchStages([]) }}
               style={{ background: 'rgba(255,255,255,0.95)', color: '#374151', border: '1px solid #e2e8f0', borderRadius: 8, padding: '7px 12px', fontFamily: 'DM Sans, Inter, sans-serif', fontSize: 11, fontWeight: 600, cursor: 'pointer' }}>
-              + Orchestration
+              + Tool
             </button>
             <button onClick={() => setShowResetConfirm(true)}
               style={{ background: 'rgba(255,255,255,0.95)', color: '#ef4444', border: '1px solid #fca5a5', borderRadius: 8, padding: '7px 12px', fontFamily: 'DM Sans, Inter, sans-serif', fontSize: 11, fontWeight: 600, cursor: 'pointer' }}>
@@ -492,7 +502,7 @@ export default function ValueChain() {
         <div style={{ position: 'absolute', top: 0, right: 0, bottom: 0, width: 320, background: '#fff', borderLeft: '1px solid #e2e8f0', overflowY: 'auto', zIndex: 10, fontFamily: 'DM Sans, Inter, sans-serif' }}>
           <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '16px 20px', borderBottom: '1px solid #f1f5f9', position: 'sticky', top: 0, background: '#fff', zIndex: 1 }}>
             <span style={{ fontSize: 11, fontWeight: 600, color: '#94a3b8', textTransform: 'uppercase', letterSpacing: '0.08em' }}>
-              Add {addForm.kind === 'agent' ? 'Agent' : addForm.kind === 'deliverable' ? 'Deliverable' : addForm.kind === 'stage' ? 'Stage' : 'Orchestration'}
+              Add {addForm.kind === 'agent' ? (newCategory === 'platform' ? 'Platform Agent' : 'Custom Agent') : addForm.kind === 'deliverable' ? 'Deliverable' : addForm.kind === 'stage' ? 'Stage' : newOrchType === 'rail' ? 'Rail' : 'Shared Tool'}
             </span>
             <button onClick={() => setAddForm(null)} style={{ background: 'none', border: 'none', cursor: 'pointer', fontSize: 18, color: '#94a3b8', padding: '0 4px' }}>×</button>
           </div>
@@ -562,35 +572,10 @@ export default function ValueChain() {
               </div>
             )}
 
-            {/* Agent type */}
-            {addForm.kind === 'agent' && (
-              <div style={{ marginBottom: 20 }}>
-                <label style={{ display: 'block', fontSize: 11, fontWeight: 600, color: '#374151', marginBottom: 8, textTransform: 'uppercase', letterSpacing: '0.05em' }}>Type</label>
-                <div style={{ display: 'flex', gap: 8 }}>
-                  {(['custom', 'platform'] as const).map(cat => (
-                    <button key={cat} onClick={() => setNewCategory(cat)}
-                      style={{ flex: 1, padding: '8px', borderRadius: 6, cursor: 'pointer', border: `1.5px solid ${newCategory === cat ? (cat === 'custom' ? '#0F6E56' : '#534AB7') : '#e2e8f0'}`, background: newCategory === cat ? (cat === 'custom' ? '#F0FDFA' : '#FAF5FF') : '#fff', color: newCategory === cat ? (cat === 'custom' ? '#064E3B' : '#3B0764') : '#6b7280', fontSize: 12, fontWeight: 600, fontFamily: 'DM Sans, Inter, sans-serif' }}>
-                      {cat === 'custom' ? '⬡ Custom' : '◈ Platform'}
-                    </button>
-                  ))}
-                </div>
-              </div>
-            )}
 
             {/* Orchestration-specific */}
             {addForm.kind === 'orchestration' && (
               <>
-                <div style={{ marginBottom: 14 }}>
-                  <label style={{ display: 'block', fontSize: 11, fontWeight: 600, color: '#374151', marginBottom: 8, textTransform: 'uppercase', letterSpacing: '0.05em' }}>Type</label>
-                  <div style={{ display: 'flex', gap: 8 }}>
-                    {(['rail', 'shared-tool'] as const).map(t => (
-                      <button key={t} onClick={() => setNewOrchType(t)}
-                        style={{ flex: 1, padding: '8px', borderRadius: 6, cursor: 'pointer', border: `1.5px solid ${newOrchType === t ? '#854F0B' : '#e2e8f0'}`, background: newOrchType === t ? '#FEF3C7' : '#fff', color: newOrchType === t ? '#78350f' : '#6b7280', fontSize: 12, fontWeight: 600, fontFamily: 'DM Sans, Inter, sans-serif' }}>
-                        {t === 'rail' ? '🧠 Rail' : '⚙ Tool'}
-                      </button>
-                    ))}
-                  </div>
-                </div>
                 <div style={{ marginBottom: 20 }}>
                   <label style={{ display: 'block', fontSize: 11, fontWeight: 600, color: '#374151', marginBottom: 8, textTransform: 'uppercase', letterSpacing: '0.05em' }}>Spans stages</label>
                   <div style={{ display: 'flex', flexWrap: 'wrap', gap: 6 }}>
@@ -613,7 +598,7 @@ export default function ValueChain() {
               return (
                 <button onClick={handleAddSubmit} disabled={!ready}
                   style={{ width: '100%', padding: '10px', borderRadius: 6, background: ready ? '#0F6E56' : '#e2e8f0', color: ready ? '#fff' : '#9ca3af', border: 'none', fontSize: 13, fontWeight: 600, cursor: ready ? 'pointer' : 'default', fontFamily: 'DM Sans, Inter, sans-serif' }}>
-                  Add {addForm.kind === 'agent' ? 'Agent' : addForm.kind === 'deliverable' ? 'Deliverable' : addForm.kind === 'stage' ? 'Stage' : 'Orchestration'}
+                  Add {addForm.kind === 'agent' ? (newCategory === 'platform' ? 'Platform Agent' : 'Custom Agent') : addForm.kind === 'deliverable' ? 'Deliverable' : addForm.kind === 'stage' ? 'Stage' : newOrchType === 'rail' ? 'Rail' : 'Shared Tool'}
                 </button>
               )
             })()}
