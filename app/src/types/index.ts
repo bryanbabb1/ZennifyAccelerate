@@ -83,6 +83,7 @@ export interface SkillOverride {
   output?: string
   description?: string
   status?: 'active' | 'draft' | 'planned'
+  tool?: 'auctor' | 'claude-code' | 'claude-project'
   stageIds?: string[]
   personaIds?: string[]
 }

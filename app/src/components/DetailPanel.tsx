@@ -48,6 +48,12 @@ const Z = {
   slate: '#64748b', dark: '#0f172a', border: '#e2e8f0', bg: '#f8fafc',
 }
 
+const TOOL_TAGS: Record<string, { label: string; bg: string; text: string; border: string }> = {
+  'auctor':         { label: 'Auctor',         bg: '#FFF7ED', text: '#9A3412', border: '#FDBA74' },
+  'claude-code':    { label: 'Claude Code',    bg: '#EEF2FF', text: '#3730A3', border: '#A5B4FC' },
+  'claude-project': { label: 'Claude Project', bg: '#F0FDFA', text: '#0F766E', border: '#5EEAD4' },
+}
+
 // ─── small primitives ─────────────────────────────────────────────────────────
 function SectionLabel({ text, color = Z.slate }: { text: string; color?: string }) {
   return (
@@ -775,28 +781,34 @@ export default function DetailPanel({
             if (personaMatched.length === 0) return null
             return (
               <Card bg="#FAFBFF" border="#C7D2FE" mb={14}>
-                <SectionLabel text={activePersonaName ? `Auctor Skills for ${activePersonaName}` : 'Auctor Skills'} color="#4338CA" />
+                <SectionLabel text={activePersonaName ? `Skills for ${activePersonaName}` : 'Skills'} color="#4338CA" />
                 {!activePersonaId && (
                   <div style={{ fontSize: 11, color: '#94A3B8', marginBottom: 10 }}>Select a persona to filter to your role.</div>
                 )}
                 <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
-                  {personaMatched.map(skill => (
-                    <div key={skill.id} style={{ background: '#fff', border: '1px solid #E0E7FF', borderRadius: 7, padding: '9px 11px' }}>
-                      <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 5 }}>
-                        <code style={{ fontSize: 11, fontWeight: 700, color: '#0F172A', background: '#F1F5F9', border: '1px solid #E2E8F0', borderRadius: 4, padding: '2px 7px', fontFamily: 'ui-monospace, SFMono-Regular, monospace' }}>
-                          {skill.command}
-                        </code>
-                        <span style={{ fontSize: 12, fontWeight: 600, color: '#1E293B' }}>{skill.name}</span>
+                  {personaMatched.map(skill => {
+                    const toolTag = TOOL_TAGS[skill.tool] ?? TOOL_TAGS['auctor']
+                    return (
+                      <div key={skill.id} style={{ background: '#fff', border: '1px solid #E0E7FF', borderRadius: 7, padding: '9px 11px' }}>
+                        <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 5, flexWrap: 'wrap' }}>
+                          <code style={{ fontSize: 11, fontWeight: 700, color: '#0F172A', background: '#F1F5F9', border: '1px solid #E2E8F0', borderRadius: 4, padding: '2px 7px', fontFamily: 'ui-monospace, SFMono-Regular, monospace' }}>
+                            {skill.command}
+                          </code>
+                          <span style={{ fontSize: 12, fontWeight: 600, color: '#1E293B' }}>{skill.name}</span>
+                          <span style={{ fontSize: 10, fontWeight: 600, background: toolTag.bg, color: toolTag.text, border: `1px solid ${toolTag.border}`, borderRadius: 4, padding: '2px 6px', marginLeft: 'auto' }}>
+                            {toolTag.label}
+                          </span>
+                        </div>
+                        {skill.description && (
+                          <div style={{ fontSize: 11.5, color: '#475569', lineHeight: 1.5, marginBottom: 5 }}>{skill.description}</div>
+                        )}
+                        <div style={{ fontSize: 11, color: '#64748B' }}>
+                          <span style={{ fontWeight: 600, color: '#94A3B8', textTransform: 'uppercase', fontSize: 10, letterSpacing: '0.04em' }}>Produces · </span>
+                          {skill.output}
+                        </div>
                       </div>
-                      {skill.description && (
-                        <div style={{ fontSize: 11.5, color: '#475569', lineHeight: 1.5, marginBottom: 5 }}>{skill.description}</div>
-                      )}
-                      <div style={{ fontSize: 11, color: '#64748B' }}>
-                        <span style={{ fontWeight: 600, color: '#94A3B8', textTransform: 'uppercase', fontSize: 10, letterSpacing: '0.04em' }}>Produces · </span>
-                        {skill.output}
-                      </div>
-                    </div>
-                  ))}
+                    )
+                  })}
                 </div>
               </Card>
             )

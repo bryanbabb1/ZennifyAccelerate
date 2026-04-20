@@ -2,14 +2,19 @@ import { useState, useMemo } from 'react'
 import { useChain } from '../context/ChainContext'
 import type { Skill, SkillOverride, Stage, Persona } from '../types'
 
-const AUCTOR_COLOR = { bg: '#FFF7ED', border: '#FDBA74', text: '#9A3412' }
 const STAGE_COLOR = { bg: '#EEF2FF', border: '#A5B4FC', text: '#3730A3' }
 const STATUS_COLORS: Record<string, { bg: string; text: string; label: string }> = {
   active: { bg: '#D1FAE5', text: '#065F46', label: 'Active' },
   draft: { bg: '#FEF3C7', text: '#92400E', label: 'Draft' },
   planned: { bg: '#EDE9FE', text: '#4C1D95', label: 'Planned' },
 }
+const TOOL_TAGS: Record<string, { label: string; bg: string; text: string; border: string }> = {
+  'auctor':         { label: 'Auctor',         bg: '#FFF7ED', text: '#9A3412', border: '#FDBA74' },
+  'claude-code':    { label: 'Claude Code',    bg: '#EEF2FF', text: '#3730A3', border: '#A5B4FC' },
+  'claude-project': { label: 'Claude Project', bg: '#F0FDFA', text: '#0F766E', border: '#5EEAD4' },
+}
 const SKILL_STATUSES: Array<'active' | 'draft' | 'planned'> = ['active', 'draft', 'planned']
+const SKILL_TOOLS: Array<'auctor' | 'claude-code' | 'claude-project'> = ['auctor', 'claude-code', 'claude-project']
 
 const FONT = 'DM Sans, Inter, sans-serif'
 
@@ -56,8 +61,7 @@ export default function SkillsLibrary() {
         <div style={{ marginBottom: 16 }}>
           <div style={{ fontSize: 20, fontWeight: 700, color: '#0F172A', letterSpacing: '-0.01em' }}>Skill Library</div>
           <div style={{ fontSize: 12, color: '#64748B', marginTop: 2 }}>
-            {filtered.length} of {skills.length} delivery skills · invoked in{' '}
-            <span style={{ color: AUCTOR_COLOR.text, fontWeight: 600 }}>Auctor</span>
+            {filtered.length} of {skills.length} delivery skills
           </div>
         </div>
 
@@ -156,6 +160,7 @@ function SkillCard({ skill, stageName, personaName, onClick }: {
   onClick: () => void
 }) {
   const statusStyle = STATUS_COLORS[skill.status] ?? STATUS_COLORS.draft
+  const toolTag = TOOL_TAGS[skill.tool] ?? TOOL_TAGS['auctor']
 
   return (
     <div
@@ -204,7 +209,7 @@ function SkillCard({ skill, stageName, personaName, onClick }: {
       {/* Skill name */}
       <div style={{ fontSize: 15, fontWeight: 700, color: '#0F172A', lineHeight: 1.3 }}>{skill.name}</div>
 
-      {/* Stage tags */}
+      {/* Stage tags + tool tag */}
       <div style={{ display: 'flex', flexWrap: 'wrap', gap: 5 }}>
         {skill.stageIds.map(id => (
           <span key={id} style={{
@@ -218,11 +223,11 @@ function SkillCard({ skill, stageName, personaName, onClick }: {
         ))}
         <span style={{
           fontSize: 10, fontWeight: 600,
-          background: AUCTOR_COLOR.bg, color: AUCTOR_COLOR.text,
-          border: `1px solid ${AUCTOR_COLOR.border}`,
+          background: toolTag.bg, color: toolTag.text,
+          border: `1px solid ${toolTag.border}`,
           borderRadius: 4, padding: '2px 7px',
         }}>
-          Auctor
+          {toolTag.label}
         </span>
       </div>
 
@@ -419,6 +424,44 @@ function SkillDetailModal({ skill, deliveryStages, personas, isEditing, stageNam
             )}
           </Section>
 
+          {/* Tool */}
+          <Section label="Tool">
+            {isEditing ? (
+              <div style={{ display: 'flex', gap: 6, flexWrap: 'wrap' }}>
+                {SKILL_TOOLS.map(t => {
+                  const tag = TOOL_TAGS[t]
+                  const active = skill.tool === t
+                  return (
+                    <span
+                      key={t}
+                      onClick={() => onSetOverride({ tool: t })}
+                      style={{
+                        fontSize: 10, fontWeight: 600, cursor: 'pointer',
+                        background: active ? tag.bg : '#F8FAFC',
+                        color: active ? tag.text : '#94A3B8',
+                        border: `1px solid ${active ? tag.border : '#E2E8F0'}`,
+                        borderRadius: 4, padding: '3px 8px', userSelect: 'none',
+                        transition: 'all 0.1s',
+                      }}
+                    >
+                      {tag.label}
+                    </span>
+                  )
+                })}
+              </div>
+            ) : (
+              <span style={{
+                fontSize: 10, fontWeight: 600,
+                background: TOOL_TAGS[skill.tool]?.bg ?? '#F8FAFC',
+                color: TOOL_TAGS[skill.tool]?.text ?? '#64748B',
+                border: `1px solid ${TOOL_TAGS[skill.tool]?.border ?? '#E2E8F0'}`,
+                borderRadius: 4, padding: '3px 8px', display: 'inline-block',
+              }}>
+                {TOOL_TAGS[skill.tool]?.label ?? skill.tool}
+              </span>
+            )}
+          </Section>
+
           {/* Stages */}
           <Section label="Delivery Stages">
             <div style={{ display: 'flex', flexWrap: 'wrap', gap: 6 }}>
@@ -454,14 +497,6 @@ function SkillDetailModal({ skill, deliveryStages, personas, isEditing, stageNam
                   </span>
                 ))
               )}
-              <span style={{
-                fontSize: 10, fontWeight: 600,
-                background: AUCTOR_COLOR.bg, color: AUCTOR_COLOR.text,
-                border: `1px solid ${AUCTOR_COLOR.border}`,
-                borderRadius: 4, padding: '3px 8px',
-              }}>
-                Auctor
-              </span>
             </div>
           </Section>
 
