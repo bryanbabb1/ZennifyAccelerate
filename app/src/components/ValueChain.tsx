@@ -93,6 +93,7 @@ export default function ValueChain() {
   const [addForm, setAddForm] = useState<AddForm | null>(null)
   const [showResetConfirm, setShowResetConfirm] = useState(false)
   const [showPasswordModal, setShowPasswordModal] = useState(false)
+  const [showHelp, setShowHelp] = useState(false)
   const [activePersonaId, setActivePersonaId] = useState<string | null>(null)
   const [personaConfigId, setPersonaConfigId] = useState<string | null>(null)
 
@@ -280,7 +281,31 @@ export default function ValueChain() {
             <span style={{ color: '#374151' }}>{label}</span>
           </span>
         ))}
+        <button
+          onClick={() => setShowHelp(v => !v)}
+          title="How to use this canvas"
+          style={{ marginLeft: 4, background: 'none', border: '1px solid #cbd5e1', borderRadius: '50%', width: 18, height: 18, fontSize: 10, cursor: 'pointer', color: '#64748b', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0, padding: 0 }}>
+          ?
+        </button>
       </div>
+
+      {/* ── Help panel ── */}
+      {showHelp && (
+        <div style={{ position: 'absolute', top: 52, left: 16, zIndex: 10, background: '#fff', border: '1px solid #e2e8f0', borderRadius: 10, padding: '16px 18px', fontFamily: 'DM Sans, Inter, sans-serif', fontSize: 12, color: '#374151', maxWidth: 360, boxShadow: '0 4px 20px rgba(0,0,0,0.12)', lineHeight: 1.6 }}>
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 10 }}>
+            <span style={{ fontWeight: 700, fontSize: 13 }}>How to use this canvas</span>
+            <button onClick={() => setShowHelp(false)} style={{ background: 'none', border: 'none', cursor: 'pointer', fontSize: 14, color: '#94a3b8', padding: 0, lineHeight: 1 }}>×</button>
+          </div>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: 9 }}>
+            <div><strong>Navigate</strong> — Pan by clicking and dragging the canvas background. Zoom with scroll wheel or the controls in the bottom-left.</div>
+            <div><strong>Click any node</strong> — Opens a detail panel on the right with description, owner, status, notes, and links for that item.</div>
+            <div><strong>Persona overlay</strong> — Click a persona in the left panel to highlight every node that persona touches. Click again to clear. Each node shows that persona's specific role when opened.</div>
+            <div><strong>Node types</strong> — <span style={{ color: '#0F6E56', fontWeight: 600 }}>Teal</span> = pre-sales stages/agents. <span style={{ color: '#534AB7', fontWeight: 600 }}>Purple</span> = delivery stages/platforms. <span style={{ color: '#854F0B', fontWeight: 600 }}>Gold</span> = orchestration rails &amp; shared tools. Teal cards below the spine = deliverables.</div>
+            <div><strong>Status badges</strong> — <span style={{ background: '#d1fae5', color: '#065f46', borderRadius: 3, padding: '1px 5px' }}>Live</span> <span style={{ background: '#fef3c7', color: '#92400e', borderRadius: 3, padding: '1px 5px' }}>WIP</span> <span style={{ background: '#ede9fe', color: '#4c1d95', borderRadius: 3, padding: '1px 5px' }}>Planned</span> — shown on agents, deliverables, and orchestration nodes.</div>
+            <div><strong>Edit mode</strong> — Click <em>✏ Edit</em> (top right) and enter the password to unlock: rename nodes, move/resize, add new nodes, change statuses, update SOP links and build checklists.</div>
+          </div>
+        </div>
+      )}
 
       {/* ── Top-right controls ── */}
       <div style={{ position: 'absolute', top: 16, right: sidebarOpen ? 336 : 16, zIndex: 5, display: 'flex', alignItems: 'center', gap: 8, transition: 'right 0.2s ease' }}>
