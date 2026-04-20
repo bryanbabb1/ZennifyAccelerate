@@ -226,7 +226,10 @@ export default function ValueChain() {
 
   function handleAddSubmit() {
     if (!addForm || !newName.trim()) return
-    if (addForm.kind === 'agent') addAgent(addForm.stageId, newName.trim(), newDesc.trim(), newCategory)
+    if (addForm.kind === 'agent') {
+      if (!addForm.stageId) return
+      addAgent(addForm.stageId, newName.trim(), newDesc.trim(), newCategory)
+    }
     else if (addForm.kind === 'deliverable') addDeliverable(addForm.stageId, newName.trim())
     else if (addForm.kind === 'orchestration') {
       const stages = newOrchStages.length > 0 ? newOrchStages : ['s1']
@@ -288,6 +291,11 @@ export default function ValueChain() {
               onClick={() => { setAddForm({ stageId: 's1', kind: 'stage' }); setNewName(''); setNewStageNumber(''); setNewStageType('presales') }}
               style={{ background: 'rgba(255,255,255,0.95)', color: '#374151', border: '1px solid #e2e8f0', borderRadius: 8, padding: '7px 12px', fontFamily: 'DM Sans, Inter, sans-serif', fontSize: 11, fontWeight: 600, cursor: 'pointer' }}>
               + Stage
+            </button>
+            <button
+              onClick={() => { setSelected(null); setAddForm({ stageId: '', kind: 'agent' }); setNewName(''); setNewDesc(''); setNewCategory('custom') }}
+              style={{ background: 'rgba(255,255,255,0.95)', color: '#374151', border: '1px solid #e2e8f0', borderRadius: 8, padding: '7px 12px', fontFamily: 'DM Sans, Inter, sans-serif', fontSize: 11, fontWeight: 600, cursor: 'pointer' }}>
+              + Agent
             </button>
             <button
               onClick={() => { setAddForm({ stageId: 's1', kind: 'orchestration' }); setNewName(''); setNewDesc(''); setNewOrchType('shared-tool'); setNewOrchStages([]) }}
@@ -494,6 +502,23 @@ export default function ValueChain() {
               <div style={{ fontSize: 12, color: '#64748b', marginBottom: 16 }}>Adding to: <strong style={{ color: '#0F6E56' }}>{stageName}</strong></div>
             )}
 
+            {/* Stage picker — shown when opened from top-level + Agent button */}
+            {addForm.kind === 'agent' && addForm.stageId === '' && (
+              <div style={{ marginBottom: 14 }}>
+                <label style={{ display: 'block', fontSize: 11, fontWeight: 600, color: '#374151', marginBottom: 5, textTransform: 'uppercase', letterSpacing: '0.05em' }}>Stage *</label>
+                <select
+                  value={addForm.stageId}
+                  onChange={e => setAddForm(f => f ? { ...f, stageId: e.target.value } : f)}
+                  style={{ width: '100%', padding: '8px 10px', borderRadius: 6, border: '1px solid #d1d5db', fontSize: 13, fontFamily: 'DM Sans, Inter, sans-serif', background: '#fff', cursor: 'pointer' }}
+                >
+                  <option value="">— select a stage —</option>
+                  {data.stages.map(s => (
+                    <option key={s.id} value={s.id}>{s.type === 'presales' ? 'S' : 'D'}{s.number} · {s.name}</option>
+                  ))}
+                </select>
+              </div>
+            )}
+
             {/* Stage type selector */}
             {addForm.kind === 'stage' && (
               <div style={{ marginBottom: 14 }}>
@@ -583,10 +608,15 @@ export default function ValueChain() {
               </>
             )}
 
-            <button onClick={handleAddSubmit} disabled={!newName.trim()}
-              style={{ width: '100%', padding: '10px', borderRadius: 6, background: newName.trim() ? '#0F6E56' : '#e2e8f0', color: newName.trim() ? '#fff' : '#9ca3af', border: 'none', fontSize: 13, fontWeight: 600, cursor: newName.trim() ? 'pointer' : 'default', fontFamily: 'DM Sans, Inter, sans-serif' }}>
-              Add {addForm.kind === 'agent' ? 'Agent' : addForm.kind === 'deliverable' ? 'Deliverable' : addForm.kind === 'stage' ? 'Stage' : 'Orchestration'}
-            </button>
+            {(() => {
+              const ready = !!newName.trim() && (addForm.kind !== 'agent' || !!addForm.stageId)
+              return (
+                <button onClick={handleAddSubmit} disabled={!ready}
+                  style={{ width: '100%', padding: '10px', borderRadius: 6, background: ready ? '#0F6E56' : '#e2e8f0', color: ready ? '#fff' : '#9ca3af', border: 'none', fontSize: 13, fontWeight: 600, cursor: ready ? 'pointer' : 'default', fontFamily: 'DM Sans, Inter, sans-serif' }}>
+                  Add {addForm.kind === 'agent' ? 'Agent' : addForm.kind === 'deliverable' ? 'Deliverable' : addForm.kind === 'stage' ? 'Stage' : 'Orchestration'}
+                </button>
+              )
+            })()}
 
             {addForm.kind === 'stage' && (
               <div style={{ marginTop: 10, fontSize: 11, color: '#94a3b8', textAlign: 'center' }}>
