@@ -70,12 +70,21 @@ export interface Skill {
   id: string
   name: string
   command: string
+  description?: string
   stageIds: string[]
   personaIds: string[]
   tool: 'auctor' | 'claude-code' | 'claude-project'
   output: string
-  ws4DocId?: string
   status: 'active' | 'draft' | 'planned'
+}
+
+export interface SkillOverride {
+  command?: string
+  output?: string
+  description?: string
+  status?: 'active' | 'draft' | 'planned'
+  stageIds?: string[]
+  personaIds?: string[]
 }
 
 export interface SeedData {
