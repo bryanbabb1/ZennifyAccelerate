@@ -235,9 +235,13 @@ function StageBody({ stage, nodeId, taggedPersonas, descriptions, onSetDescripti
   stage: import('../types').Stage; nodeId: string | null
   taggedPersonas: Persona[]; descriptions?: Record<string, string>; onSetDescription?: (t: string) => void
 }) {
+  const { data, deliverableRefs } = useChain()
   const agents     = seed.agents.filter(a => a.stageIds.includes(stage.id))
   const delivs     = seed.deliverables.filter(d => d.producedAtStageId === stage.id)
   const frameworks = seed.frameworks.filter(f => f.stageIds.includes(stage.id))
+  const referencedDelivs = data.deliverables.filter(d =>
+    d.producedAtStageId !== stage.id && (deliverableRefs[d.id] ?? []).includes(stage.id)
+  )
 
   return (
     <>
@@ -275,7 +279,7 @@ function StageBody({ stage, nodeId, taggedPersonas, descriptions, onSetDescripti
 
       {delivs.length > 0 && (
         <div style={{ marginBottom: 14 }}>
-          <SectionLabel text={`Deliverables (${delivs.length})`} color={Z.goldDark} />
+          <SectionLabel text={`Produced here (${delivs.length})`} color={Z.goldDark} />
           <div style={{ display: 'flex', flexDirection: 'column', gap: 5 }}>
             {delivs.map(d => (
               <div key={d.id} style={{ display: 'flex', alignItems: 'center', gap: 8, padding: '6px 10px', background: Z.tealLight, border: `1px solid ${Z.tealBorder}`, borderRadius: 6, fontSize: 12, color: Z.dark }}>
@@ -283,6 +287,24 @@ function StageBody({ stage, nodeId, taggedPersonas, descriptions, onSetDescripti
                 <span style={{ flex: 1 }}>{d.name}</span>
               </div>
             ))}
+          </div>
+        </div>
+      )}
+
+      {referencedDelivs.length > 0 && (
+        <div style={{ marginBottom: 14 }}>
+          <SectionLabel text={`Available from prior phases (${referencedDelivs.length})`} color={Z.purple} />
+          <div style={{ display: 'flex', flexDirection: 'column', gap: 5 }}>
+            {referencedDelivs.map(d => {
+              const origin = seed.stages.find(s => s.id === d.producedAtStageId)
+              return (
+                <div key={d.id} style={{ display: 'flex', alignItems: 'center', gap: 8, padding: '6px 10px', background: Z.purpleLight, border: `1px solid ${Z.purpleBorder}`, borderRadius: 6, fontSize: 12, color: Z.dark }}>
+                  <span style={{ flexShrink: 0, color: Z.purple }}>↗</span>
+                  <span style={{ flex: 1 }}>{d.name}</span>
+                  {origin && <span style={{ fontSize: 10, color: Z.purple, fontWeight: 600, flexShrink: 0, background: '#ede9fe', borderRadius: 10, padding: '1px 7px' }}>from S{origin.number}</span>}
+                </div>
+              )
+            })}
           </div>
         </div>
       )}
@@ -360,8 +382,11 @@ function DeliverableBody({ deliv, nodeId, taggedPersonas, descriptions, onSetDes
   deliv: import('../types').Deliverable; nodeId: string | null
   taggedPersonas: Persona[]; descriptions?: Record<string, string>; onSetDescription?: (t: string) => void
 }) {
+  const { isEditing, data, deliverableRefs, setDeliverableRefs } = useChain()
   const producedAt = seed.stages.find(s => s.id === deliv.producedAtStageId)
   const ingestedBy = seed.stages.find(s => s.id === deliv.ingestedByStageId)
+  const refStageIds = deliverableRefs[deliv.id] ?? []
+  const refStages = data.stages.filter(s => refStageIds.includes(s.id))
 
   return (
     <>
@@ -376,6 +401,23 @@ function DeliverableBody({ deliv, nodeId, taggedPersonas, descriptions, onSetDes
           <div style={{ fontSize: 12.5, fontWeight: 700, color: Z.dark }}>{ingestedBy ? `Stage ${ingestedBy.number}` : 'IP Loop'}</div>
           <div style={{ fontSize: 11, color: Z.slate, marginTop: 2 }}>{ingestedBy?.name ?? 'Institutional knowledge'}</div>
         </Card>
+      </div>
+
+      <div style={{ marginBottom: 14 }}>
+        <SectionLabel text="Referenced in stages" color={Z.goldDark} />
+        {isEditing ? (
+          <StagePicker selectedIds={refStageIds} allStages={data.stages} onChange={ids => setDeliverableRefs(deliv.id, ids)} />
+        ) : refStages.length > 0 ? (
+          <div style={{ display: 'flex', flexWrap: 'wrap', gap: 6 }}>
+            {refStages.map(s => (
+              <span key={s.id} style={{ fontSize: 11, fontWeight: 600, padding: '3px 10px', borderRadius: 20, background: s.type === 'presales' ? Z.greenLight : Z.purpleLight, border: `1.5px solid ${s.type === 'presales' ? Z.greenBorder : Z.purpleBorder}`, color: s.type === 'presales' ? Z.greenDark : Z.purple }}>
+                {s.number} · {s.name}
+              </span>
+            ))}
+          </div>
+        ) : (
+          <div style={{ fontSize: 11.5, color: '#94a3b8', fontStyle: 'italic' }}>No additional stages reference this artifact.</div>
+        )}
       </div>
 
       <DescriptionField nodeId={nodeId} descriptions={descriptions} onSetDescription={onSetDescription}

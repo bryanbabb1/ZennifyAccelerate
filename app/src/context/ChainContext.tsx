@@ -25,6 +25,7 @@ export interface Customizations {
   descriptions: Record<string, string>
   owners: Record<string, string>
   stageOverrides: Record<string, string[]>
+  deliverableRefs: Record<string, string[]>
   links: Record<string, { url: string; label: string }[]>
   statusFields: Record<string, { sopUrl?: string; sopLabel?: string; done?: string; inProgress?: string; outstanding?: string; plan?: string }>
 }
@@ -59,6 +60,7 @@ type Action =
   | { type: 'ADD_LINK'; nodeId: string; url: string; label: string }
   | { type: 'REMOVE_LINK'; nodeId: string; index: number }
   | { type: 'SET_STATUS_FIELD'; nodeId: string; field: string; value: string }
+  | { type: 'SET_DELIVERABLE_REFS'; delivId: string; stageIds: string[] }
   | { type: 'RESTORE'; customizations: Customizations }
   | { type: 'RESET' }
 
@@ -86,11 +88,13 @@ interface ChainContextValue {
   setDescription: (nodeId: string, text: string) => void
   setOwner: (nodeId: string, owner: string) => void
   setStageOverride: (nodeId: string, stageIds: string[]) => void
+  setDeliverableRefs: (delivId: string, stageIds: string[]) => void
   addLink: (nodeId: string, url: string, label: string) => void
   removeLink: (nodeId: string, index: number) => void
   setStatusField: (nodeId: string, field: string, value: string) => void
   positions: Record<string, { x: number; y: number }>
   stageOverrides: Record<string, string[]>
+  deliverableRefs: Record<string, string[]>
   links: Record<string, { url: string; label: string }[]>
   statusFields: Record<string, { sopUrl?: string; sopLabel?: string; done?: string; inProgress?: string; outstanding?: string; plan?: string }>
   sizes: Record<string, { width: number; height: number }>
@@ -493,6 +497,19 @@ const defaultCustomizations: Customizations = {
   descriptions: {},
   owners: {},
   stageOverrides: {},
+  deliverableRefs: {
+    'dma-deck':      ['d1', 'd2'],
+    'account-brief': ['d1'],
+    'opp-brief':     ['d1', 'd2'],
+    'proposal-deck': ['d1'],
+    'brd-scope':     ['d1', 'd2', 'd3'],
+    'handoff-pack':  ['d2'],
+    'engagement-brief': ['d2', 'd3'],
+    'brd-delivery':  ['d4', 'd5'],
+    'solution-design-doc': ['d4', 'd5', 'd7'],
+    'architecture-overview': ['d4', 'd5', 'd7'],
+    'charter-governance': ['d5', 'd7', 'd8'],
+  },
   links: {},
   statusFields: {},
 }
@@ -610,6 +627,9 @@ function reducer(state: ChainState, action: Action): ChainState {
       const existing = (c.statusFields ?? {})[action.nodeId] ?? {}
       return { ...state, customizations: { ...c, statusFields: { ...(c.statusFields ?? {}), [action.nodeId]: { ...existing, [action.field]: action.value } } } }
     }
+
+    case 'SET_DELIVERABLE_REFS':
+      return { ...state, customizations: { ...c, deliverableRefs: { ...(c.deliverableRefs ?? {}), [action.delivId]: action.stageIds } } }
 
     case 'RESTORE':
       // merge with defaults so new fields don't break on old stored data
@@ -730,6 +750,7 @@ export function ChainProvider({ children }: { children: ReactNode }) {
     descriptions: state.customizations.descriptions ?? {},
     owners: state.customizations.owners ?? {},
     stageOverrides: state.customizations.stageOverrides ?? {},
+    deliverableRefs: { ...defaultCustomizations.deliverableRefs, ...(state.customizations.deliverableRefs ?? {}) },
     links: state.customizations.links ?? {},
     statusFields: state.customizations.statusFields ?? {},
     toggleEditing: () => dispatch({ type: 'TOGGLE_EDIT' }),
@@ -757,6 +778,7 @@ export function ChainProvider({ children }: { children: ReactNode }) {
     setDescription: (nodeId, text) => dispatch({ type: 'SET_DESCRIPTION', nodeId, text }),
     setOwner: (nodeId, owner) => dispatch({ type: 'SET_OWNER', nodeId, owner }),
     setStageOverride: (nodeId, stageIds) => dispatch({ type: 'SET_STAGE_OVERRIDE', nodeId, stageIds }),
+    setDeliverableRefs: (delivId, stageIds) => dispatch({ type: 'SET_DELIVERABLE_REFS', delivId, stageIds }),
     addLink: (nodeId, url, label) => dispatch({ type: 'ADD_LINK', nodeId, url, label }),
     removeLink: (nodeId, index) => dispatch({ type: 'REMOVE_LINK', nodeId, index }),
     setStatusField: (nodeId, field, value) => dispatch({ type: 'SET_STATUS_FIELD', nodeId, field, value }),
