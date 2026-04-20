@@ -5,6 +5,7 @@ const seed: SeedData = {
     { id: 'portfolio-leader', name: 'Portfolio Leader', engagesAllStages: true },
     { id: 'ssa', name: 'SSA', engagesAllStages: true },
     { id: 'sa', name: 'Solution Architect', engagesAllStages: true },
+    { id: 'technical-lead', name: 'Technical Lead', engagesAllStages: true },
     { id: 'developer', name: 'Developer', engagesAllStages: true },
     { id: 'qa', name: 'QA', engagesAllStages: true },
     { id: 'delivery-lead', name: 'Delivery Lead', engagesAllStages: true },
