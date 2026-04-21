@@ -1,5 +1,5 @@
 import { createContext, useContext, useReducer, useEffect, useRef, type ReactNode } from 'react'
-import type { Agent, Deliverable, Orchestration, SeedData, SkillOverride, Stage } from '../types'
+import type { Agent, Deliverable, Orchestration, SeedData, Skill, SkillOverride, Stage } from '../types'
 import baseSeed from '../data/seed'
 import { loadLive, saveLive } from '../lib/persistence'
 
@@ -29,6 +29,8 @@ export interface Customizations {
   links: Record<string, { url: string; label: string }[]>
   statusFields: Record<string, { sopUrl?: string; sopLabel?: string; done?: string; inProgress?: string; outstanding?: string; plan?: string }>
   skillOverrides: Record<string, SkillOverride>
+  addedSkills: Skill[]
+  removedSkillIds: string[]
 }
 
 interface ChainState {
@@ -63,6 +65,8 @@ type Action =
   | { type: 'SET_STATUS_FIELD'; nodeId: string; field: string; value: string }
   | { type: 'SET_DELIVERABLE_REFS'; delivId: string; stageIds: string[] }
   | { type: 'SET_SKILL_OVERRIDE'; skillId: string; override: SkillOverride }
+  | { type: 'ADD_SKILL'; skill: Skill }
+  | { type: 'REMOVE_SKILL'; id: string }
   | { type: 'RESTORE'; customizations: Customizations }
   | { type: 'RESET' }
 
@@ -95,6 +99,8 @@ interface ChainContextValue {
   removeLink: (nodeId: string, index: number) => void
   setStatusField: (nodeId: string, field: string, value: string) => void
   setSkillOverride: (skillId: string, override: SkillOverride) => void
+  addSkill: (skill: Omit<Skill, 'id'>) => void
+  removeSkill: (id: string) => void
   positions: Record<string, { x: number; y: number }>
   stageOverrides: Record<string, string[]>
   deliverableRefs: Record<string, string[]>
@@ -553,6 +559,8 @@ const defaultCustomizations: Customizations = {
   links: {},
   statusFields: {},
   skillOverrides: {},
+  addedSkills: [],
+  removedSkillIds: [],
 }
 
 // ─── reducer ──────────────────────────────────────────────────────────────────
@@ -677,6 +685,16 @@ function reducer(state: ChainState, action: Action): ChainState {
       return { ...state, customizations: { ...c, skillOverrides: { ...(c.skillOverrides ?? {}), [action.skillId]: { ...existing, ...action.override } } } }
     }
 
+    case 'ADD_SKILL':
+      return { ...state, customizations: { ...c, addedSkills: [...(c.addedSkills ?? []), action.skill] } }
+
+    case 'REMOVE_SKILL': {
+      const isAdded = (c.addedSkills ?? []).some(s => s.id === action.id)
+      return isAdded
+        ? { ...state, customizations: { ...c, addedSkills: (c.addedSkills ?? []).filter(s => s.id !== action.id) } }
+        : { ...state, customizations: { ...c, removedSkillIds: [...(c.removedSkillIds ?? []), action.id] } }
+    }
+
     case 'RESTORE':
       // merge with defaults so new fields don't break on old stored data
       return { ...state, customizations: {
@@ -741,7 +759,10 @@ function buildEffectiveData(c: Customizations): SeedData {
         return result
       }),
     ],
-    skills: baseSeed.skills.map(sk => {
+    skills: [
+      ...baseSeed.skills.filter(sk => !(c.removedSkillIds ?? []).includes(sk.id)),
+      ...(c.addedSkills ?? []),
+    ].map(sk => {
       let result = { ...sk }
       if (r[sk.id]) result = { ...result, name: r[sk.id] }
       if (c.descriptions?.[sk.id]) result = { ...result, description: c.descriptions[sk.id] }
@@ -844,6 +865,8 @@ export function ChainProvider({ children }: { children: ReactNode }) {
     removeLink: (nodeId, index) => dispatch({ type: 'REMOVE_LINK', nodeId, index }),
     setStatusField: (nodeId, field, value) => dispatch({ type: 'SET_STATUS_FIELD', nodeId, field, value }),
     setSkillOverride: (skillId, override) => dispatch({ type: 'SET_SKILL_OVERRIDE', skillId, override }),
+    addSkill: (skill) => dispatch({ type: 'ADD_SKILL', skill: { ...skill, id: `skill-custom-${Date.now()}` } }),
+    removeSkill: (id) => dispatch({ type: 'REMOVE_SKILL', id }),
     reset: () => dispatch({ type: 'RESET' }),
   }
 
