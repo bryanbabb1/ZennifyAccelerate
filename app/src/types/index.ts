@@ -75,14 +75,14 @@ export interface Skill {
   personaIds: string[]
   tool: 'auctor' | 'claude'
   output: string
-  status: 'active' | 'draft' | 'planned'
+  status: 'live' | 'wip' | 'planned'
 }
 
 export interface SkillOverride {
   command?: string
   output?: string
   description?: string
-  status?: 'active' | 'draft' | 'planned'
+  status?: 'live' | 'wip' | 'planned'
   tool?: 'auctor' | 'claude'
   stageIds?: string[]
   personaIds?: string[]
