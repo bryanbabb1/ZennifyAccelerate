@@ -218,21 +218,17 @@ export default function SkillsLibrary() {
             </FormField>
 
             <FormField label="Deliverables">
-              <div style={{ display: 'flex', flexWrap: 'wrap', gap: 5 }}>
-                {deliverables.map(d => { const active = addForm.deliverableIds.includes(d.id); return (
-                  <span key={d.id} onClick={() => setAddForm(f => { if (!f) return f; const ids = f.deliverableIds.includes(d.id) ? f.deliverableIds.filter(id => id !== d.id) : [...f.deliverableIds, d.id]; return { ...f, deliverableIds: ids } })}
-                    style={{ fontSize: 10, cursor: 'pointer', padding: '3px 7px', borderRadius: 4, background: active ? '#ECFEFF' : '#F8FAFC', color: active ? '#0E7490' : '#94A3B8', border: `1px solid ${active ? '#67E8F9' : '#E2E8F0'}`, fontWeight: active ? 600 : 400, userSelect: 'none' }}>{d.name}</span>
-                )})}
-              </div>
+              <DeliverablePicker
+                deliverables={deliverables} stages={stages} selected={addForm.deliverableIds}
+                onToggle={id => setAddForm(f => { if (!f) return f; const ids = f.deliverableIds.includes(id) ? f.deliverableIds.filter(x => x !== id) : [...f.deliverableIds, id]; return { ...f, deliverableIds: ids } })}
+              />
             </FormField>
 
             <FormField label="Platforms & Tools">
-              <div style={{ display: 'flex', flexWrap: 'wrap', gap: 5 }}>
-                {platformOptions.map(p => { const active = addForm.platformIds.includes(p.nodeId); return (
-                  <span key={p.nodeId} onClick={() => setAddForm(f => { if (!f) return f; const ids = f.platformIds.includes(p.nodeId) ? f.platformIds.filter(id => id !== p.nodeId) : [...f.platformIds, p.nodeId]; return { ...f, platformIds: ids } })}
-                    style={{ fontSize: 10, cursor: 'pointer', padding: '3px 7px', borderRadius: 4, background: active ? '#FFF7ED' : '#F8FAFC', color: active ? '#9A3412' : '#94A3B8', border: `1px solid ${active ? '#FDBA74' : '#E2E8F0'}`, fontWeight: active ? 600 : 400, userSelect: 'none' }}>{p.name}</span>
-                )})}
-              </div>
+              <PlatformPicker
+                options={platformOptions} selected={addForm.platformIds}
+                onToggle={id => setAddForm(f => { if (!f) return f; const ids = f.platformIds.includes(id) ? f.platformIds.filter(x => x !== id) : [...f.platformIds, id]; return { ...f, platformIds: ids } })}
+              />
             </FormField>
 
             <button onClick={handleAddSubmit}
@@ -316,7 +312,7 @@ function FilterPill({ label, active, onClick, title, color }: { label: string; a
 
 function SkillCard({ skill, stageName, personaName, owner, deliverables, platformOptions, onClick }: {
   skill: Skill; stageName: (id: string) => string; personaName: (id: string) => string
-  owner?: string; deliverables: Deliverable[]; platformOptions: { nodeId: string; name: string }[]
+  owner?: string; deliverables: Deliverable[]; platformOptions: { nodeId: string; name: string; kind: string }[]
   onClick: () => void
 }) {
   const statusStyle = STATUS_COLORS[skill.status] ?? STATUS_COLORS.planned
@@ -370,7 +366,7 @@ function SkillCard({ skill, stageName, personaName, owner, deliverables, platfor
 // ── SkillDetailModal ──────────────────────────────────────────────────────────
 
 function SkillDetailModal({ skill, stages, personas, deliverables, platformOptions, isEditing, stageName, personaName, owner, statusFields, onClose, onRename, onSetDescription, onSetOverride, onSetOwner, onSetStatusField, onRemove }: {
-  skill: Skill; stages: Stage[]; personas: Persona[]; deliverables: Deliverable[]; platformOptions: { nodeId: string; name: string }[]
+  skill: Skill; stages: Stage[]; personas: Persona[]; deliverables: Deliverable[]; platformOptions: { nodeId: string; name: string; kind: string }[]
   isEditing: boolean
   stageName: (id: string) => string; personaName: (id: string) => string
   owner: string
@@ -507,28 +503,26 @@ function SkillDetailModal({ skill, stages, personas, deliverables, platformOptio
 
           {/* Deliverables */}
           <Sect label="Deliverables">
-            <div style={{ display: 'flex', flexWrap: 'wrap', gap: 6 }}>
-              {isEditing
-                ? deliverables.map(d => { const active = (skill.deliverableIds ?? []).includes(d.id); return (
-                    <span key={d.id} onClick={() => toggleDeliverable(d.id)} style={{ fontSize: 10, cursor: 'pointer', padding: '3px 8px', borderRadius: 4, background: active ? '#ECFEFF' : '#F8FAFC', color: active ? '#0E7490' : '#94A3B8', border: `1px solid ${active ? '#67E8F9' : '#E2E8F0'}`, fontWeight: active ? 600 : 400, userSelect: 'none' }}>{d.name}</span>)})
-                : (skill.deliverableIds ?? []).length > 0
-                  ? (skill.deliverableIds ?? []).map(id => { const name = deliverables.find(d => d.id === id)?.name ?? id; return (
-                      <span key={id} style={{ fontSize: 10, fontWeight: 600, background: '#ECFEFF', color: '#0E7490', border: '1px solid #67E8F9', borderRadius: 4, padding: '3px 8px' }}>{name}</span>)})
-                  : <span style={{ fontSize: 12, color: '#94A3B8' }}>None mapped</span>}
-            </div>
+            {isEditing
+              ? <DeliverablePicker deliverables={deliverables} stages={stages} selected={skill.deliverableIds ?? []} onToggle={toggleDeliverable} />
+              : <div style={{ display: 'flex', flexWrap: 'wrap', gap: 6 }}>
+                  {(skill.deliverableIds ?? []).length > 0
+                    ? (skill.deliverableIds ?? []).map(id => { const name = deliverables.find(d => d.id === id)?.name ?? id; return (
+                        <span key={id} style={{ fontSize: 10, fontWeight: 600, background: '#ECFEFF', color: '#0E7490', border: '1px solid #67E8F9', borderRadius: 4, padding: '3px 8px' }}>{name}</span>)})
+                    : <span style={{ fontSize: 12, color: '#94A3B8' }}>None mapped</span>}
+                </div>}
           </Sect>
 
           {/* Platforms & Tools */}
           <Sect label="Platforms & Tools">
-            <div style={{ display: 'flex', flexWrap: 'wrap', gap: 6 }}>
-              {isEditing
-                ? platformOptions.map(p => { const active = (skill.platformIds ?? []).includes(p.nodeId); return (
-                    <span key={p.nodeId} onClick={() => togglePlatform(p.nodeId)} style={{ fontSize: 10, cursor: 'pointer', padding: '3px 8px', borderRadius: 4, background: active ? '#FFF7ED' : '#F8FAFC', color: active ? '#9A3412' : '#94A3B8', border: `1px solid ${active ? '#FDBA74' : '#E2E8F0'}`, fontWeight: active ? 600 : 400, userSelect: 'none' }}>{p.name}</span>)})
-                : (skill.platformIds ?? []).length > 0
-                  ? (skill.platformIds ?? []).map(id => { const name = platformOptions.find(p => p.nodeId === id)?.name ?? id; return (
-                      <span key={id} style={{ fontSize: 10, fontWeight: 600, background: '#FFF7ED', color: '#9A3412', border: '1px solid #FDBA74', borderRadius: 4, padding: '3px 8px' }}>{name}</span>)})
-                  : <span style={{ fontSize: 12, color: '#94A3B8' }}>None mapped</span>}
-            </div>
+            {isEditing
+              ? <PlatformPicker options={platformOptions} selected={skill.platformIds ?? []} onToggle={togglePlatform} />
+              : <div style={{ display: 'flex', flexWrap: 'wrap', gap: 6 }}>
+                  {(skill.platformIds ?? []).length > 0
+                    ? (skill.platformIds ?? []).map(id => { const name = platformOptions.find(p => p.nodeId === id)?.name ?? id; return (
+                        <span key={id} style={{ fontSize: 10, fontWeight: 600, background: '#FFF7ED', color: '#9A3412', border: '1px solid #FDBA74', borderRadius: 4, padding: '3px 8px' }}>{name}</span>)})
+                    : <span style={{ fontSize: 12, color: '#94A3B8' }}>None mapped</span>}
+                </div>}
           </Sect>
 
           {/* Personas */}
@@ -568,6 +562,76 @@ function Sect({ label, children }: { label: string; children: React.ReactNode })
     <div>
       <div style={{ fontSize: 10, fontWeight: 600, color: '#94A3B8', textTransform: 'uppercase', letterSpacing: '0.06em', marginBottom: 8 }}>{label}</div>
       {children}
+    </div>
+  )
+}
+
+// ── Grouped pickers ───────────────────────────────────────────────────────────
+
+function DeliverablePicker({ deliverables, stages, selected, onToggle }: {
+  deliverables: Deliverable[]; stages: Stage[]; selected: string[]; onToggle: (id: string) => void
+}) {
+  const presalesIds = new Set(['s1', 's2', 's3', 's4', 's5'])
+  const groups: Array<{ label: string; color: string; items: Deliverable[] }> = [
+    { label: 'Presales', color: '#166534', items: deliverables.filter(d => !d.isRecurring && presalesIds.has(d.producedAtStageId)) },
+    ...['d1', 'd2', 'd3', 'd4', 'd5', 'd6', 'd7', 'd8'].map(sid => {
+      const s = stages.find(st => st.id === sid)
+      return { label: s ? `${s.number} · ${s.name}` : sid, color: '#1E40AF', items: deliverables.filter(d => !d.isRecurring && d.producedAtStageId === sid) }
+    }),
+    { label: '↺ Recurring', color: '#92400E', items: deliverables.filter(d => d.isRecurring) },
+  ].filter(g => g.items.length > 0)
+
+  return (
+    <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
+      {groups.map(g => (
+        <div key={g.label}>
+          <div style={{ fontSize: 9, fontWeight: 700, color: g.color, textTransform: 'uppercase', letterSpacing: '0.07em', marginBottom: 5 }}>{g.label}</div>
+          <div style={{ display: 'flex', flexWrap: 'wrap', gap: 5 }}>
+            {g.items.map(d => {
+              const active = selected.includes(d.id)
+              return (
+                <span key={d.id} onClick={() => onToggle(d.id)}
+                  style={{ fontSize: 10, cursor: 'pointer', padding: '3px 7px', borderRadius: 4, userSelect: 'none', fontWeight: active ? 600 : 400,
+                    background: active ? '#ECFEFF' : '#F8FAFC', color: active ? '#0E7490' : '#94A3B8', border: `1px solid ${active ? '#67E8F9' : '#E2E8F0'}` }}>
+                  {d.name}
+                </span>
+              )
+            })}
+          </div>
+        </div>
+      ))}
+    </div>
+  )
+}
+
+function PlatformPicker({ options, selected, onToggle }: {
+  options: { nodeId: string; name: string; kind: string }[]; selected: string[]; onToggle: (id: string) => void
+}) {
+  const groups = [
+    { label: 'Rails', color: '#6B21A8', items: options.filter(p => p.kind === 'Rail') },
+    { label: 'Tools', color: '#0369A1', items: options.filter(p => p.kind === 'Tool') },
+    { label: 'Agents', color: '#0F6E56', items: options.filter(p => p.kind === 'Agent') },
+  ].filter(g => g.items.length > 0)
+
+  return (
+    <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
+      {groups.map(g => (
+        <div key={g.label}>
+          <div style={{ fontSize: 9, fontWeight: 700, color: g.color, textTransform: 'uppercase', letterSpacing: '0.07em', marginBottom: 5 }}>{g.label}</div>
+          <div style={{ display: 'flex', flexWrap: 'wrap', gap: 5 }}>
+            {g.items.map(p => {
+              const active = selected.includes(p.nodeId)
+              return (
+                <span key={p.nodeId} onClick={() => onToggle(p.nodeId)}
+                  style={{ fontSize: 10, cursor: 'pointer', padding: '3px 7px', borderRadius: 4, userSelect: 'none', fontWeight: active ? 600 : 400,
+                    background: active ? '#FFF7ED' : '#F8FAFC', color: active ? '#9A3412' : '#94A3B8', border: `1px solid ${active ? '#FDBA74' : '#E2E8F0'}` }}>
+                  {p.name}
+                </span>
+              )
+            })}
+          </div>
+        </div>
+      ))}
     </div>
   )
 }

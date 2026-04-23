@@ -47,6 +47,7 @@ export interface Deliverable {
   ingestedByStageId: string
   buildStatus?: string
   ws4DocMapping?: string
+  isRecurring?: boolean
 }
 
 export interface Ws4Doc {

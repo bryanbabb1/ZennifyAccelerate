@@ -155,6 +155,11 @@ const seed: SeedData = {
     { id: 'deployment-runbook-doc', name: 'Deployment Runbook', producedAtStageId: 'd7', ingestedByStageId: 'd8', ws4DocMapping: 'Doc 6' },
     { id: 'post-golive-model', name: 'Post-GoLive Operating Model', producedAtStageId: 'd8', ingestedByStageId: 'ip-loop', ws4DocMapping: 'Doc 7' },
     { id: 'change-mgmt-enablement', name: 'Change Mgmt & Enablement', producedAtStageId: 'd8', ingestedByStageId: 'ip-loop', ws4DocMapping: 'Doc 8' },
+    // ── Recurring / Lifecycle-Spanning ────────────────────────────────────────
+    { id: 'raid-log', name: 'RAID Log', producedAtStageId: 'd1', ingestedByStageId: 'ip-loop', isRecurring: true },
+    { id: 'status-report', name: 'Status Report', producedAtStageId: 'd1', ingestedByStageId: 'ip-loop', isRecurring: true },
+    { id: 'decision-log', name: 'Decision Log', producedAtStageId: 'd1', ingestedByStageId: 'ip-loop', isRecurring: true },
+    { id: 'qbr-pack', name: 'QBR Pack', producedAtStageId: 'd1', ingestedByStageId: 'ip-loop', isRecurring: true },
   ],
 
   ws4EightDocFramework: {

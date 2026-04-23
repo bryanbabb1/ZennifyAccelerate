@@ -53,8 +53,8 @@ export default function DeliverableNode({ data, selected }: Props) {
         onMouseLeave={() => setHovered(false)}
         style={{
           width: '100%', minHeight: 30,
-          background: '#ecfeff',
-          border: `1px solid ${selected ? '#0e7490' : '#67e8f9'}`,
+          background: deliv.isRecurring ? '#fffbeb' : '#ecfeff',
+          border: `1px solid ${selected ? '#0e7490' : deliv.isRecurring ? '#fcd34d' : '#67e8f9'}`,
           borderRadius: 5,
           boxShadow: selected ? '0 0 0 2px #a5f3fc' : 'none',
           display: 'flex', flexDirection: 'column',
@@ -78,12 +78,12 @@ export default function DeliverableNode({ data, selected }: Props) {
 
         {/* name row */}
         <div style={{ display: 'flex', alignItems: 'center', gap: 5, minHeight: 20 }}>
-          <span style={{ fontSize: 10, flexShrink: 0, color: '#0e7490' }}>▸</span>
+          <span style={{ fontSize: 10, flexShrink: 0, color: deliv.isRecurring ? '#b45309' : '#0e7490' }}>{deliv.isRecurring ? '↺' : '▸'}</span>
           <EditableText
             value={deliv.name}
             onSave={val => rename(deliv.id, val)}
             isEditing={isEditing}
-            style={{ fontSize: 10.5, fontWeight: 500, color: '#164e63', flex: 1, wordBreak: 'break-word', whiteSpace: 'normal', fontFamily: 'DM Sans, Inter, sans-serif' }}
+            style={{ fontSize: 10.5, fontWeight: 500, color: deliv.isRecurring ? '#92400e' : '#164e63', flex: 1, wordBreak: 'break-word', whiteSpace: 'normal', fontFamily: 'DM Sans, Inter, sans-serif' }}
             inputStyle={{ fontSize: 10.5, color: '#164e63' }}
           />
         </div>

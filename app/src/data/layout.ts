@@ -224,12 +224,21 @@ export function buildLayout(
   }
 
   // ── deliverables ──────────────────────────────────────────────────────────
+  const regularDelivs = data.deliverables.filter(d => !d.isRecurring)
+  const recurringDelivs = data.deliverables.filter(d => d.isRecurring)
+
   const delivByStage: Record<string, Deliverable[]> = {}
-  for (const d of data.deliverables) {
+  for (const d of regularDelivs) {
     const sid = d.producedAtStageId
     if (!delivByStage[sid]) delivByStage[sid] = []
     delivByStage[sid].push(d)
   }
+
+  let maxStackDepth = 0
+  for (const delivs of Object.values(delivByStage)) {
+    if (delivs.length > maxStackDepth) maxStackDepth = delivs.length
+  }
+  const RECURRING_ROW_Y = DELIV_ROW_BASE + maxStackDepth * DELIV_ROW_STEP + 32
 
   for (const [stageId, delivs] of Object.entries(delivByStage)) {
     const stageLeft = stageXMap[stageId]
@@ -253,6 +262,23 @@ export function buildLayout(
         target: nodeId,
         type: 'straight',
         style: { stroke: '#94a3b8', strokeWidth: 0.75, opacity: 0.55 },
+      })
+    })
+  }
+
+  // recurring deliverables — dedicated row below the regular deliverable columns
+  if (recurringDelivs.length > 0) {
+    const d1X = stageXMap['d1'] ?? 0
+    recurringDelivs.forEach((deliv, i) => {
+      const nodeId = `deliv-${deliv.id}`
+      nodes.push({
+        id: nodeId,
+        type: 'deliverableNode',
+        position: pos(nodeId, { x: d1X + i * (DELIV_W + 14), y: RECURRING_ROW_Y }),
+        style: sizeStyle(nodeId, DELIV_W, DELIV_H),
+        data: { deliv, width: DELIV_W },
+        draggable: isEditing,
+        selectable: true,
       })
     })
   }
