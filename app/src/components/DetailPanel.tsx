@@ -765,32 +765,33 @@ export default function DetailPanel({
           )}
 
           {allSkills && allSkills.length > 0 && (() => {
-            const nodeStageIds: string[] = (() => {
-              if (item.kind === 'stage') return [item.data.id]
-              if (item.kind === 'agent') return item.data.stageIds
-              if (item.kind === 'deliverable') return [item.data.producedAtStageId]
-              if (item.kind === 'orchestration') return item.data.spansStageIds
-              return []
-            })()
-            const nodeDeliverableId = item.kind === 'deliverable' ? item.data.id : null
-            const nodeCanvasId = (() => {
-              if (item.kind === 'agent') return `agent-${item.data.id}`
-              if (item.kind === 'orchestration') return item.data.type === 'rail' ? `rail-${item.data.id}` : `shared-${item.data.id}`
-              return null
-            })()
-            const matched = allSkills.filter(s =>
-              s.stageIds.some(sid => nodeStageIds.includes(sid)) ||
-              (nodeDeliverableId && (s.deliverableIds ?? []).includes(nodeDeliverableId)) ||
-              (nodeCanvasId && (s.platformIds ?? []).includes(nodeCanvasId))
-            )
+            // Each node type uses its own dimension — no stage fallback for tools/deliverables
+            const isPlatformNode = item.kind === 'orchestration' || (item.kind === 'agent' && item.data.category === 'platform')
+            const matched = allSkills.filter(s => {
+              if (item.kind === 'stage') return s.stageIds.includes(item.data.id)
+              if (item.kind === 'agent') {
+                if (item.data.category === 'platform') return (s.platformIds ?? []).includes(`agent-${item.data.id}`)
+                return s.stageIds.some(sid => item.data.stageIds.includes(sid))
+              }
+              if (item.kind === 'deliverable') return (s.deliverableIds ?? []).includes(item.data.id)
+              if (item.kind === 'orchestration') {
+                const canvasId = item.data.type === 'rail' ? `rail-${item.data.id}` : `shared-${item.data.id}`
+                return (s.platformIds ?? []).includes(canvasId)
+              }
+              return false
+            })
             const personaMatched = activePersonaId
               ? matched.filter(s => s.personaIds.includes(activePersonaId))
               : matched
-            if (personaMatched.length === 0) return null
+            // show empty state for tool/deliverable nodes so user knows to map skills there
+            if (personaMatched.length === 0 && !isPlatformNode && item.kind !== 'deliverable') return null
             return (
               <Card bg="#FAFBFF" border="#C7D2FE" mb={14}>
                 <SectionLabel text={activePersonaName ? `Skills for ${activePersonaName}` : 'Skills'} color="#4338CA" />
-                {!activePersonaId && (
+                {personaMatched.length === 0 && (
+                  <div style={{ fontSize: 11, color: '#94A3B8', fontStyle: 'italic' }}>No skills mapped here yet — assign them in the Skill Library.</div>
+                )}
+                {personaMatched.length > 0 && !activePersonaId && (item.kind === 'stage' || (item.kind === 'agent' && item.data.category !== 'platform')) && (
                   <div style={{ fontSize: 11, color: '#94A3B8', marginBottom: 10 }}>Select a persona to filter to your role.</div>
                 )}
                 <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
