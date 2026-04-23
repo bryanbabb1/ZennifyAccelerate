@@ -101,6 +101,8 @@ interface ChainContextValue {
   setSkillOverride: (skillId: string, override: SkillOverride) => void
   addSkill: (skill: Omit<Skill, 'id'>) => void
   removeSkill: (id: string) => void
+  customizations: Customizations
+  restore: (customizations: Customizations) => void
   positions: Record<string, { x: number; y: number }>
   stageOverrides: Record<string, string[]>
   deliverableRefs: Record<string, string[]>
@@ -867,6 +869,8 @@ export function ChainProvider({ children }: { children: ReactNode }) {
     setSkillOverride: (skillId, override) => dispatch({ type: 'SET_SKILL_OVERRIDE', skillId, override }),
     addSkill: (skill) => dispatch({ type: 'ADD_SKILL', skill: { ...skill, id: `skill-custom-${Date.now()}` } }),
     removeSkill: (id) => dispatch({ type: 'REMOVE_SKILL', id }),
+    customizations: state.customizations,
+    restore: (customizations) => dispatch({ type: 'RESTORE', customizations }),
     reset: () => dispatch({ type: 'RESET' }),
   }
 

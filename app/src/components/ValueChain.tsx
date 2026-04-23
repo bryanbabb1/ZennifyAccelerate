@@ -24,6 +24,7 @@ import HandoffNode from './nodes/HandoffNode'
 import AddButtonNode from './nodes/AddButtonNode'
 import DetailPanel from './DetailPanel'
 import EditPasswordModal from './EditPasswordModal'
+import SnapshotPanel from './SnapshotPanel'
 
 const nodeTypes = {
   stageNode: StageNode,
@@ -52,7 +53,7 @@ function nodeIdForItem(item: SelectedItem): string {
 
 export default function ValueChain() {
   const { data, isEditing, toggleEditing, positions, setPosition, sizes,
-          addAgent, addDeliverable, addOrchestration, addStage, notes, addNote, removeNote, reset,
+          addAgent, addDeliverable, addOrchestration, addStage, notes, addNote, removeNote,
           statuses, togglePersonaNode, setPersonaNote, personaInteractions,
           descriptions, owners, setDescription, setOwner, rename,
           setStageOverride, links, addLink, removeLink,
@@ -91,7 +92,7 @@ export default function ValueChain() {
 
   const [selected, setSelected] = useState<SelectedItem | null>(null)
   const [addForm, setAddForm] = useState<AddForm | null>(null)
-  const [showResetConfirm, setShowResetConfirm] = useState(false)
+  const [showSnapshots, setShowSnapshots] = useState(false)
   const [showPasswordModal, setShowPasswordModal] = useState(false)
   const [showHelp, setShowHelp] = useState(false)
   const [activePersonaId, setActivePersonaId] = useState<string | null>(null)
@@ -337,9 +338,9 @@ export default function ValueChain() {
               style={{ background: 'rgba(255,255,255,0.95)', color: '#374151', border: '1px solid #e2e8f0', borderRadius: 8, padding: '7px 12px', fontFamily: 'DM Sans, Inter, sans-serif', fontSize: 11, fontWeight: 600, cursor: 'pointer' }}>
               + Tool
             </button>
-            <button onClick={() => setShowResetConfirm(true)}
-              style={{ background: 'rgba(255,255,255,0.95)', color: '#ef4444', border: '1px solid #fca5a5', borderRadius: 8, padding: '7px 12px', fontFamily: 'DM Sans, Inter, sans-serif', fontSize: 11, fontWeight: 600, cursor: 'pointer' }}>
-              Reset
+            <button onClick={() => setShowSnapshots(v => !v)}
+              style={{ background: showSnapshots ? '#0F6E56' : 'rgba(255,255,255,0.95)', color: showSnapshots ? '#fff' : '#374151', border: `1px solid ${showSnapshots ? '#0F6E56' : '#e2e8f0'}`, borderRadius: 8, padding: '7px 12px', fontFamily: 'DM Sans, Inter, sans-serif', fontSize: 11, fontWeight: 600, cursor: 'pointer' }}>
+              Snapshots
             </button>
           </>
         )}
@@ -385,17 +386,8 @@ export default function ValueChain() {
         />
       )}
 
-      {/* ── Reset confirm ── */}
-      {showResetConfirm && (
-        <div style={{ position: 'absolute', top: '50%', left: '50%', transform: 'translate(-50%,-50%)', zIndex: 20, background: '#fff', border: '1px solid #e2e8f0', borderRadius: 12, padding: 28, boxShadow: '0 8px 32px rgba(0,0,0,0.12)', fontFamily: 'DM Sans, Inter, sans-serif', textAlign: 'center', width: 320 }}>
-          <div style={{ fontSize: 16, fontWeight: 700, color: '#0f172a', marginBottom: 8 }}>Reset to defaults?</div>
-          <div style={{ fontSize: 13, color: '#64748b', marginBottom: 24 }}>This will clear all edits, renames, moves, resizes, and additions. The seed data will be restored.</div>
-          <div style={{ display: 'flex', gap: 10 }}>
-            <button onClick={() => setShowResetConfirm(false)} style={{ flex: 1, padding: '9px', borderRadius: 7, border: '1px solid #e2e8f0', background: '#fff', fontSize: 13, cursor: 'pointer', fontFamily: 'DM Sans, Inter, sans-serif' }}>Cancel</button>
-            <button onClick={() => { reset(); setShowResetConfirm(false) }} style={{ flex: 1, padding: '9px', borderRadius: 7, border: 'none', background: '#ef4444', color: '#fff', fontSize: 13, fontWeight: 600, cursor: 'pointer', fontFamily: 'DM Sans, Inter, sans-serif' }}>Reset</button>
-          </div>
-        </div>
-      )}
+      {/* ── Snapshot panel ── */}
+      {showSnapshots && <SnapshotPanel onClose={() => setShowSnapshots(false)} />}
 
       {/* ── Canvas ── */}
       <ReactFlow
