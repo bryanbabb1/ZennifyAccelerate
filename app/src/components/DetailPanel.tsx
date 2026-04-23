@@ -765,7 +765,6 @@ export default function DetailPanel({
           )}
 
           {allSkills && allSkills.length > 0 && (() => {
-            // derive which stage IDs apply to this node
             const nodeStageIds: string[] = (() => {
               if (item.kind === 'stage') return [item.data.id]
               if (item.kind === 'agent') return item.data.stageIds
@@ -773,10 +772,20 @@ export default function DetailPanel({
               if (item.kind === 'orchestration') return item.data.spansStageIds
               return []
             })()
-            const stageMatched = allSkills.filter(s => s.stageIds.some(sid => nodeStageIds.includes(sid)))
+            const nodeDeliverableId = item.kind === 'deliverable' ? item.data.id : null
+            const nodeCanvasId = (() => {
+              if (item.kind === 'agent') return `agent-${item.data.id}`
+              if (item.kind === 'orchestration') return item.data.type === 'rail' ? `rail-${item.data.id}` : `shared-${item.data.id}`
+              return null
+            })()
+            const matched = allSkills.filter(s =>
+              s.stageIds.some(sid => nodeStageIds.includes(sid)) ||
+              (nodeDeliverableId && (s.deliverableIds ?? []).includes(nodeDeliverableId)) ||
+              (nodeCanvasId && (s.platformIds ?? []).includes(nodeCanvasId))
+            )
             const personaMatched = activePersonaId
-              ? stageMatched.filter(s => s.personaIds.includes(activePersonaId))
-              : stageMatched
+              ? matched.filter(s => s.personaIds.includes(activePersonaId))
+              : matched
             if (personaMatched.length === 0) return null
             return (
               <Card bg="#FAFBFF" border="#C7D2FE" mb={14}>

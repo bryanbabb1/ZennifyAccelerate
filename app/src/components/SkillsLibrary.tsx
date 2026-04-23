@@ -1,7 +1,7 @@
 import { useState, useMemo } from 'react'
 import { useChain } from '../context/ChainContext'
 import EditPasswordModal from './EditPasswordModal'
-import type { Skill, SkillOverride, Stage, Persona } from '../types'
+import type { Skill, SkillOverride, Stage, Persona, Deliverable, Orchestration, Agent } from '../types'
 
 const STAGE_COLOR    = { bg: '#EEF2FF', border: '#A5B4FC', text: '#3730A3' }
 const PRESALES_COLOR = { bg: '#F0FDF4', border: '#86EFAC', text: '#166534' }
@@ -22,13 +22,13 @@ const FONT = 'DM Sans, Inter, sans-serif'
 interface AddForm {
   name: string; command: string; output: string; description: string; owner: string
   tool: 'auctor' | 'claude'; status: 'live' | 'wip' | 'planned'
-  stageIds: string[]; personaIds: string[]
+  stageIds: string[]; personaIds: string[]; deliverableIds: string[]; platformIds: string[]
 }
-const EMPTY_FORM: AddForm = { name: '', command: '', output: '', description: '', owner: '', tool: 'auctor', status: 'planned', stageIds: [], personaIds: [] }
+const EMPTY_FORM: AddForm = { name: '', command: '', output: '', description: '', owner: '', tool: 'auctor', status: 'planned', stageIds: [], personaIds: [], deliverableIds: [], platformIds: [] }
 
 export default function SkillsLibrary() {
   const { data, rename, setDescription, setSkillOverride, addSkill, removeSkill, owners, setOwner, statusFields, setStatusField } = useChain()
-  const { skills, stages, personas } = data
+  const { skills, stages, personas, deliverables, orchestration, agents } = data
 
   const [isEditing, setIsEditing] = useState(false)
   const [showPasswordModal, setShowPasswordModal] = useState(false)
@@ -62,10 +62,16 @@ export default function SkillsLibrary() {
     else { setShowPasswordModal(true) }
   }
 
+  // platform options: rails + shared tools + platform agents
+  const platformOptions = useMemo(() => [
+    ...orchestration.map(o => ({ nodeId: o.type === 'rail' ? `rail-${o.id}` : `shared-${o.id}`, name: o.name, kind: o.type === 'rail' ? 'Rail' : 'Tool' })),
+    ...agents.filter(a => a.category === 'platform').map(a => ({ nodeId: `agent-${a.id}`, name: a.name, kind: 'Agent' })),
+  ], [orchestration, agents])
+
   function handleAddSubmit() {
     if (!addForm || !addForm.name.trim() || !addForm.command.trim() || !addForm.output.trim()) return
     addSkill(
-      { name: addForm.name.trim(), command: addForm.command.trim(), output: addForm.output.trim(), description: addForm.description.trim() || undefined, tool: addForm.tool, status: addForm.status, stageIds: addForm.stageIds, personaIds: addForm.personaIds },
+      { name: addForm.name.trim(), command: addForm.command.trim(), output: addForm.output.trim(), description: addForm.description.trim() || undefined, tool: addForm.tool, status: addForm.status, stageIds: addForm.stageIds, personaIds: addForm.personaIds, deliverableIds: addForm.deliverableIds, platformIds: addForm.platformIds },
       addForm.owner.trim() || undefined
     )
     setAddForm(null)
@@ -128,7 +134,7 @@ export default function SkillsLibrary() {
         <div style={{ padding: '24px 32px', display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(360px, 1fr))', gap: 14 }}>
           {filtered.map(skill => (
             <SkillCard key={skill.id} skill={skill} stageName={stageName} personaName={personaName}
-              owner={owners[skill.id]}
+              owner={owners[skill.id]} deliverables={deliverables} platformOptions={platformOptions}
               onClick={() => { setAddForm(null); setSelectedId(skill.id) }} />
           ))}
           {filtered.length === 0 && (
@@ -211,6 +217,24 @@ export default function SkillsLibrary() {
               </div>
             </FormField>
 
+            <FormField label="Deliverables">
+              <div style={{ display: 'flex', flexWrap: 'wrap', gap: 5 }}>
+                {deliverables.map(d => { const active = addForm.deliverableIds.includes(d.id); return (
+                  <span key={d.id} onClick={() => setAddForm(f => { if (!f) return f; const ids = f.deliverableIds.includes(d.id) ? f.deliverableIds.filter(id => id !== d.id) : [...f.deliverableIds, d.id]; return { ...f, deliverableIds: ids } })}
+                    style={{ fontSize: 10, cursor: 'pointer', padding: '3px 7px', borderRadius: 4, background: active ? '#ECFEFF' : '#F8FAFC', color: active ? '#0E7490' : '#94A3B8', border: `1px solid ${active ? '#67E8F9' : '#E2E8F0'}`, fontWeight: active ? 600 : 400, userSelect: 'none' }}>{d.name}</span>
+                )})}
+              </div>
+            </FormField>
+
+            <FormField label="Platforms & Tools">
+              <div style={{ display: 'flex', flexWrap: 'wrap', gap: 5 }}>
+                {platformOptions.map(p => { const active = addForm.platformIds.includes(p.nodeId); return (
+                  <span key={p.nodeId} onClick={() => setAddForm(f => { if (!f) return f; const ids = f.platformIds.includes(p.nodeId) ? f.platformIds.filter(id => id !== p.nodeId) : [...f.platformIds, p.nodeId]; return { ...f, platformIds: ids } })}
+                    style={{ fontSize: 10, cursor: 'pointer', padding: '3px 7px', borderRadius: 4, background: active ? '#FFF7ED' : '#F8FAFC', color: active ? '#9A3412' : '#94A3B8', border: `1px solid ${active ? '#FDBA74' : '#E2E8F0'}`, fontWeight: active ? 600 : 400, userSelect: 'none' }}>{p.name}</span>
+                )})}
+              </div>
+            </FormField>
+
             <button onClick={handleAddSubmit}
               disabled={!addForm.name.trim() || !addForm.command.trim() || !addForm.output.trim()}
               style={{ padding: '9px 0', borderRadius: 7, border: 'none', fontFamily: FONT, marginTop: 4, fontSize: 13, fontWeight: 700,
@@ -229,6 +253,8 @@ export default function SkillsLibrary() {
           skill={selectedSkill}
           stages={stages}
           personas={personas}
+          deliverables={deliverables}
+          platformOptions={platformOptions}
           isEditing={isEditing}
           stageName={stageName}
           personaName={personaName}
@@ -288,13 +314,16 @@ function FilterPill({ label, active, onClick, title, color }: { label: string; a
 
 // ── SkillCard ─────────────────────────────────────────────────────────────────
 
-function SkillCard({ skill, stageName, personaName, owner, onClick }: {
+function SkillCard({ skill, stageName, personaName, owner, deliverables, platformOptions, onClick }: {
   skill: Skill; stageName: (id: string) => string; personaName: (id: string) => string
-  owner?: string; onClick: () => void
+  owner?: string; deliverables: Deliverable[]; platformOptions: { nodeId: string; name: string }[]
+  onClick: () => void
 }) {
   const statusStyle = STATUS_COLORS[skill.status] ?? STATUS_COLORS.planned
   const toolTag = TOOL_TAGS[skill.tool] ?? TOOL_TAGS.auctor
   const isPresales = (id: string) => ['s1','s2','s3','s4','s5'].includes(id)
+  const mappedDeliverables = (skill.deliverableIds ?? []).map(id => deliverables.find(d => d.id === id)?.name ?? id)
+  const mappedPlatforms = (skill.platformIds ?? []).map(id => platformOptions.find(p => p.nodeId === id)?.name ?? id)
 
   return (
     <div onClick={onClick} style={{ background: '#fff', border: '1px solid #E2E8F0', borderRadius: 10, padding: '16px 18px', display: 'flex', flexDirection: 'column', gap: 10, boxShadow: '0 1px 3px rgba(0,0,0,0.04)', cursor: 'pointer', transition: 'box-shadow 0.15s, border-color 0.15s' }}
@@ -312,6 +341,20 @@ function SkillCard({ skill, stageName, personaName, owner, onClick }: {
         )})}
         <span style={{ fontSize: 10, fontWeight: 600, background: toolTag.bg, color: toolTag.text, border: `1px solid ${toolTag.border}`, borderRadius: 4, padding: '2px 7px' }}>{toolTag.label}</span>
       </div>
+      {mappedDeliverables.length > 0 && (
+        <div style={{ display: 'flex', flexWrap: 'wrap', gap: 5 }}>
+          {mappedDeliverables.map(name => (
+            <span key={name} style={{ fontSize: 10, fontWeight: 600, background: '#ECFEFF', color: '#0E7490', border: '1px solid #67E8F9', borderRadius: 4, padding: '2px 7px' }}>{name}</span>
+          ))}
+        </div>
+      )}
+      {mappedPlatforms.length > 0 && (
+        <div style={{ display: 'flex', flexWrap: 'wrap', gap: 5 }}>
+          {mappedPlatforms.map(name => (
+            <span key={name} style={{ fontSize: 10, fontWeight: 600, background: '#FFF7ED', color: '#9A3412', border: '1px solid #FDBA74', borderRadius: 4, padding: '2px 7px' }}>{name}</span>
+          ))}
+        </div>
+      )}
       <div style={{ fontSize: 12, color: '#475569', lineHeight: 1.4, overflowWrap: 'break-word', wordBreak: 'break-word' }}>
         <span style={{ fontWeight: 600, color: '#94A3B8', textTransform: 'uppercase', fontSize: 10, letterSpacing: '0.05em' }}>Output · </span>{skill.output}
       </div>
@@ -326,8 +369,9 @@ function SkillCard({ skill, stageName, personaName, owner, onClick }: {
 
 // ── SkillDetailModal ──────────────────────────────────────────────────────────
 
-function SkillDetailModal({ skill, stages, personas, isEditing, stageName, personaName, owner, statusFields, onClose, onRename, onSetDescription, onSetOverride, onSetOwner, onSetStatusField, onRemove }: {
-  skill: Skill; stages: Stage[]; personas: Persona[]; isEditing: boolean
+function SkillDetailModal({ skill, stages, personas, deliverables, platformOptions, isEditing, stageName, personaName, owner, statusFields, onClose, onRename, onSetDescription, onSetOverride, onSetOwner, onSetStatusField, onRemove }: {
+  skill: Skill; stages: Stage[]; personas: Persona[]; deliverables: Deliverable[]; platformOptions: { nodeId: string; name: string }[]
+  isEditing: boolean
   stageName: (id: string) => string; personaName: (id: string) => string
   owner: string
   statusFields: { sopUrl?: string; sopLabel?: string; done?: string; inProgress?: string; outstanding?: string; plan?: string }
@@ -346,6 +390,8 @@ function SkillDetailModal({ skill, stages, personas, isEditing, stageName, perso
   }
   function toggleStage(id: string) { onSetOverride({ stageIds: skill.stageIds.includes(id) ? skill.stageIds.filter(s => s !== id) : [...skill.stageIds, id] }) }
   function togglePersona(id: string) { onSetOverride({ personaIds: skill.personaIds.includes(id) ? skill.personaIds.filter(p => p !== id) : [...skill.personaIds, id] }) }
+  function toggleDeliverable(id: string) { const cur = skill.deliverableIds ?? []; onSetOverride({ deliverableIds: cur.includes(id) ? cur.filter(d => d !== id) : [...cur, id] }) }
+  function togglePlatform(id: string) { const cur = skill.platformIds ?? []; onSetOverride({ platformIds: cur.includes(id) ? cur.filter(p => p !== id) : [...cur, id] }) }
 
   return (
     <>
@@ -456,6 +502,32 @@ function SkillDetailModal({ skill, stages, personas, isEditing, stageName, perso
                     </span>)})
                 : skill.stageIds.map(id => { const col = isPresales(id) ? PRESALES_COLOR : STAGE_COLOR; return (
                     <span key={id} style={{ fontSize: 10, fontWeight: 600, background: col.bg, color: col.text, border: `1px solid ${col.border}`, borderRadius: 4, padding: '3px 8px' }}>{stageName(id)}</span>)})}
+            </div>
+          </Sect>
+
+          {/* Deliverables */}
+          <Sect label="Deliverables">
+            <div style={{ display: 'flex', flexWrap: 'wrap', gap: 6 }}>
+              {isEditing
+                ? deliverables.map(d => { const active = (skill.deliverableIds ?? []).includes(d.id); return (
+                    <span key={d.id} onClick={() => toggleDeliverable(d.id)} style={{ fontSize: 10, cursor: 'pointer', padding: '3px 8px', borderRadius: 4, background: active ? '#ECFEFF' : '#F8FAFC', color: active ? '#0E7490' : '#94A3B8', border: `1px solid ${active ? '#67E8F9' : '#E2E8F0'}`, fontWeight: active ? 600 : 400, userSelect: 'none' }}>{d.name}</span>)})
+                : (skill.deliverableIds ?? []).length > 0
+                  ? (skill.deliverableIds ?? []).map(id => { const name = deliverables.find(d => d.id === id)?.name ?? id; return (
+                      <span key={id} style={{ fontSize: 10, fontWeight: 600, background: '#ECFEFF', color: '#0E7490', border: '1px solid #67E8F9', borderRadius: 4, padding: '3px 8px' }}>{name}</span>)})
+                  : <span style={{ fontSize: 12, color: '#94A3B8' }}>None mapped</span>}
+            </div>
+          </Sect>
+
+          {/* Platforms & Tools */}
+          <Sect label="Platforms & Tools">
+            <div style={{ display: 'flex', flexWrap: 'wrap', gap: 6 }}>
+              {isEditing
+                ? platformOptions.map(p => { const active = (skill.platformIds ?? []).includes(p.nodeId); return (
+                    <span key={p.nodeId} onClick={() => togglePlatform(p.nodeId)} style={{ fontSize: 10, cursor: 'pointer', padding: '3px 8px', borderRadius: 4, background: active ? '#FFF7ED' : '#F8FAFC', color: active ? '#9A3412' : '#94A3B8', border: `1px solid ${active ? '#FDBA74' : '#E2E8F0'}`, fontWeight: active ? 600 : 400, userSelect: 'none' }}>{p.name}</span>)})
+                : (skill.platformIds ?? []).length > 0
+                  ? (skill.platformIds ?? []).map(id => { const name = platformOptions.find(p => p.nodeId === id)?.name ?? id; return (
+                      <span key={id} style={{ fontSize: 10, fontWeight: 600, background: '#FFF7ED', color: '#9A3412', border: '1px solid #FDBA74', borderRadius: 4, padding: '3px 8px' }}>{name}</span>)})
+                  : <span style={{ fontSize: 12, color: '#94A3B8' }}>None mapped</span>}
             </div>
           </Sect>
 

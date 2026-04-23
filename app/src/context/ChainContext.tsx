@@ -776,6 +776,8 @@ function buildEffectiveData(c: Customizations): SeedData {
         if (ov.tool !== undefined) result = { ...result, tool: ov.tool }
         if (ov.stageIds !== undefined) result = { ...result, stageIds: ov.stageIds }
         if (ov.personaIds !== undefined) result = { ...result, personaIds: ov.personaIds }
+        if (ov.deliverableIds !== undefined) result = { ...result, deliverableIds: ov.deliverableIds }
+        if (ov.platformIds !== undefined) result = { ...result, platformIds: ov.platformIds }
       }
       return result
     }),

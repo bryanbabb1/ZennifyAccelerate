@@ -73,6 +73,8 @@ export interface Skill {
   description?: string
   stageIds: string[]
   personaIds: string[]
+  deliverableIds?: string[]
+  platformIds?: string[]
   tool: 'auctor' | 'claude'
   output: string
   status: 'live' | 'wip' | 'planned'
@@ -86,6 +88,8 @@ export interface SkillOverride {
   tool?: 'auctor' | 'claude'
   stageIds?: string[]
   personaIds?: string[]
+  deliverableIds?: string[]
+  platformIds?: string[]
 }
 
 export interface SeedData {
