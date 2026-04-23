@@ -20,11 +20,11 @@ const SKILL_TOOLS: Array<'auctor' | 'claude'> = ['auctor', 'claude']
 const FONT = 'DM Sans, Inter, sans-serif'
 
 interface AddForm {
-  name: string; command: string; output: string
+  name: string; command: string; output: string; description: string; owner: string
   tool: 'auctor' | 'claude'; status: 'live' | 'wip' | 'planned'
   stageIds: string[]; personaIds: string[]
 }
-const EMPTY_FORM: AddForm = { name: '', command: '', output: '', tool: 'auctor', status: 'planned', stageIds: [], personaIds: [] }
+const EMPTY_FORM: AddForm = { name: '', command: '', output: '', description: '', owner: '', tool: 'auctor', status: 'planned', stageIds: [], personaIds: [] }
 
 export default function SkillsLibrary() {
   const { data, rename, setDescription, setSkillOverride, addSkill, removeSkill, owners, setOwner, statusFields, setStatusField } = useChain()
@@ -64,7 +64,10 @@ export default function SkillsLibrary() {
 
   function handleAddSubmit() {
     if (!addForm || !addForm.name.trim() || !addForm.command.trim() || !addForm.output.trim()) return
-    addSkill({ name: addForm.name.trim(), command: addForm.command.trim(), output: addForm.output.trim(), tool: addForm.tool, status: addForm.status, stageIds: addForm.stageIds, personaIds: addForm.personaIds })
+    addSkill(
+      { name: addForm.name.trim(), command: addForm.command.trim(), output: addForm.output.trim(), description: addForm.description.trim() || undefined, tool: addForm.tool, status: addForm.status, stageIds: addForm.stageIds, personaIds: addForm.personaIds },
+      addForm.owner.trim() || undefined
+    )
     setAddForm(null)
   }
 
@@ -159,6 +162,17 @@ export default function SkillsLibrary() {
               <input value={addForm.output} onChange={e => setAddForm(f => f && { ...f, output: e.target.value })}
                 onKeyDown={e => e.key === 'Enter' && handleAddSubmit()}
                 placeholder="e.g. Risk assessment doc" style={inputStyle} />
+            </FormField>
+
+            <FormField label="Description">
+              <textarea value={addForm.description} onChange={e => setAddForm(f => f && { ...f, description: e.target.value })}
+                placeholder="What does this skill do?" rows={3}
+                style={{ ...inputStyle, resize: 'vertical', lineHeight: 1.5 }} />
+            </FormField>
+
+            <FormField label="Owner">
+              <input value={addForm.owner} onChange={e => setAddForm(f => f && { ...f, owner: e.target.value })}
+                placeholder="e.g. Bryan Babb" style={inputStyle} />
             </FormField>
 
             <FormField label="Tool">
@@ -298,7 +312,7 @@ function SkillCard({ skill, stageName, personaName, owner, onClick }: {
         )})}
         <span style={{ fontSize: 10, fontWeight: 600, background: toolTag.bg, color: toolTag.text, border: `1px solid ${toolTag.border}`, borderRadius: 4, padding: '2px 7px' }}>{toolTag.label}</span>
       </div>
-      <div style={{ fontSize: 12, color: '#475569', lineHeight: 1.4 }}>
+      <div style={{ fontSize: 12, color: '#475569', lineHeight: 1.4, overflowWrap: 'break-word', wordBreak: 'break-word' }}>
         <span style={{ fontWeight: 600, color: '#94A3B8', textTransform: 'uppercase', fontSize: 10, letterSpacing: '0.05em' }}>Output · </span>{skill.output}
       </div>
       <div style={{ display: 'flex', flexWrap: 'wrap', gap: 5, marginTop: 2 }}>

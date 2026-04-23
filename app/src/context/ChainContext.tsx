@@ -99,7 +99,7 @@ interface ChainContextValue {
   removeLink: (nodeId: string, index: number) => void
   setStatusField: (nodeId: string, field: string, value: string) => void
   setSkillOverride: (skillId: string, override: SkillOverride) => void
-  addSkill: (skill: Omit<Skill, 'id'>) => void
+  addSkill: (skill: Omit<Skill, 'id'>, owner?: string) => void
   removeSkill: (id: string) => void
   customizations: Customizations
   restore: (customizations: Customizations) => void
@@ -867,7 +867,11 @@ export function ChainProvider({ children }: { children: ReactNode }) {
     removeLink: (nodeId, index) => dispatch({ type: 'REMOVE_LINK', nodeId, index }),
     setStatusField: (nodeId, field, value) => dispatch({ type: 'SET_STATUS_FIELD', nodeId, field, value }),
     setSkillOverride: (skillId, override) => dispatch({ type: 'SET_SKILL_OVERRIDE', skillId, override }),
-    addSkill: (skill) => dispatch({ type: 'ADD_SKILL', skill: { ...skill, id: `skill-custom-${Date.now()}` } }),
+    addSkill: (skill, owner) => {
+      const id = `skill-custom-${Date.now()}`
+      dispatch({ type: 'ADD_SKILL', skill: { ...skill, id } })
+      if (owner?.trim()) dispatch({ type: 'SET_OWNER', nodeId: id, owner: owner.trim() })
+    },
     removeSkill: (id) => dispatch({ type: 'REMOVE_SKILL', id }),
     customizations: state.customizations,
     restore: (customizations) => dispatch({ type: 'RESTORE', customizations }),
