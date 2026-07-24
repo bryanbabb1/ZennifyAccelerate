@@ -1,4 +1,4 @@
-import { useMemo, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import '../ecosystem.css'
 import { ITEMS, STAGES, STAGE_VALUE, PILLARS, KPIS, EcoItem } from '../data/ecosystem'
 import { LOGO_WHITE, LOGO_DARK, BADGE, ICONS } from '../data/assetsData'
@@ -24,11 +24,26 @@ export default function EcosystemOverview() {
   const [fm, setFm] = useState<string | null>(null)
   const [q, setQ] = useState('')
   const [drawer, setDrawer] = useState<EcoItem | null>(null)
+  const [items, setItems] = useState<EcoItem[]>(ITEMS)
 
-  const capsFor = (id: string) => ITEMS.filter(a => (a.stages || []).includes(id))
+  // Live content: fetch the read-only JSON endpoint (Apps Script fronting the
+  // private CMS sheet), set via the VITE_ECOSYSTEM_URL build env var. Falls back
+  // to the data baked into the repo if unset or unreachable.
+  useEffect(() => {
+    const url = import.meta.env.VITE_ECOSYSTEM_URL as string | undefined
+    if (!url) return
+    fetch(url)
+      .then(r => r.json())
+      .then((data: EcoItem[]) => {
+        if (Array.isArray(data) && data.length) setItems(data)
+      })
+      .catch(() => { /* keep baked fallback */ })
+  }, [])
+
+  const capsFor = (id: string) => items.filter(a => (a.stages || []).includes(id))
 
   const list = useMemo(() => {
-    const out = ITEMS.filter(a => {
+    const out = items.filter(a => {
       if (fk && a.kind !== fk) return false
       if (fm === 'live' && !isLive(a)) return false
       if (fm === 'road' && isLive(a)) return false
@@ -41,21 +56,21 @@ export default function EcosystemOverview() {
     out.sort((a, b) => (Number(isLive(b)) - Number(isLive(a))) ||
       KORD.indexOf(a.kind) - KORD.indexOf(b.kind) || a.name.localeCompare(b.name))
     return out
-  }, [fk, fm, q])
+  }, [items, fk, fm, q])
 
   const matrix = useMemo(() => {
     const mat: Record<string, Record<string, number>> = {}
     MKORD.forEach(k => { mat[k] = {}; STAGES.forEach(s => (mat[k][s[0]] = 0)) })
-    ITEMS.filter(isLive).forEach(a => {
+    items.filter(isLive).forEach(a => {
       if (mat[a.kind]) (a.stages || []).forEach(s => { if (s in mat[a.kind]) mat[a.kind][s]++ })
     })
     let max = 1
     MKORD.forEach(k => STAGES.forEach(s => (max = Math.max(max, mat[k][s[0]]))))
     return { mat, max }
-  }, [])
+  }, [items])
 
-  const liveCount = ITEMS.filter(isLive).length
-  const kindCount = new Set(ITEMS.map(a => a.kind)).size
+  const liveCount = items.filter(isLive).length
+  const kindCount = new Set(items.map(a => a.kind)).size
   const sv = STAGE_VALUE[stage] || ['', '']
   const st = STAGES.find(x => x[0] === stage)!
   const caps = capsFor(stage)
