@@ -35,14 +35,8 @@ export default function PasswordGate({ children }: { children: ReactNode }) {
         <img src={LOGO_WHITE} alt="Zennify" style={{ height: 32, marginBottom: 34 }} />
         <div style={{
           fontSize: 11, fontWeight: 700, letterSpacing: '1.6px', textTransform: 'uppercase',
-          color: '#62D7B8', marginBottom: 10,
-        }}>Private preview</div>
-        <h1 style={{ margin: '0 0 8px', color: '#fff', fontSize: 22, fontWeight: 700, lineHeight: 1.2 }}>
-          This site is not public yet.
-        </h1>
-        <p style={{ margin: '0 0 24px', color: 'rgba(255,255,255,0.72)', fontSize: 14, lineHeight: 1.5 }}>
-          Enter the access code to continue.
-        </p>
+          color: '#62D7B8', marginBottom: 24,
+        }}>Private view</div>
         <form onSubmit={submit} style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
           <input
             type="password"
