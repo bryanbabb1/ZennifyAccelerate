@@ -2,13 +2,14 @@ import { useState } from 'react'
 import { ChainProvider } from './context/ChainContext'
 import ValueChain from './components/ValueChain'
 import SkillsLibrary from './components/SkillsLibrary'
+import EcosystemOverview from './components/EcosystemOverview'
 
-type View = 'chain' | 'skills'
+type View = 'overview' | 'chain' | 'skills'
 
 const FONT = 'DM Sans, Inter, sans-serif'
 
 export default function App() {
-  const [view, setView] = useState<View>('chain')
+  const [view, setView] = useState<View>('overview')
 
   return (
     <ChainProvider>
@@ -30,6 +31,7 @@ export default function App() {
             ZENNIFY ACCELERATE
           </span>
           {([
+            { id: 'overview', label: 'AI Ecosystem' },
             { id: 'chain', label: 'Value Chain' },
             { id: 'skills', label: 'Skill Library' },
           ] as { id: View; label: string }[]).map(tab => (
@@ -56,7 +58,7 @@ export default function App() {
 
         {/* ── View ── */}
         <div style={{ flex: 1, overflow: 'hidden', position: 'relative' }}>
-          {view === 'chain' ? <ValueChain /> : <SkillsLibrary />}
+          {view === 'overview' ? <EcosystemOverview /> : view === 'chain' ? <ValueChain /> : <SkillsLibrary />}
         </div>
 
       </div>
