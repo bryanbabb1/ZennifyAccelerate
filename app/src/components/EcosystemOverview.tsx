@@ -1,7 +1,7 @@
 import { useMemo, useState } from 'react'
 import '../ecosystem.css'
 import { ITEMS, STAGES, STAGE_VALUE, PILLARS, KPIS, EcoItem } from '../data/ecosystem'
-import { LOGO_WHITE, BADGE, ICONS } from '../data/assetsData'
+import { LOGO_WHITE, LOGO_DARK, BADGE, ICONS } from '../data/assetsData'
 
 const KINDTAG: Record<string, string> = {
   Skill: 'tag-teal', Agent: 'tag-blue', 'Claude Project': 'tag-purple',
@@ -61,7 +61,19 @@ export default function EcosystemOverview() {
   const caps = capsFor(stage)
 
   return (
-    <div className="eco" style={{ height: '100%', overflowY: 'auto' }}>
+    <div className="eco">
+      {/* In-page nav */}
+      <nav><div className="wrap">
+        <img className="logo" src={LOGO_DARK} alt="Zennify" />
+        <div className="links">
+          <a href="#model">The model</a>
+          <a href="#lifecycle">Lifecycle</a>
+          <a href="#explore">Explore</a>
+          <a href="#coverage">Coverage</a>
+          <a href="#measure">Measurement</a>
+        </div>
+      </div></nav>
+
       {/* Hero */}
       <header className="hero"><div className="wrap">
         <img className="logo" src={LOGO_WHITE} alt="Zennify" />
