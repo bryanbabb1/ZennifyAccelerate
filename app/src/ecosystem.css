@@ -123,3 +123,16 @@
 .eco .bcard .bm::before{content:'';position:absolute;left:0;top:6px;width:5px;height:5px;border-radius:50%;background:var(--z-teal-light)}
 @media(max-width:900px){.eco .benefitgrid{grid-template-columns:1fr 1fr}}
 .eco .drawer .close{z-index:3}
+.eco .qstat{display:flex;flex-wrap:wrap;align-items:baseline;gap:4px 10px;margin-top:4px}
+.eco .qstat .qba{font-size:12.5px;color:var(--z-slate);font-weight:500}
+.eco .qstat .qb{color:var(--z-orange);font-weight:700}.eco .qstat .qa{color:var(--z-teal);font-weight:700}
+.eco .qstat .qh{font-size:11.5px;font-weight:700;color:var(--z-dark);background:var(--z-ice);border-radius:var(--z-radius-sm);padding:1px 7px}
+.eco .drawer .impact{background:var(--z-ice);border-radius:var(--z-radius);padding:14px 16px}
+.eco .drawer .iba{display:flex;align-items:center;gap:12px;margin-bottom:8px}
+.eco .drawer .ip .inum{font-size:26px;font-weight:700;line-height:1}
+.eco .drawer .ip.before .inum{color:var(--z-orange)}.eco .drawer .ip.after .inum{color:var(--z-teal)}
+.eco .drawer .iarrow{font-size:18px;color:var(--z-slate)}
+.eco .drawer .ihead{font-size:14px;font-weight:700;color:var(--z-dark);line-height:1.25}
+.eco .drawer .imetric{font-size:12px;color:var(--z-slate);margin-top:3px}
+.eco .drawer .ibasis{font-size:10.5px;font-weight:700;letter-spacing:.3px;margin-top:9px;padding-top:8px;border-top:1px solid rgba(28,74,77,.12)}
+.eco .drawer .ibasis.meas{color:#1C6B3A}.eco .drawer .ibasis.est{color:#9A5B12}.eco .drawer .ibasis.enab{color:var(--z-slate)}
