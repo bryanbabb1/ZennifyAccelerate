@@ -34,9 +34,15 @@ Live production: `zennify-accelerate.vercel.app` (deploys from `main`).
 Content is maintained in a **private Google Sheet CMS** (do NOT make it public):
 - Sheet ID: `1HSFZbCxb0p_7OKfVKdBBgE6XDf8eUeMWbtT47xRBgBk`
   (title: "Zennify Accelerate — AI Ecosystem CMS", owner bryan.babb@zennify.com).
-- Columns: Sort, Name, Type, Maturity, Status (internal), Lifecycle Stages, Phase,
-  External Description, Value Statement, Value Pillars, Metric Name, Metric Target,
-  Built On / Platform, Owner, Link, **Visible Externally**.
+- Columns: Sort, Name, Type, Platform, Maturity, Status (internal), Lifecycle Stages,
+  Phase, External Description, Value Statement, Use Cases, Primary Benefit,
+  **Metric, Before, After, Headline, Basis**, Link, **Visible Externally**.
+  (Metric/Before/After/Headline/Basis replaced the old Metric Name / Metric Target:
+  each capability carries a quantified before→after impact. **Basis** is the honesty
+  marker — `Measured · Salesforce` = validated, `Directional estimate` = educated guess
+  shown as "not yet measured", `Enabler` = qualitative/no time metric. Only Pre-Sales
+  Factory (40→14 days) and Estimating Factory (~5%→~1%) are Measured today; the rest
+  are directional estimates to refine or replace with real numbers.)
 - A **Google Apps Script** bound to the Sheet exposes a read-only `doGet` JSON web app
   (Execute as owner, access Anyone). It returns only rows where `Visible Externally != No`,
   so the Sheet stays private and internal/WIP rows never leave.
