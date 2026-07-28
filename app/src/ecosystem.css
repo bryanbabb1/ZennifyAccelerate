@@ -82,11 +82,11 @@
 .eco .drawer .dhead{background:var(--z-dark);color:#fff;padding:26px 26px 22px;position:relative}
 .eco .drawer .dhead h3{color:#fff;font-size:22px;line-height:1.2;margin-top:12px}
 .eco .drawer .dbody{padding:24px 26px}
-.eco .drawer .lbl{font-size:10px;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:var(--z-teal);margin-bottom:6px}
+.eco .drawer .lbl{font-size:11px;font-weight:700;letter-spacing:.8px;text-transform:uppercase;color:var(--z-dark);margin-bottom:7px}
 .eco .drawer .val{font-size:13.5px;line-height:1.5;margin-bottom:20px}.eco .drawer .row{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:20px}
 .eco .drawer .close{position:absolute;top:20px;right:22px;background:rgba(255,255,255,.14);border:none;color:#fff;width:30px;height:30px;border-radius:var(--z-radius);font-size:16px;cursor:pointer}
-.eco .vpill{background:var(--z-lt);border-radius:var(--z-radius);padding:12px 14px;margin-bottom:10px}
-.eco .vpill .h{font-size:12px;font-weight:700}.eco .vpill .p{font-size:11.5px;color:var(--z-slate);margin-top:3px;line-height:1.4}
+.eco .vpill{background:var(--z-ice);border-radius:var(--z-radius);padding:14px 16px;margin-bottom:10px}
+.eco .vpill .h{font-size:13px;font-weight:700;color:var(--z-dark)}.eco .vpill .p{font-size:12.5px;color:var(--z-dark);font-weight:500;margin-top:4px;line-height:1.45}
 .eco /* matrix */
 .matrix{background:var(--z-lt)}
 .eco .mtable{width:100%;border-collapse:separate;border-spacing:5px}
