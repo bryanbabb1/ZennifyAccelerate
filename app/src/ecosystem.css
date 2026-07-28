@@ -108,3 +108,6 @@
 .eco .score .kpi .p{color:var(--z-teal-light)}.eco .score .kpi h3{color:#fff}.eco .score .kpi .d{color:rgba(255,255,255,.72)}.eco .score .kpi .nn{color:var(--z-mint)}
 .eco .note{font-size:11px;color:var(--z-slate);margin-top:22px;font-style:italic}
 @media(max-width:900px){.eco .stats,.eco .pillars,.eco .scards,.eco .kpis{grid-template-columns:repeat(2,1fr)}.eco .detail{grid-template-columns:1fr}.eco .caps{grid-template-columns:1fr}.eco h1{font-size:32px}}
+.eco .uclist{margin:0 0 20px;padding-left:2px;list-style:none}
+.eco .uclist li{position:relative;padding-left:16px;font-size:12.5px;color:var(--z-dark);line-height:1.45;margin-bottom:7px}
+.eco .uclist li::before{content:'';position:absolute;left:2px;top:7px;width:5px;height:5px;border-radius:50%;background:var(--z-teal)}

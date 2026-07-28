@@ -251,13 +251,34 @@ export default function EcosystemOverview() {
               <div className="dbody">
                 <div className="lbl">What it is</div>
                 <div className="val">{drawer.desc || 'A capability in the Zennify AI ecosystem.'}</div>
-                <div className="lbl">Maturity</div>
+
+                {drawer.useCases && drawer.useCases.length ? (
+                  <>
+                    <div className="lbl">Use cases</div>
+                    <ul className="uclist">{drawer.useCases.map((u, i) => <li key={i}>{u}</li>)}</ul>
+                  </>
+                ) : null}
+
+                {drawer.value ? (
+                  <>
+                    <div className="lbl">Value it creates</div>
+                    <div className="val">{drawer.value}</div>
+                    {drawer.benefit ? <div className="row" style={{ marginTop: -10 }}><span className="tag tag-mint">{drawer.benefit}</span></div> : null}
+                  </>
+                ) : null}
+
+                {drawer.metricName ? (
+                  <>
+                    <div className="lbl">Proof point</div>
+                    <div className="vpill"><div className="h">{drawer.metricName}</div><div className="p">{drawer.metricTarget}</div></div>
+                  </>
+                ) : null}
+
+                <div className="lbl">Maturity &amp; platform</div>
                 <div className="row"><span className={`mstate ${m[0]}`}>{m[1]}</span>{drawer.built ? <span className="sc">{drawer.built}</span> : null}</div>
-                <div className="lbl">Where it works</div>
+
+                <div className="lbl">Lifecycle stage</div>
                 <div className="row">{stages.length ? stages.map(s => <span className="tag tag-dark" key={s}>{stageName[s] || s}</span>) : <span className="tag tag-mint">Runs across the lifecycle</span>}</div>
-                <div className="lbl">Value it creates</div>
-                <div className="vpill"><div className="h">Speed</div><div className="p">Compresses the manual effort in this step so the team spends time on judgment.</div></div>
-                <div className="vpill"><div className="h">Quality &amp; consistency</div><div className="p">Encodes Zennify methodology and brand so output is on-standard every time.</div></div>
               </div>
             </>
           )
