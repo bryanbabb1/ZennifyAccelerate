@@ -276,7 +276,7 @@ export default function EcosystemOverview() {
 
                 {drawer.value ? (
                   <>
-                    <div className="lbl">Value it creates</div>
+                    <div className="lbl">Why it matters</div>
                     <div className="val">{drawer.value}</div>
                     {drawer.benefit ? <div className="row" style={{ marginTop: -10 }}><span className="tag tag-mint">{drawer.benefit}</span></div> : null}
                   </>
