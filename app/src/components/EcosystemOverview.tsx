@@ -80,7 +80,7 @@ export default function EcosystemOverview() {
       if (!b) return
       if (!map[b]) map[b] = { count: 0, metrics: [] }
       map[b].count++
-      if (a.metricName) map[b].metrics.push(a.metricTarget ? `${a.metricName} — ${a.metricTarget}` : a.metricName)
+      if (a.headline) map[b].metrics.push(a.metric ? `${a.metric} · ${a.headline}` : a.headline)
     })
     const order = [...BENEFIT_ORDER, ...Object.keys(map).filter(b => !BENEFIT_ORDER.includes(b))]
     return order.filter(b => map[b]).map(b => ({ name: b, count: map[b].count, metrics: map[b].metrics.slice(0, 3) }))
@@ -195,6 +195,7 @@ export default function EcosystemOverview() {
               <div className="item" key={a.name} onClick={() => setDrawer(a)}>
                 <div className="top"><span className="nm">{a.name}</span><span className={`tag ${KINDTAG[a.kind] || 'tag-slate'} kt`}>{a.kind}</span></div>
                 <div className="desc">{(a.desc || '').slice(0, 105)}{(a.desc || '').length > 105 ? '…' : ''}</div>
+                {a.headline ? <div className="qstat">{a.before && a.after ? <span className="qba"><b className="qb">{a.before}</b> → <b className="qa">{a.after}</b></span> : null}<span className="qh">{a.headline}</span></div> : null}
                 <div className="foot">
                   <span className={`mstate ${m[0]}`}>{m[1]}</span>
                   {(a.stages || []).slice(0, 3).map(s => <span className="sc" key={s}>{s.toUpperCase()}</span>)}
@@ -282,10 +283,21 @@ export default function EcosystemOverview() {
                   </>
                 ) : null}
 
-                {drawer.metricName ? (
+                {drawer.headline ? (
                   <>
-                    <div className="lbl">Proof point</div>
-                    <div className="vpill"><div className="h">{drawer.metricName}</div><div className="p">{drawer.metricTarget}</div></div>
+                    <div className="lbl">Impact</div>
+                    <div className="impact">
+                      {drawer.before && drawer.after ? (
+                        <div className="iba">
+                          <div className="ip before"><div className="inum">{drawer.before}</div></div>
+                          <span className="iarrow">→</span>
+                          <div className="ip after"><div className="inum">{drawer.after}</div></div>
+                        </div>
+                      ) : null}
+                      <div className="ihead">{drawer.headline}</div>
+                      {drawer.metric ? <div className="imetric">{drawer.metric}</div> : null}
+                      {drawer.basis ? <div className={`ibasis ${drawer.basis.indexOf('Measured') === 0 ? 'meas' : drawer.basis === 'Directional estimate' ? 'est' : 'enab'}`}>{drawer.basis === 'Directional estimate' ? 'Directional estimate — not yet measured' : drawer.basis}</div> : null}
+                    </div>
                   </>
                 ) : null}
 
