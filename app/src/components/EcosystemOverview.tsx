@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useState } from 'react'
 import '../ecosystem.css'
-import { ITEMS, STAGES, STAGE_VALUE, PILLARS, KPIS, EcoItem } from '../data/ecosystem'
+import { ITEMS, STAGES, STAGE_VALUE, PILLARS, EcoItem } from '../data/ecosystem'
 import { LOGO_WHITE, LOGO_DARK, BADGE, ICONS } from '../data/assetsData'
 
 const KINDTAG: Record<string, string> = {
@@ -71,6 +71,20 @@ export default function EcosystemOverview() {
 
   const liveCount = items.filter(isLive).length
   const kindCount = new Set(items.map(a => a.kind)).size
+
+  const BENEFIT_ORDER = ['Time saved', 'Less rework', 'Consistent quality', 'Risk reduced', 'Sharper insight', 'Better client experience']
+  const benefitSummary = useMemo(() => {
+    const map: Record<string, { count: number; metrics: string[] }> = {}
+    items.forEach(a => {
+      const b = a.benefit
+      if (!b) return
+      if (!map[b]) map[b] = { count: 0, metrics: [] }
+      map[b].count++
+      if (a.metricName) map[b].metrics.push(a.metricTarget ? `${a.metricName} — ${a.metricTarget}` : a.metricName)
+    })
+    const order = [...BENEFIT_ORDER, ...Object.keys(map).filter(b => !BENEFIT_ORDER.includes(b))]
+    return order.filter(b => map[b]).map(b => ({ name: b, count: map[b].count, metrics: map[b].metrics.slice(0, 3) }))
+  }, [items])
   const sv = STAGE_VALUE[stage] || ['', '']
   const st = STAGES.find(x => x[0] === stage)!
   const caps = capsFor(stage)
@@ -139,7 +153,7 @@ export default function EcosystemOverview() {
             {caps.length ? caps.map(c => {
               const m = mstate(c)
               return (
-                <div className="cap" key={c.name}>
+                <div className="cap" key={c.name} onClick={() => setDrawer(c)}>
                   <div className="top"><span className="nm">{c.name}</span><span className={`tag ${KINDTAG[c.kind] || 'tag-slate'} kt`}>{c.kind}</span></div>
                   <p>{(c.desc || '').slice(0, 120)}</p>
                   <div style={{ marginTop: 8 }}><span className={`mstate ${m[0]}`}>{m[1]}</span></div>
@@ -217,21 +231,22 @@ export default function EcosystemOverview() {
           <span className="sw" style={{ background: 'rgba(39,187,175,1)' }} />higher</div>
       </div></section>
 
-      {/* Measurement */}
+      {/* Measurement — driven by the catalog's Primary Benefit + Metric columns */}
       <section id="measure" className="score"><div className="wrap">
-        <div className="sechead"><span className="eyebrow">Outcome scorecard</span><h2>Targets we set and track with you.</h2>
-          <p>Illustrative targets. Real baselines are established at kickoff and reported through the engagement.</p></div>
-        <div className="scards">
-          <div className="scard"><div className="n">10x</div><div className="h">Faster first drafts</div><div className="p">First-pass BRD, SOW, and design docs in hours, not weeks.</div></div>
-          <div className="scard"><div className="n">95%+</div><div className="h">First-pass QA</div><div className="p">Deliverables that clear brand and methodology review the first time.</div></div>
-          <div className="scard"><div className="n">100%</div><div className="h">Lifecycle coverage</div><div className="p">Every stage has an active AI capability supporting the team.</div></div>
-          <div className="scard"><div className="n">Live</div><div className="h">Status transparency</div><div className="p">Clients see project health and decisions as they happen.</div></div>
-        </div>
-        <div style={{ height: 34 }} />
-        <div className="sechead" style={{ marginBottom: 20 }}><span className="eyebrow">Measurement framework</span><h2 style={{ fontSize: 20 }}>The metrics behind the targets.</h2></div>
-        <div className="kpis" style={{ ['--z-lt' as string]: 'rgba(255,255,255,.08)' } as React.CSSProperties}>
-          {KPIS.map(k => (
-            <div className="kpi" key={k.name}><div className="p">{k.pillar}</div><h3>{k.name}</h3><div className="d">{k.desc}</div><div className="nn">{k.note}</div></div>
+        <div className="sechead"><span className="eyebrow">The value it creates</span><h2>Benefits, and how we measure them.</h2>
+          <p>Drawn straight from the capability catalog: the outcomes each benefit delivers, and the results we track.</p></div>
+        <div className="benefitgrid">
+          {benefitSummary.map(b => (
+            <div className="bcard" key={b.name}>
+              <div className="n">{b.count}</div>
+              <div className="h">{b.name}</div>
+              <div className="sub">{b.count === 1 ? 'capability delivers this' : 'capabilities deliver this'}</div>
+              <div className="bl">
+                {b.metrics.length
+                  ? b.metrics.map((m, i) => <div className="bm" key={i}>{m}</div>)
+                  : <div className="bm">Tracked per engagement</div>}
+              </div>
+            </div>
           ))}
         </div>
       </div></section>
