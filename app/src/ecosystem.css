@@ -63,7 +63,6 @@
 .eco .dcard .stopline .slabel{font-size:10px;font-weight:700;letter-spacing:.7px;text-transform:uppercase;color:var(--z-teal-light)}
 .eco .dcard .stopline .sstat{font-size:28px;font-weight:700;color:#fff;line-height:1.05;margin-top:8px}
 .eco .dcard .stopline .sdesc{font-size:13px;color:rgba(255,255,255,.82);line-height:1.45;margin-top:7px}
-.eco .dcard .stopline .sbasis{font-size:11px;color:var(--z-orange);margin-top:10px;font-weight:600}
 .eco .caps{display:grid;grid-template-columns:repeat(2,1fr);gap:12px}
 .eco .cap{background:#fff;border:1px solid var(--z-purple-lt);border-radius:var(--z-radius);padding:15px 16px}
 .eco .cap .top{display:flex;align-items:center;gap:8px;margin-bottom:7px}.eco .cap .nm{font-size:13.5px;font-weight:700;line-height:1.2}

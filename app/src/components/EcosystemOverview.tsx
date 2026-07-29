@@ -152,7 +152,6 @@ export default function EcosystemOverview() {
                 <div className="slabel">Value at this stage</div>
                 <div className="sstat">{STAGE_IMPACT[stage].stat}</div>
                 <div className="sdesc">{STAGE_IMPACT[stage].label}</div>
-                <div className="sbasis">Directional estimate — not yet measured</div>
               </div>
             ) : null}
             <div className="metric"><div className="n">{caps.length} AI capabilities</div><div className="l">active at this stage</div></div>
