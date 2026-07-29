@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useState } from 'react'
 import '../ecosystem.css'
-import { ITEMS, STAGES, STAGE_VALUE, PILLARS, EcoItem } from '../data/ecosystem'
+import { ITEMS, STAGES, STAGE_VALUE, STAGE_IMPACT, PILLARS, EcoItem } from '../data/ecosystem'
 import { LOGO_WHITE, LOGO_DARK, BADGE, ICONS } from '../data/assetsData'
 
 const KINDTAG: Record<string, string> = {
@@ -140,13 +140,21 @@ export default function EcosystemOverview() {
           <h2>Explore what accelerates each stage.</h2>
           <p>Select a stage to see the value it delivers and the AI capabilities working behind the scenes.</p></div>
         <div className="raillabel">Sales &amp; pre-sales</div>
-        <div className="railrow">{STAGES.filter(s => s[3] === 'Sales').map(s => <StageBtn key={s[0]} s={s} on={s[0] === stage} count={capsFor(s[0]).length} onClick={() => setStage(s[0])} />)}</div>
+        <div className="railrow">{STAGES.filter(s => s[3] === 'Sales').map(s => <StageBtn key={s[0]} s={s} on={s[0] === stage} count={capsFor(s[0]).length} impact={STAGE_IMPACT[s[0]]} onClick={() => setStage(s[0])} />)}</div>
         <div className="raillabel">Delivery</div>
-        <div className="railrow">{STAGES.filter(s => s[3] === 'Delivery').map(s => <StageBtn key={s[0]} s={s} on={s[0] === stage} count={capsFor(s[0]).length} onClick={() => setStage(s[0])} />)}</div>
+        <div className="railrow">{STAGES.filter(s => s[3] === 'Delivery').map(s => <StageBtn key={s[0]} s={s} on={s[0] === stage} count={capsFor(s[0]).length} impact={STAGE_IMPACT[s[0]]} onClick={() => setStage(s[0])} />)}</div>
         <div className="detail" style={{ marginTop: 20 }}>
           <div className="dcard">
             <span className="eyebrow">{st[1]} &middot; {st[2]}</span>
             <h3>{sv[0]}</h3><p>{sv[1]}</p>
+            {STAGE_IMPACT[stage] && caps.length > 0 ? (
+              <div className="stopline">
+                <div className="slabel">Value at this stage</div>
+                <div className="sstat">{STAGE_IMPACT[stage].stat}</div>
+                <div className="sdesc">{STAGE_IMPACT[stage].label}</div>
+                <div className="sbasis">Directional estimate — not yet measured</div>
+              </div>
+            ) : null}
             <div className="metric"><div className="n">{caps.length} AI capabilities</div><div className="l">active at this stage</div></div>
           </div>
           <div className="caps">
@@ -315,10 +323,11 @@ export default function EcosystemOverview() {
   )
 }
 
-function StageBtn({ s, on, count, onClick }: { s: [string, string, string, string]; on: boolean; count: number; onClick: () => void }) {
+function StageBtn({ s, on, count, impact, onClick }: { s: [string, string, string, string]; on: boolean; count: number; impact?: { stat: string; label: string; basis: string }; onClick: () => void }) {
   return (
     <button className={`stagebtn ${on ? 'on' : ''}`} onClick={onClick}>
       <div className="code">{s[1]}</div><div className="nm">{s[2]}</div><div className="ct">{count} capabilities</div>
+      {impact && count > 0 ? <div className="simpact">{impact.stat}</div> : null}
     </button>
   )
 }
