@@ -75,6 +75,10 @@
 .eco .fchip{font-size:12px;font-weight:500;padding:7px 13px;border-radius:var(--z-radius);border:1px solid var(--z-purple-lt);background:#fff;color:var(--z-dark);cursor:pointer;display:inline-flex;align-items:center;gap:7px}
 .eco .fchip .cd{width:9px;height:9px;border-radius:2px}.eco .fchip.on{background:var(--z-dark);color:#fff;border-color:var(--z-dark)}
 .eco .divv{width:1px;height:24px;background:var(--z-purple-lt);margin:0 3px}.eco .cnt{font-size:12px;color:var(--z-slate);margin-left:auto}
+.eco .catoggle{font-family:var(--z-font);font-size:13px;font-weight:700;color:var(--z-dark);background:#fff;border:1px solid var(--z-purple-lt);border-radius:var(--z-radius);padding:11px 18px;cursor:pointer}
+.eco .catoggle:hover{border-color:var(--z-teal);color:var(--z-teal)}
+.eco .catoggle.expand{width:100%;background:var(--z-ice);border-style:dashed}
+.eco .catoggle:not(.expand){margin-bottom:12px}
 .eco .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(258px,1fr));gap:12px}
 .eco .item{background:#fff;border:1px solid var(--z-purple-lt);border-radius:var(--z-radius);padding:15px 16px;cursor:pointer;display:flex;flex-direction:column;gap:8px}
 .eco .item:hover{border-color:var(--z-teal)}.eco .item .top{display:flex;align-items:center;gap:8px}
@@ -93,15 +97,6 @@
 .eco .drawer .close{position:absolute;top:20px;right:22px;background:rgba(255,255,255,.14);border:none;color:#fff;width:30px;height:30px;border-radius:var(--z-radius);font-size:16px;cursor:pointer}
 .eco .vpill{background:var(--z-ice);border-radius:var(--z-radius);padding:14px 16px;margin-bottom:10px}
 .eco .vpill .h{font-size:13px;font-weight:700;color:var(--z-dark)}.eco .vpill .p{font-size:12.5px;color:var(--z-dark);font-weight:500;margin-top:4px;line-height:1.45}
-.eco /* matrix */
-.matrix{background:var(--z-lt)}
-.eco .mtable{width:100%;border-collapse:separate;border-spacing:5px}
-.eco .mtable th{font-size:10.5px;font-weight:700;color:var(--z-slate);text-transform:uppercase;padding:6px 4px;text-align:center}
-.eco .mtable th.rowh,.eco .mtable td.rowh{text-align:left}.eco .mtable td.rowh{font-size:12.5px;font-weight:700;color:var(--z-dark);padding-right:10px;width:140px}
-.eco .mcell{width:44px;height:38px;border-radius:var(--z-radius-sm);text-align:center;font-size:13px;font-weight:700;color:#fff;vertical-align:middle}
-.eco .mcell.empty{background:#fff;color:var(--z-purple-lt)}
-.eco .mscale{display:flex;align-items:center;gap:8px;margin-top:16px;font-size:11px;color:var(--z-slate)}
-.eco .mscale .sw{width:26px;height:14px;border-radius:3px}
 .eco .score{background:var(--z-dark);color:#fff}.eco .score .eyebrow{color:var(--z-teal-light)}.eco .score h2{color:#fff}.eco .score .sechead p{color:rgba(255,255,255,.72)}
 .eco .scards{display:grid;grid-template-columns:repeat(4,1fr);gap:14px}
 .eco .scard{background:rgba(255,255,255,.08);border-radius:var(--z-radius);padding:20px}
@@ -128,7 +123,7 @@
 .eco .bcard .bm{position:relative;padding-left:13px;line-height:1.35}
 .eco .bcard .bm::before{content:'';position:absolute;left:0;top:6px;width:5px;height:5px;border-radius:50%;background:var(--z-teal-light)}
 .eco .bcard .bm .bmn{display:block;font-size:12.5px;font-weight:600;color:#fff}
-.eco .bcard .bm .bmv{display:block;font-size:12px;color:var(--z-teal-light);margin-top:1px}
+.eco .bcard .bm .bmv{display:block;font-size:12px;color:var(--z-orange);margin-top:1px}
 .eco .bcard .bm .bmv b{font-weight:700}
 @media(max-width:900px){.eco .benefitgrid{grid-template-columns:1fr 1fr}}
 .eco .drawer .close{z-index:3}
