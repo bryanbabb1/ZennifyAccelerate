@@ -12,7 +12,6 @@ const CMAP: Record<string, string> = {
   MCP: 'mint', Tool: 'slate', Platform: 'teal-light',
 }
 const KORD = ['Skill', 'Agent', 'Claude Project', 'App', 'MCP', 'Tool', 'Platform']
-const MKORD = ['Skill', 'Agent', 'Claude Project', 'App', 'MCP', 'Tool']
 
 const isLive = (a: EcoItem) => a.maturity === 'Live'
 const mstate = (a: EcoItem): [string, string] => isLive(a) ? ['m-live', 'Live'] : ['m-road', 'Roadmap']
@@ -23,6 +22,7 @@ export default function EcosystemOverview() {
   const [fk, setFk] = useState<string | null>(null)
   const [fm, setFm] = useState<string | null>(null)
   const [q, setQ] = useState('')
+  const [catalogOpen, setCatalogOpen] = useState(false)
   const [drawer, setDrawer] = useState<EcoItem | null>(null)
   const [items, setItems] = useState<EcoItem[]>(ITEMS)
 
@@ -58,19 +58,10 @@ export default function EcosystemOverview() {
     return out
   }, [items, fk, fm, q])
 
-  const matrix = useMemo(() => {
-    const mat: Record<string, Record<string, number>> = {}
-    MKORD.forEach(k => { mat[k] = {}; STAGES.forEach(s => (mat[k][s[0]] = 0)) })
-    items.filter(isLive).forEach(a => {
-      if (mat[a.kind]) (a.stages || []).forEach(s => { if (s in mat[a.kind]) mat[a.kind][s]++ })
-    })
-    let max = 1
-    MKORD.forEach(k => STAGES.forEach(s => (max = Math.max(max, mat[k][s[0]]))))
-    return { mat, max }
-  }, [items])
-
   const liveCount = items.filter(isLive).length
   const kindCount = new Set(items.map(a => a.kind)).size
+  const filtering = !!q || !!fk || !!fm
+  const catalogVisible = catalogOpen || filtering
 
   const BENEFIT_ORDER = ['Time saved', 'Less rework', 'Consistent quality', 'Risk reduced', 'Sharper insight', 'Better client experience']
   type BEx = { name: string; before?: string; after?: string; headline?: string }
@@ -104,7 +95,6 @@ export default function EcosystemOverview() {
           <a href="#lifecycle">Lifecycle</a>
           <a href="#measure">Value</a>
           <a href="#explore">Explore</a>
-          <a href="#coverage">Coverage</a>
         </div>
       </div></nav>
 
@@ -227,48 +217,29 @@ export default function EcosystemOverview() {
             ))}
           </div>
         </div>
-        <div className="grid">
-          {list.map(a => {
-            const m = mstate(a)
-            return (
-              <div className="item" key={a.name} onClick={() => setDrawer(a)}>
-                <div className="top"><span className="nm">{a.name}</span><span className={`tag ${KINDTAG[a.kind] || 'tag-slate'} kt`}>{a.kind}</span></div>
-                <div className="desc">{(a.desc || '').slice(0, 105)}{(a.desc || '').length > 105 ? '…' : ''}</div>
-                {a.headline ? <div className="qstat">{a.before && a.after ? <span className="qba"><b className="qb">{a.before}</b> → <b className="qa">{a.after}</b></span> : null}<span className="qh">{a.headline}</span></div> : null}
-                <div className="foot">
-                  <span className={`mstate ${m[0]}`}>{m[1]}</span>
-                  {(a.stages || []).slice(0, 3).map(s => <span className="sc" key={s}>{s.toUpperCase()}</span>)}
-                </div>
-              </div>
-            )
-          })}
-        </div>
-      </div></section>
-
-      {/* Coverage matrix */}
-      <section id="coverage" className="matrix"><div className="wrap">
-        <div className="sechead"><span className="eyebrow">Coverage at a glance</span>
-          <h2>Where AI shows up across the lifecycle.</h2>
-          <p>Each cell counts the live capabilities of that type at that stage. Darker means deeper coverage.</p></div>
-        <table className="mtable">
-          <tbody>
-            <tr><td className="rowh"></td>{STAGES.map(s => <th key={s[0]}>{s[1]}</th>)}</tr>
-            {MKORD.map(k => (
-              <tr key={k}>
-                <td className="rowh">{k}</td>
-                {STAGES.map(s => {
-                  const v = matrix.mat[k][s[0]]
-                  return <td key={s[0]} className={`mcell ${v ? '' : 'empty'}`}
-                    style={v ? { background: `rgba(39,187,175,${(0.30 + 0.70 * v / matrix.max).toFixed(2)})` } : undefined}>{v || ''}</td>
-                })}
-              </tr>
-            ))}
-          </tbody>
-        </table>
-        <div className="mscale">Coverage depth
-          <span className="sw" style={{ background: 'rgba(39,187,175,0.30)' }} />lower
-          <span className="sw" style={{ background: 'rgba(39,187,175,0.70)' }} />
-          <span className="sw" style={{ background: 'rgba(39,187,175,1)' }} />higher</div>
+        {catalogVisible ? (
+          <>
+            {!filtering ? <button className="catoggle" onClick={() => setCatalogOpen(false)}>Collapse catalog ▲</button> : null}
+            <div className="grid">
+              {list.map(a => {
+                const m = mstate(a)
+                return (
+                  <div className="item" key={a.name} onClick={() => setDrawer(a)}>
+                    <div className="top"><span className="nm">{a.name}</span><span className={`tag ${KINDTAG[a.kind] || 'tag-slate'} kt`}>{a.kind}</span></div>
+                    <div className="desc">{(a.desc || '').slice(0, 105)}{(a.desc || '').length > 105 ? '…' : ''}</div>
+                    {a.headline ? <div className="qstat">{a.before && a.after ? <span className="qba"><b className="qb">{a.before}</b> → <b className="qa">{a.after}</b></span> : null}<span className="qh">{a.headline}</span></div> : null}
+                    <div className="foot">
+                      <span className={`mstate ${m[0]}`}>{m[1]}</span>
+                      {(a.stages || []).slice(0, 3).map(s => <span className="sc" key={s}>{s.toUpperCase()}</span>)}
+                    </div>
+                  </div>
+                )
+              })}
+            </div>
+          </>
+        ) : (
+          <button className="catoggle expand" onClick={() => setCatalogOpen(true)}>Show all {list.length} capabilities ▼</button>
+        )}
       </div></section>
 
       <footer><div className="wrap"><span className="c">&copy; 2026 Zennify &middot; AI Ecosystem Overview</span><img src={BADGE} alt="Zennify" /></div></footer>
