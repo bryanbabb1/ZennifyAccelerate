@@ -20,9 +20,15 @@ Live production: `zennify-accelerate.vercel.app` (deploys from `main`).
 
 ## Key files
 - `app/src/App.tsx` — renders **only** `EcosystemOverview` (tab switcher removed).
-- `app/src/components/EcosystemOverview.tsx` — the whole page (hero, value pillars,
-  interactive lifecycle rail, filterable capability catalog + detail drawer,
-  type-by-stage coverage matrix, outcome scorecard + measurement framework).
+- `app/src/components/EcosystemOverview.tsx` — the whole page, in order: hero, value
+  pillars, interactive lifecycle rail (with per-stage topline value), **Value section**
+  ("Six outcomes, backed by real capabilities" — moved ABOVE the catalog; each of the 6
+  benefit cards lists real capabilities with before→after, original value in GREEN, new
+  AI-enabled value in ORANGE), filterable capability catalog (**starts collapsed** behind
+  a "Show all N" toggle; auto-expands on search/filter) + detail drawer, footer.
+  **Coverage matrix REMOVED** (2026-07-29) — restore from git history if wanted. On load,
+  state hydrates from a `localStorage('eco_items')` cache of the last live fetch, then
+  revalidates in the background (kills the baked→live count flip on reloads).
 - `app/src/data/ecosystem.ts` — **baked fallback** capability data + STAGES / STAGE_VALUE
   / **STAGE_IMPACT** / PILLARS / KPIS. Used only if the live endpoint is unset/unreachable.
   `STAGE_IMPACT` is the **stage-level topline value** (stat / label / basis) shown heads-up
@@ -63,6 +69,21 @@ Content is maintained in a **private Google Sheet CMS** (do NOT make it public):
   build, merge to `main`.
 
 ## Open follow-ups
+- **Session 2026-07-29 shipped to `main`:** hero headline → "Every stage of your
+  engagement, accelerated by AI." (dropped "Salesforce"); hero subhead → "proven **sales
+  and delivery** methodology"; STAGE_VALUE descriptions rewritten outcome-centric;
+  per-stage topline `STAGE_IMPACT`; Value section reworked + moved above catalog with
+  green(before)/orange(after) metrics; catalog collapsed-by-default; coverage matrix
+  removed; localStorage caching of live data.
+- **ACTION FOR USER — deploy the new `Code.gs`** (handed 2026-07-29): adds `CacheService`
+  (6-hr cache) to fix the ~10s endpoint lag that made counts flip 35→81 on load. Paste
+  over the current Apps Script, redeploy the web app (same `/exec` URL, no site rebuild),
+  and optionally Run ▸ `installEditTrigger` once so edits auto-clear the cache. This
+  `Code.gs` ALSO emits metric/before/after/headline/basis (supersedes the 07-28 one).
+- **Baked fallback is stale (38 items vs ~81 live).** Couldn't regenerate it this session —
+  the `/exec` URL is a Vercel build secret and outbound to Google is sandboxed here. To
+  refresh it, user pastes a current sheet export (or the `/exec` URL) and I rebuild
+  `ecosystem.ts` so a cold/first load (or dead endpoint) still looks right.
 - **Ship state (2026-07-28):** quantified before→after impact is live on `main`
   (grid card `.qstat` line + drawer Impact block with measured/estimate/enabler basis).
   Handed the user `cms_refined.xlsx` (87 rows, new columns) + updated Apps Script
