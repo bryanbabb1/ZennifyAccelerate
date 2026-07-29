@@ -182,8 +182,8 @@ export default function EcosystemOverview() {
                       <div className="bm" key={i}>
                         <span className="bmn">{e.name}</span>
                         {e.before && e.after
-                          ? <span className="bmv"><b>{e.before}</b> → <b>{e.after}</b></span>
-                          : e.headline ? <span className="bmv">{e.headline}</span> : null}
+                          ? <span className="bmv"><b className="bfrom">{e.before}</b> → <b className="bto">{e.after}</b></span>
+                          : e.headline ? <span className="bmv"><b className="bto">{e.headline}</b></span> : null}
                       </div>
                     ))
                   : <div className="bm"><span className="bmn">Tracked per engagement</span></div>}
