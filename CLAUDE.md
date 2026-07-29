@@ -34,9 +34,15 @@ Live production: `zennify-accelerate.vercel.app` (deploys from `main`).
 Content is maintained in a **private Google Sheet CMS** (do NOT make it public):
 - Sheet ID: `1HSFZbCxb0p_7OKfVKdBBgE6XDf8eUeMWbtT47xRBgBk`
   (title: "Zennify Accelerate — AI Ecosystem CMS", owner bryan.babb@zennify.com).
-- Columns: Sort, Name, Type, Maturity, Status (internal), Lifecycle Stages, Phase,
-  External Description, Value Statement, Value Pillars, Metric Name, Metric Target,
-  Built On / Platform, Owner, Link, **Visible Externally**.
+- Columns: Sort, Name, Type, Platform, Maturity, Status (internal), Lifecycle Stages,
+  Phase, External Description, Value Statement, Use Cases, Primary Benefit,
+  **Metric, Before, After, Headline, Basis**, Link, **Visible Externally**.
+  (Metric/Before/After/Headline/Basis replaced the old Metric Name / Metric Target:
+  each capability carries a quantified before→after impact. **Basis** is the honesty
+  marker — `Measured · Salesforce` = validated, `Directional estimate` = educated guess
+  shown as "not yet measured", `Enabler` = qualitative/no time metric. Only Pre-Sales
+  Factory (40→14 days) and Estimating Factory (~5%→~1%) are Measured today; the rest
+  are directional estimates to refine or replace with real numbers.)
 - A **Google Apps Script** bound to the Sheet exposes a read-only `doGet` JSON web app
   (Execute as owner, access Anyone). It returns only rows where `Visible Externally != No`,
   so the Sheet stays private and internal/WIP rows never leave.
@@ -52,6 +58,21 @@ Content is maintained in a **private Google Sheet CMS** (do NOT make it public):
   build, merge to `main`.
 
 ## Open follow-ups
+- **Ship state (2026-07-28):** quantified before→after impact is live on `main`
+  (grid card `.qstat` line + drawer Impact block with measured/estimate/enabler basis).
+  Handed the user `cms_refined.xlsx` (87 rows, new columns) + updated Apps Script
+  `Code.gs` (emits metric/before/after/headline/basis). **User still needs to:**
+  (1) import the refreshed sheet into the live Google Sheet, (2) paste the new `Code.gs`
+  over the current Apps Script and redeploy the web app (same `/exec` URL, no rebuild).
+  Until then the site serves the baked fallback.
+- **Validate the estimates.** All impact numbers except Pre-Sales Factory and Estimating
+  Factory are *my* directional estimates — a delivery lead should sanity-check them, then
+  replace amber "estimate" rows with measured numbers over time.
+- **PARKED — internal "Early Signals / AI Impact" gated view.** Board-grade living version
+  of the well-received board slide, fed from Salesforce/Impact Signals (velocity 40→14,
+  estimation ~5%→~1%, fixed-price shift, margin, earned-wealth proof). Mockup generator
+  is `scratchpad/gen_impact.py`. Not started.
+- **Offered — Salesforce POC** to auto-populate a few measured metrics (turn amber→green).
 - Scorecard numbers (10x, 95%+) are **illustrative placeholders** — replace with real,
   validated metrics when available.
 - If Apps Script CORS ever breaks the live fetch, the fallback is a Vercel serverless
