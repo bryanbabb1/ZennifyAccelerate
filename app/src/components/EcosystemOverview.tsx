@@ -73,17 +73,22 @@ export default function EcosystemOverview() {
   const kindCount = new Set(items.map(a => a.kind)).size
 
   const BENEFIT_ORDER = ['Time saved', 'Less rework', 'Consistent quality', 'Risk reduced', 'Sharper insight', 'Better client experience']
+  type BEx = { name: string; before?: string; after?: string; headline?: string }
   const benefitSummary = useMemo(() => {
-    const map: Record<string, { count: number; metrics: string[] }> = {}
+    const map: Record<string, { count: number; ex: BEx[] }> = {}
     items.forEach(a => {
       const b = a.benefit
       if (!b) return
-      if (!map[b]) map[b] = { count: 0, metrics: [] }
+      if (!map[b]) map[b] = { count: 0, ex: [] }
       map[b].count++
-      if (a.headline) map[b].metrics.push(a.metric ? `${a.metric} · ${a.headline}` : a.headline)
+      if (a.headline || (a.before && a.after)) map[b].ex.push({ name: a.name, before: a.before, after: a.after, headline: a.headline })
     })
     const order = [...BENEFIT_ORDER, ...Object.keys(map).filter(b => !BENEFIT_ORDER.includes(b))]
-    return order.filter(b => map[b]).map(b => ({ name: b, count: map[b].count, metrics: map[b].metrics.slice(0, 3) }))
+    return order.filter(b => map[b]).map(b => {
+      // Lead with the most concrete proof: capabilities that carry a real before→after.
+      const ex = [...map[b].ex].sort((x, y) => Number(!!(y.before && y.after)) - Number(!!(x.before && x.after)))
+      return { name: b, count: map[b].count, ex: ex.slice(0, 3) }
+    })
   }, [items])
   const sv = STAGE_VALUE[stage] || ['', '']
   const st = STAGES.find(x => x[0] === stage)!
@@ -97,9 +102,9 @@ export default function EcosystemOverview() {
         <div className="links">
           <a href="#model">The model</a>
           <a href="#lifecycle">Lifecycle</a>
+          <a href="#measure">Value</a>
           <a href="#explore">Explore</a>
           <a href="#coverage">Coverage</a>
-          <a href="#measure">Measurement</a>
         </div>
       </div></nav>
 
@@ -171,6 +176,33 @@ export default function EcosystemOverview() {
         </div>
       </div></section>
 
+      {/* Benefits — the value the ecosystem creates, rolled up from the catalog */}
+      <section id="measure" className="score"><div className="wrap">
+        <div className="sechead"><span className="eyebrow">The value it creates</span><h2>Six outcomes, backed by real capabilities.</h2>
+          <p>Every capability in the ecosystem is built to move one of these outcomes. Here are examples of each, with the time change they drive.</p></div>
+        <div className="benefitgrid">
+          {benefitSummary.map(b => (
+            <div className="bcard" key={b.name}>
+              <div className="n">{b.count}</div>
+              <div className="h">{b.name}</div>
+              <div className="sub">{b.count === 1 ? 'capability delivers this' : 'capabilities deliver this'}</div>
+              <div className="bl">
+                {b.ex.length
+                  ? b.ex.map((e, i) => (
+                      <div className="bm" key={i}>
+                        <span className="bmn">{e.name}</span>
+                        {e.before && e.after
+                          ? <span className="bmv"><b>{e.before}</b> → <b>{e.after}</b></span>
+                          : e.headline ? <span className="bmv">{e.headline}</span> : null}
+                      </div>
+                    ))
+                  : <div className="bm"><span className="bmn">Tracked per engagement</span></div>}
+              </div>
+            </div>
+          ))}
+        </div>
+      </div></section>
+
       {/* Explorer */}
       <section id="explore"><div className="wrap">
         <div className="sechead"><span className="eyebrow">Capability catalog</span>
@@ -237,26 +269,6 @@ export default function EcosystemOverview() {
           <span className="sw" style={{ background: 'rgba(39,187,175,0.30)' }} />lower
           <span className="sw" style={{ background: 'rgba(39,187,175,0.70)' }} />
           <span className="sw" style={{ background: 'rgba(39,187,175,1)' }} />higher</div>
-      </div></section>
-
-      {/* Measurement — driven by the catalog's Primary Benefit + Metric columns */}
-      <section id="measure" className="score"><div className="wrap">
-        <div className="sechead"><span className="eyebrow">The value it creates</span><h2>Benefits, and how we measure them.</h2>
-          <p>Drawn straight from the capability catalog: the outcomes each benefit delivers, and the results we track.</p></div>
-        <div className="benefitgrid">
-          {benefitSummary.map(b => (
-            <div className="bcard" key={b.name}>
-              <div className="n">{b.count}</div>
-              <div className="h">{b.name}</div>
-              <div className="sub">{b.count === 1 ? 'capability delivers this' : 'capabilities deliver this'}</div>
-              <div className="bl">
-                {b.metrics.length
-                  ? b.metrics.map((m, i) => <div className="bm" key={i}>{m}</div>)
-                  : <div className="bm">Tracked per engagement</div>}
-              </div>
-            </div>
-          ))}
-        </div>
       </div></section>
 
       <footer><div className="wrap"><span className="c">&copy; 2026 Zennify &middot; AI Ecosystem Overview</span><img src={BADGE} alt="Zennify" /></div></footer>
