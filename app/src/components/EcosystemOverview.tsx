@@ -102,7 +102,7 @@ export default function EcosystemOverview() {
       <header className="hero"><div className="wrap">
         <img className="logo" src={LOGO_WHITE} alt="Zennify" />
         <span className="eyebrow">AI-accelerated delivery</span>
-        <h1>Every stage of your Salesforce journey, accelerated by AI.</h1>
+        <h1>Every stage of your engagement, accelerated by AI.</h1>
         <p className="lead">Zennify pairs a proven sales and delivery methodology with a coordinated ecosystem of
           AI skills, agents, and apps. The result: faster cycles, consistent quality, and full transparency
           from first conversation to long after go-live.</p>
