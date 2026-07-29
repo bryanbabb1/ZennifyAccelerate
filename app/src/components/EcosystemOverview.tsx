@@ -24,20 +24,36 @@ export default function EcosystemOverview() {
   const [q, setQ] = useState('')
   const [catalogOpen, setCatalogOpen] = useState(false)
   const [drawer, setDrawer] = useState<EcoItem | null>(null)
-  const [items, setItems] = useState<EcoItem[]>(ITEMS)
+  // Hydrate from last-known-good live data cached in localStorage so returning
+  // visitors see the full, correct set instantly instead of the smaller baked
+  // fallback flipping ~seconds later. Falls back to the baked ITEMS on first visit.
+  const [items, setItems] = useState<EcoItem[]>(() => {
+    try {
+      const cached = localStorage.getItem('eco_items')
+      if (cached) {
+        const d = JSON.parse(cached)
+        if (Array.isArray(d) && d.length) return d as EcoItem[]
+      }
+    } catch { /* ignore */ }
+    return ITEMS
+  })
 
   // Live content: fetch the read-only JSON endpoint (Apps Script fronting the
-  // private CMS sheet), set via the VITE_ECOSYSTEM_URL build env var. Falls back
-  // to the data baked into the repo if unset or unreachable.
+  // private CMS sheet), set via the VITE_ECOSYSTEM_URL build env var. On success
+  // we update state and cache the payload for the next load. Falls back to the
+  // cached/baked data if unset or unreachable.
   useEffect(() => {
     const url = import.meta.env.VITE_ECOSYSTEM_URL as string | undefined
     if (!url) return
     fetch(url)
       .then(r => r.json())
       .then((data: EcoItem[]) => {
-        if (Array.isArray(data) && data.length) setItems(data)
+        if (Array.isArray(data) && data.length) {
+          setItems(data)
+          try { localStorage.setItem('eco_items', JSON.stringify(data)) } catch { /* quota/private mode */ }
+        }
       })
-      .catch(() => { /* keep baked fallback */ })
+      .catch(() => { /* keep cached/baked fallback */ })
   }, [])
 
   const capsFor = (id: string) => items.filter(a => (a.stages || []).includes(id))
