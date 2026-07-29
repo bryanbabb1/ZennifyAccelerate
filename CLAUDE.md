@@ -24,7 +24,12 @@ Live production: `zennify-accelerate.vercel.app` (deploys from `main`).
   interactive lifecycle rail, filterable capability catalog + detail drawer,
   type-by-stage coverage matrix, outcome scorecard + measurement framework).
 - `app/src/data/ecosystem.ts` — **baked fallback** capability data + STAGES / STAGE_VALUE
-  / PILLARS / KPIS. Used only if the live endpoint is unset/unreachable.
+  / **STAGE_IMPACT** / PILLARS / KPIS. Used only if the live endpoint is unset/unreachable.
+  `STAGE_IMPACT` is the **stage-level topline value** (stat / label / basis) shown heads-up
+  on each lifecycle rail button + in the dark stage detail card. It's **editorial copy
+  maintained in code** (like STAGE_VALUE), NOT sheet-driven — per-capability time units are
+  heterogeneous and can't be honestly summed, so each stage has one authored directional
+  headline. Edit it here, not in the CMS.
 - `app/src/data/assetsData.ts` — base64 Zennify logos + pillar icons.
 - `app/src/ecosystem.css` — scoped (`.eco`) styles.
 - `app/src/components/ValueChain.tsx` + `SkillsLibrary.tsx` — **kept as backup** of the
