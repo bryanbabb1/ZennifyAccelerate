@@ -3,167 +3,118 @@ import { EcoItem } from '../data/ecosystem'
 
 /* ------------------------------------------------------------------ *
  * Capability "See it in action" demos.
- * Each capability that produces a tangible artifact maps to an archetype
- * (document, deck, dashboard, assessment, story+wireframe, wireframe).
- * A demo is choreographed, not a live model call: an earned-progress
- * checklist plays on timers while the artifact builds block-by-block.
+ * These are HAND-AUTHORED per capability — each shows real, specific,
+ * recognizable output (not a generic skeleton). A demo only exists for
+ * a capability that's in the DEMOS registry below; everything else has
+ * no "See it in action" button. Quality over coverage — we grow the set
+ * deliberately. The generation choreography is theater; the payload is
+ * the point.
  * ------------------------------------------------------------------ */
 
-type Arch = 'storywire' | 'wire' | 'doc' | 'deck' | 'dash' | 'assess'
 export type DemoDef = { input: string; source: string; steps: string[]; blocks: ReactNode[] }
 
-const skip = [
-  'brand guidelines', 'next skill recommender', 'deal desk', 'delivery command center',
-  'framework sync', 'drive re-sync', 'session auto mapping', 'pulse collector',
-  'documentation lookup', 'solution architect assistant', 'listening', 'meeting notes',
-]
-
-function archFor(item: EcoItem): Arch | null {
-  const n = item.name.toLowerCase()
-  if (['Tool', 'Platform', 'MCP'].includes(item.kind)) return null
-  if (skip.some(s => n.includes(s))) return null
-  if (n.includes('story') && n.includes('design')) return 'storywire'
-  if (n.includes('mock') || n.includes('wireframe') || n.includes('ui ') || n.includes('interactive')) return 'wire'
-  if (n.includes('dashboard') || n.includes('tracker') || n.includes('overview dashboard')) return 'dash'
-  if (n.includes('deck') || n.includes('review') || n.includes('committee') || n.includes('demo') || n.includes('recap')) return 'deck'
-  if (n.includes('assessment') || n.includes('scan') || n.includes('health check') || n.includes('gap analysis') || n.includes('readout') || n.includes('maturity') || n.includes('advisor')) return 'assess'
-  return 'doc'
+// ---------- Business Requirements Document ----------------------------------
+const brd: DemoDef = {
+  input: '4 discovery workshops · Member Services',
+  source: 'Auctor · traceable to objectives',
+  steps: [
+    'Ingesting 4 workshop transcripts…',
+    'Clustering needs into requirements…',
+    'Writing acceptance criteria…',
+    'Tracing each to a business objective…',
+    'Assembling the BRD…',
+  ],
+  blocks: [
+    <div className="doc-h"><b>Business Requirements Document</b><span>Member Case Management</span></div>,
+    <div className="reqtbl">
+      <div className="reqrow head"><span>ID</span><span>Requirement</span><span>Priority</span></div>
+      <div className="reqrow">
+        <span className="rid">REQ-012</span>
+        <span><b>Single-screen case intake.</b> Rep captures member, branch, type, and description without leaving the page.
+          <em>Accept:</em> a case is created from one view with zero navigation.</span>
+        <span><i className="pr must">Must</i></span>
+      </div>
+      <div className="reqrow">
+        <span className="rid">REQ-014</span>
+        <span><b>Capture originating branch on every case.</b>
+          <em>Accept:</em> branch is required, stored on the record, and reportable.</span>
+        <span><i className="pr must">Must</i></span>
+      </div>
+      <div className="reqrow">
+        <span className="rid">REQ-021</span>
+        <span><b>Auto-route to the branch queue.</b>
+          <em>Accept:</em> on submit, the case reaches the owning branch’s queue within one minute.</span>
+        <span><i className="pr should">Should</i></span>
+      </div>
+    </div>,
+    <div className="trace">Every requirement links to <b>Objective O2 — reduce follow-up leakage</b> (target: 0 dropped cases).</div>,
+    <div className="doc-foot"><span>27 requirements · 100% traced to objectives</span><span className="tick">Signed-off draft in 3 days</span></div>,
+  ],
 }
 
-// ---- small building blocks -------------------------------------------------
-const Ln = ({ w }: { w: number }) => <div className="ln" style={{ width: `${w}%` }} />
-
-function docDemo(item: EcoItem): DemoDef {
-  return {
-    input: 'Project discovery + requirements',
-    source: `${item.built || 'Auctor'} · Zennify template`,
-    steps: [
-      'Reading discovery notes & requirements…',
-      `Outlining the ${item.name}…`,
-      'Drafting sections…',
-      'Applying the Zennify template & voice…',
-      'Running brand & completeness QA…',
-    ],
-    blocks: [
-      <div className="doc-h"><b>{item.name}</b><span>Zennify · client-ready</span></div>,
-      <div className="doc-sec"><h5>Overview</h5><Ln w={100} /><Ln w={94} /><Ln w={88} /></div>,
-      <div className="doc-sec"><h5>Key points</h5>
-        <ul className="doc-b"><li>Scope and objectives agreed and traceable</li>
-          <li>Decisions and owners captured</li><li>Acceptance criteria defined</li></ul></div>,
-      <div className="doc-sec"><h5>Detail</h5><Ln w={97} /><Ln w={91} /><Ln w={96} /><Ln w={70} /></div>,
-      <div className="doc-foot"><span>v1.0</span><span className="tick">On Zennify standard</span></div>,
-    ],
-  }
+// ---------- Estimating Factory ----------------------------------------------
+const est: DemoDef = {
+  input: 'Scope: FSC for Wealth · Phase 1',
+  source: 'Salesforce · 120 comparable projects',
+  steps: [
+    'Parsing scope & assumptions…',
+    'Matching 12 comparable engagements…',
+    'Estimating by workstream…',
+    'Applying risk & confidence bands…',
+    'Reconciling against actuals…',
+  ],
+  blocks: [
+    <div className="doc-h"><b>Effort estimate</b><span>FSC for Wealth · Phase 1</span></div>,
+    <div className="esttbl">
+      <div className="estrow head"><span>Workstream</span><span>Hours</span><span>Confidence</span></div>
+      <div className="estrow"><span>Configuration</span><span className="h">180</span><span><i className="cf hi">High</i></span></div>
+      <div className="estrow"><span>Data migration</span><span className="h">90</span><span><i className="cf md">Medium</i></span></div>
+      <div className="estrow"><span>Integrations</span><span className="h">140</span><span><i className="cf md">Medium</i></span></div>
+      <div className="estrow"><span>Testing &amp; UAT</span><span className="h">80</span><span><i className="cf hi">High</i></span></div>
+      <div className="estrow"><span>PM &amp; governance</span><span className="h">60</span><span><i className="cf hi">High</i></span></div>
+      <div className="estrow total"><span>Total</span><span className="h">550</span><span>hours</span></div>
+    </div>,
+    <div className="estvar"><div className="ev-n">±1%</div>
+      <div className="ev-t"><b>Estimate vs actuals on comparable work</b><span>within ~1% variance over the last 6 months · Measured · Salesforce</span></div></div>,
+    <div className="doc-foot"><span>Benchmarked against 12 comparable FSC engagements</span><span className="tick">Defensible in the SOW</span></div>,
+  ],
 }
 
-function deckDemo(item: EcoItem): DemoDef {
-  return {
-    input: 'Live project status + narrative',
-    source: `${item.built || 'Auctor'} · brand deck`,
-    steps: [
-      'Pulling status & data from project systems…',
-      'Structuring the narrative…',
-      'Building slides…',
-      'Applying the Zennify brand…',
-      'Finalizing the deck…',
-    ],
-    blocks: [
-      <div className="slide title"><div className="s-eyebrow">{item.name}</div><b>Executive readout</b><Ln w={40} /></div>,
-      <div className="deck-row">
-        <div className="slide"><div className="s-h" /><Ln w={90} /><Ln w={80} /><Ln w={60} /></div>
-        <div className="slide"><div className="s-h" /><div className="s-chart"><i style={{ height: '40%' }} /><i style={{ height: '70%' }} /><i style={{ height: '55%' }} /><i style={{ height: '90%' }} /></div></div>
-        <div className="slide"><div className="s-h" /><Ln w={85} /><Ln w={70} /><Ln w={78} /></div>
-      </div>,
-    ],
-  }
+// ---------- Digital Maturity Assessment -------------------------------------
+const Bar = ({ label, score }: { label: string; score: number }) => (
+  <div className="mbar"><span className="ml">{label}</span>
+    <span className="mt"><i style={{ width: `${score}%` }} /></span><b className="mv">{score}</b></div>
+)
+const dma: DemoDef = {
+  input: 'Org scan + stakeholder inputs',
+  source: 'Web app · scored across 6 dimensions',
+  steps: [
+    'Scanning the Salesforce org…',
+    'Scoring across 6 dimensions…',
+    'Benchmarking to peers…',
+    'Prioritizing recommendations…',
+  ],
+  blocks: [
+    <div className="dma-top"><div className="doc-h nofill"><b>Digital Maturity Assessment</b></div>
+      <span className="tier">Developing · Tier 2 of 5</span></div>,
+    <div className="mbars">
+      <Bar label="Data foundation" score={62} />
+      <Bar label="Customer experience" score={48} />
+      <Bar label="Automation" score={55} />
+      <Bar label="AI readiness" score={34} />
+      <Bar label="Integration" score={51} />
+      <Bar label="Governance" score={67} />
+    </div>,
+    <div className="recs">
+      <div className="rec-l">Prioritized next moves</div>
+      <div className="rec"><span>Consolidate the data model</span><span className="rc"><i className="ri hi">Impact High</i><i className="re md">Effort Med</i></span></div>
+      <div className="rec"><span>Stand up an AI-ready data pipeline</span><span className="rc"><i className="ri hi">Impact High</i><i className="re hi">Effort High</i></span></div>
+      <div className="rec"><span>Automate service intake</span><span className="rc"><i className="ri md">Impact Med</i><i className="re lo">Effort Low</i></span></div>
+    </div>,
+  ],
 }
 
-function dashDemo(item: EcoItem): DemoDef {
-  return {
-    input: 'Live integration + project data',
-    source: `${item.built || 'Auctor'} · live data`,
-    steps: [
-      'Connecting to live project systems…',
-      'Aggregating metrics…',
-      'Rendering charts…',
-      'Assembling the dashboard…',
-    ],
-    blocks: [
-      <div className="kpis">
-        <div className="kpi"><div className="kn">86%</div><div className="kl">On track</div></div>
-        <div className="kpi"><div className="kn">12</div><div className="kl">Open risks</div></div>
-        <div className="kpi"><div className="kn">94%</div><div className="kl">Velocity</div></div>
-        <div className="kpi"><div className="kn">$1.2M</div><div className="kl">Budget used</div></div>
-      </div>,
-      <div className="dash-chart"><i style={{ height: '55%' }} /><i style={{ height: '72%' }} /><i style={{ height: '48%' }} /><i style={{ height: '83%' }} /><i style={{ height: '66%' }} /><i style={{ height: '90%' }} /><i style={{ height: '77%' }} /></div>,
-      <div className="dash-tbl">
-        {['Discovery', 'Design', 'Build', 'UAT'].map((r, i) =>
-          <div className="tr" key={i}><span>{r}</span><span className={`pill ${i < 2 ? 'g' : i < 3 ? 'a' : 'n'}`}>{i < 2 ? 'Complete' : i < 3 ? 'In progress' : 'Upcoming'}</span></div>)}
-      </div>,
-    ],
-  }
-}
-
-function assessDemo(item: EcoItem): DemoDef {
-  const R = 34, C = 2 * Math.PI * R
-  return {
-    input: 'Org scan + current-state data',
-    source: `${item.built || 'Auctor'} · readout`,
-    steps: [
-      'Scanning the org & environment…',
-      'Scoring across dimensions…',
-      'Identifying gaps & risks…',
-      'Compiling the readout…',
-    ],
-    blocks: [
-      <div className="assess-top">
-        <svg className="ring" viewBox="0 0 80 80" width="80" height="80">
-          <circle cx="40" cy="40" r={R} fill="none" stroke="#e6ebf4" strokeWidth="8" />
-          <circle cx="40" cy="40" r={R} fill="none" stroke="var(--z-teal)" strokeWidth="8"
-            strokeDasharray={C} strokeDashoffset={C * (1 - 0.72)} strokeLinecap="round" transform="rotate(-90 40 40)" />
-          <text x="40" y="45" textAnchor="middle" className="ring-t">72</text>
-        </svg>
-        <div className="assess-lead"><b>Maturity score</b><span>Solid foundation, focused gaps to close.</span></div>
-      </div>,
-      <div className="findings">
-        <div className="finding"><span className="dot a" /><div><b>Data model</b> — some over-customization to unwind before scale.</div></div>
-        <div className="finding"><span className="dot n" /><div><b>Security</b> — sharing model is sound and audit-ready.</div></div>
-        <div className="finding"><span className="dot r" /><div><b>Integrations</b> — two brittle point-to-point flows to modernize.</div></div>
-      </div>,
-    ],
-  }
-}
-
-function storyWireDemo(_item: EcoItem): DemoDef {
-  return {
-    input: 'Discovery note · REQ-04',
-    source: 'Auctor · org metadata',
-    steps: [
-      'Reading the discovery note…',
-      'Extracting the requirement and actors…',
-      'Drafting the user story and acceptance criteria…',
-      'Mapping fields to Salesforce objects…',
-      'Rendering the editable wireframe…',
-    ],
-    blocks: [storyCard, wireframe],
-  }
-}
-
-function wireDemo(_item: EcoItem): DemoDef {
-  return {
-    input: 'Described screen · Case intake',
-    source: 'Claude · Lightning components',
-    steps: [
-      'Reading the described screen…',
-      'Selecting Lightning components…',
-      'Laying out fields & sections…',
-      'Rendering the mock…',
-    ],
-    blocks: [wireframe],
-  }
-}
-
-// shared artifacts (story + wireframe)
+// ---------- Story & Design Writer (story + wireframe) -----------------------
 const storyCard = (
   <div className="storycard">
     <div className="sc-head"><span className="sc-key">US-118</span> Member case intake<span className="sc-done">Generated</span></div>
@@ -195,18 +146,29 @@ const wireframe = (
     </div>
   </div>
 )
+const storyWire: DemoDef = {
+  input: 'Discovery note · REQ-04',
+  source: 'Auctor · org metadata',
+  steps: [
+    'Reading the discovery note…',
+    'Extracting the requirement and actors…',
+    'Drafting the user story and acceptance criteria…',
+    'Mapping fields to Salesforce objects…',
+    'Rendering the editable wireframe…',
+  ],
+  blocks: [storyCard, wireframe],
+}
+
+// ---------- registry --------------------------------------------------------
+const DEMOS: Record<string, DemoDef> = {
+  'Business Requirements Document': brd,
+  'Estimating Factory': est,
+  'Digital Maturity Assessment': dma,
+  'Story & Design Writer': storyWire,
+}
 
 export function getDemo(item: EcoItem): DemoDef | null {
-  const arch = archFor(item)
-  if (!arch) return null
-  switch (arch) {
-    case 'storywire': return storyWireDemo(item)
-    case 'wire': return wireDemo(item)
-    case 'deck': return deckDemo(item)
-    case 'dash': return dashDemo(item)
-    case 'assess': return assessDemo(item)
-    default: return docDemo(item)
-  }
+  return DEMOS[item.name] || null
 }
 
 // ---- the runner ------------------------------------------------------------
@@ -214,7 +176,7 @@ const STEP_MS = 620
 
 export function DemoRunner({ item }: { item: EcoItem }) {
   const demo = getDemo(item)!
-  const [cur, setCur] = useState(0)          // current step index; === steps.length when done
+  const [cur, setCur] = useState(0)
   const [running, setRunning] = useState(true)
   const timers = useRef<number[]>([])
 
@@ -227,13 +189,11 @@ export function DemoRunner({ item }: { item: EcoItem }) {
     timers.current.push(window.setTimeout(() => { setCur(demo.steps.length); setRunning(false) }, demo.steps.length * STEP_MS))
   }
 
-  // (re)start whenever the capability changes; clean up timers on unmount
   useEffect(() => { start(); return clear /* eslint-disable-line */ }, [item.name])
 
   const done = !running && cur >= demo.steps.length
   const total = demo.steps.length
-  // how many artifact blocks are revealed so far, synced to progress
-  const revealed = done ? demo.blocks.length : Math.round(((cur) / total) * demo.blocks.length)
+  const revealed = done ? demo.blocks.length : Math.round((cur / total) * demo.blocks.length)
   const pct = Math.round((Math.min(cur, total) / total) * 100)
 
   return (
