@@ -2,6 +2,7 @@ import { useEffect, useMemo, useState } from 'react'
 import '../ecosystem.css'
 import { ITEMS, STAGES, STAGE_VALUE, STAGE_IMPACT, PILLARS, EcoItem } from '../data/ecosystem'
 import { LOGO_WHITE, LOGO_DARK, BADGE, ICONS } from '../data/assetsData'
+import WatchItWork from './WatchItWork'
 
 const KINDTAG: Record<string, string> = {
   Skill: 'tag-teal', Agent: 'tag-blue', 'Claude Project': 'tag-purple',
@@ -108,6 +109,7 @@ export default function EcosystemOverview() {
         <img className="logo" src={LOGO_DARK} alt="Zennify" />
         <div className="links">
           <a href="#model">The model</a>
+          <a href="#watch">See it work</a>
           <a href="#lifecycle">Lifecycle</a>
           <a href="#measure">Value</a>
           <a href="#explore">Explore</a>
@@ -144,6 +146,9 @@ export default function EcosystemOverview() {
           ))}
         </div>
       </div></section>
+
+      {/* Watch it work — generate-it demo */}
+      <WatchItWork />
 
       {/* Lifecycle */}
       <section id="lifecycle" className="lifewrap"><div className="wrap">
