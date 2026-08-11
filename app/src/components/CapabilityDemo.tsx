@@ -43,7 +43,31 @@ const Kpis = (items: { n: string; l: string }[]) => (
 const RAG = (rows: { k: string; chip: ReactNode }[]) => (
   <div className="dash-tbl">{rows.map((r, i) => <div className="tr" key={i}><span>{r.k}</span>{r.chip}</div>)}</div>
 )
-const BarChart = (hs: number[]) => <div className="dash-chart">{hs.map((h, i) => <i key={i} style={{ height: `${h}%` }} />)}</div>
+const Spark = (pts: number[], up = true) => {
+  const w = 58, h = 18, max = Math.max(...pts), min = Math.min(...pts)
+  const d = pts.map((p, i) => `${((i / (pts.length - 1)) * w).toFixed(1)},${(h - ((p - min) / ((max - min) || 1)) * h).toFixed(1)}`).join(' ')
+  return <svg className="spark" viewBox={`0 0 ${w} ${h}`} width={w} height={h}><polyline points={d} fill="none" stroke={up ? 'var(--z-teal)' : 'var(--z-orange)'} strokeWidth="1.5" strokeLinejoin="round" /></svg>
+}
+const Completion = () => {
+  const w = 240, h = 92, act = [4, 12, 22, 30, 41, 50, 62, 71, 80]
+  const ax = act.map((v, i) => `${((i / (act.length - 1)) * w).toFixed(0)},${(h - (v / 88) * h).toFixed(0)}`).join(' ')
+  return (
+    <svg viewBox={`0 0 ${w} ${h}`} width="100%" preserveAspectRatio="none" style={{ height: 92 }}>
+      <polyline points={`0,${h - 2} ${w},4`} fill="none" stroke="var(--z-purple-lt)" strokeWidth="1.5" strokeDasharray="4 3" />
+      <polyline points={ax} fill="none" stroke="var(--z-teal)" strokeWidth="2.5" strokeLinejoin="round" strokeLinecap="round" />
+    </svg>
+  )
+}
+const Donut = (val: number) => {
+  const r = 30, C = 2 * Math.PI * r
+  return (
+    <svg viewBox="0 0 76 76" width="76" height="76">
+      <circle cx="38" cy="38" r={r} fill="none" stroke="#e6ebf4" strokeWidth="8" />
+      <circle cx="38" cy="38" r={r} fill="none" stroke="var(--z-teal)" strokeWidth="8" strokeDasharray={C} strokeDashoffset={C * (1 - val / 100)} strokeLinecap="round" transform="rotate(-90 38 38)" />
+      <text x="38" y="43" textAnchor="middle" fontSize="18" fontWeight="700" fill="var(--z-dark)">{val}</text>
+    </svg>
+  )
+}
 const Bar = ({ label, score }: { label: string; score: number }) => (
   <div className="mbar"><span className="ml">{label}</span><span className="mt"><i style={{ width: `${score}%` }} /></span><b className="mv">{score}</b></div>
 )
@@ -56,16 +80,28 @@ const Story = (key: string, title: string, story: ReactNode, ac: string[], chips
     <div className="sc-chips">{chips.map((c, i) => <span key={i}>{c}</span>)}</div>
   </div>
 )
-const Wireframe = (obj: string, title: string, hl: [string, string][], fields: { label: string; warn?: boolean; req?: boolean; full?: boolean; tall?: boolean }[]) => (
-  <div className="lwf">
+type WField = { label: string; val?: string; warn?: boolean; req?: boolean; full?: boolean; tall?: boolean }
+const Wireframe = (
+  obj: string, title: string, path: string[], cur: number, hl: [string, string][],
+  fields: WField[], activity: { t: string; s: string }[], related: { r: string; s: string }[],
+) => (
+  <div className="lwf2">
     <div className="lwf-top"><span className="lwf-obj">{obj}</span><span className="lwf-title">{title}</span>
       <span className="lwf-pills"><i>Edit</i><i>Clone</i><i className="p">Save</i></span></div>
+    <div className="lwf-path">{path.map((p, i) => <span key={i} className={`pchev ${i < cur ? 'done' : i === cur ? 'cur' : ''}`}>{p}</span>)}</div>
     <div className="lwf-hl">{hl.map(([k, v], i) => <div key={i}><span>{k}</span><b>{v}</b></div>)}</div>
     <div className="lwf-tabs"><span className="on">Details</span><span>Related</span><span>Activity</span></div>
-    <div className="lwf-form">{fields.map((f, i) => (
-      <div className={`lwf-f ${f.warn ? 'warn' : ''} ${f.full ? 'full' : ''}`} key={i}>
-        <span>{f.label}{f.req ? <em>required</em> : null}</span><div className={`in ${f.tall ? 'tall' : ''}`} />
-      </div>))}</div>
+    <div className="lwf-body">
+      <div className="lwf-form">{fields.map((f, i) => (
+        <div className={`lwf-f ${f.warn ? 'warn' : ''} ${f.full ? 'full' : ''}`} key={i}>
+          <span>{f.label}{f.req ? <em>required</em> : null}</span>
+          {f.val ? <div className="inv">{f.val}</div> : <div className={`in ${f.tall ? 'tall' : ''}`} />}
+        </div>))}</div>
+      <div className="lwf-side">
+        <div className="lwf-card"><div className="lc-h">Activity</div>{activity.map((a, i) => <div className="lc-act" key={i}><b>{a.t}</b><span>{a.s}</span></div>)}</div>
+        <div className="lwf-card"><div className="lc-h">Related</div>{related.map((r, i) => <div className="lc-rel" key={i}><span>{r.r}</span><span className="lc-s">{r.s}</span></div>)}</div>
+      </div>
+    </div>
   </div>
 )
 
@@ -74,14 +110,30 @@ const brd: DemoDef = {
   input: '4 discovery workshops · Member Services', source: 'Auctor · traceable to objectives',
   steps: ['Ingesting 4 workshop transcripts…', 'Clustering needs into requirements…', 'Writing acceptance criteria…', 'Tracing each to a business objective…', 'Assembling the BRD…'],
   blocks: [
-    H('Business Requirements Document', 'Member Case Management'),
-    Table('64px 1fr 62px', ['ID', 'Requirement', 'Priority'], [
-      [<span className="rid">REQ-012</span>, <span><b>Single-screen case intake.</b> Rep captures member, branch, type, and description without leaving the page.<em>Accept:</em> a case is created from one view with zero navigation.</span>, Ch('Must', 'd')],
-      [<span className="rid">REQ-014</span>, <span><b>Capture originating branch on every case.</b><em>Accept:</em> branch is required, stored on the record, and reportable.</span>, Ch('Must', 'd')],
-      [<span className="rid">REQ-021</span>, <span><b>Auto-route to the branch queue.</b><em>Accept:</em> on submit, the case reaches the owning branch’s queue within one minute.</span>, Ch('Should', 'g')],
-    ]),
-    Note(<>Every requirement links to <b>Objective O2 — reduce follow-up leakage</b> (target: 0 dropped cases).</>),
-    Foot('27 requirements · 100% traced to objectives', 'Signed-off draft in 3 days'),
+    <div className="docx-title"><div className="dx-eyebrow">Business Requirements Document</div>
+      <b>Member Case Management</b>
+      <div className="dx-meta"><span>Regional Credit Union</span><span>Version 1.0</span><span>Prepared by Zennify</span></div></div>,
+    <div className="docx-sec"><h5>1 · Overview</h5>
+      <p>Member issues raised at a branch are logged across three disconnected systems, and the originating branch
+        is frequently lost — breaking follow-up. This document defines the requirements for a single-screen case
+        intake on Financial Services Cloud that captures, routes, and reports every member case against a defined
+        set of business objectives.</p></div>,
+    <div className="docx-sec"><h5>2 · Functional requirements</h5>
+      <div className="rtbl">
+        <div className="rr head"><span>ID</span><span>Requirement &amp; acceptance</span><span>Pri</span><span>Traces</span></div>
+        <div className="rr"><span className="rid">REQ-012</span><span><b>Single-screen case intake.</b> Capture member, branch, type, and description in one view. <em>Accept:</em> a case is created with zero navigation.</span><span><i className="ch d">Must</i></span><span className="tr">O2</span></div>
+        <div className="rr"><span className="rid">REQ-014</span><span><b>Capture originating branch.</b> <em>Accept:</em> branch is required, stored on the record, and reportable.</span><span><i className="ch d">Must</i></span><span className="tr">O3</span></div>
+        <div className="rr"><span className="rid">REQ-019</span><span><b>Duplicate detection.</b> <em>Accept:</em> warn on member + subject match within 24h; allow override.</span><span><i className="ch g">Should</i></span><span className="tr">O1</span></div>
+        <div className="rr"><span className="rid">REQ-021</span><span><b>Auto-route to branch queue.</b> <em>Accept:</em> on submit, the case reaches the owning branch’s queue within one minute.</span><span><i className="ch d">Must</i></span><span className="tr">O2</span></div>
+        <div className="rr"><span className="rid">REQ-027</span><span><b>SLA clock.</b> <em>Accept:</em> a 4-hour response timer starts on creation and surfaces on the record.</span><span><i className="ch g">Should</i></span><span className="tr">O1</span></div>
+      </div></div>,
+    <div className="docx-sec"><h5>3 · Traceability</h5>
+      <div className="tracechips">
+        <span><b>O1</b> Faster resolution · 9 reqs</span>
+        <span><b>O2</b> No dropped cases · 12 reqs</span>
+        <span><b>O3</b> Branch reporting · 6 reqs</span>
+      </div></div>,
+    <div className="doc-foot"><span>27 requirements · 100% traced to objectives</span><span className="tick">Signed-off draft in 3 days</span></div>,
   ],
 }
 
@@ -129,8 +181,14 @@ const storyWire: DemoDef = {
       <><b>As a</b> branch service rep, <b>I want</b> to log a member’s issue in one screen <b>so that</b> nothing falls through between the branch and the call center.</>,
       ['Case captures member, branch, type, and description in a single view.', 'Originating branch is required and stored on every case.', 'Submitting routes the case to the owning branch queue.'],
       ['REQ-04', 'D3 · Sprint 0', 'Story & Design Writer']),
-    Wireframe('CASE', 'New Member Case', [['Status', 'New'], ['Priority', 'Medium'], ['Branch', '—'], ['Member', '—']],
-      [{ label: 'Subject' }, { label: 'Member' }, { label: 'Case Type' }, { label: 'Branch ', warn: true, req: true }, { label: 'Description', full: true, tall: true }]),
+    Wireframe('CASE', 'New Member Case',
+      ['New', 'In progress', 'Escalated', 'Resolved', 'Closed'], 0,
+      [['Status', 'New'], ['Priority', 'Medium'], ['Branch', '—'], ['Member', 'J. Rivera']],
+      [{ label: 'Subject', val: 'Debit card declined at branch' }, { label: 'Member', val: 'J. Rivera' },
+        { label: 'Case Type', val: 'Service request' }, { label: 'Branch ', warn: true, req: true },
+        { label: 'Description', full: true, tall: true, val: 'Member reports card declined despite sufficient funds; needs urgent resolution.' }],
+      [{ t: 'Case created', s: 'by S. Chen · just now' }, { t: 'Auto-assigned', s: 'Downtown branch queue' }, { t: 'SLA started', s: '4h response target' }],
+      [{ r: 'Member · J. Rivera', s: '3 open cases' }, { r: 'Account · ****4821', s: 'Checking' }]),
   ],
 }
 
@@ -228,9 +286,48 @@ const archOverview: DemoDef = {
   input: 'Systems + integration inventory', source: 'Auctor',
   steps: ['Mapping systems…', 'Tracing integrations…', 'Capturing NFRs…', 'Assembling the overview…'],
   blocks: [
-    H('Architecture Overview', 'System landscape'),
-    Sec('Integrations', Table('1fr 92px 1fr', ['System', 'Mode', 'Data'], [['Core banking', Ch('Real-time', 't'), <>Member, accounts</>], ['MDM', Ch('Batch', 'n'), <>Golden profile</>], ['Marketing', Ch('Event', 't'), <>Consent, activity</>]])),
-    Sec('Non-functional', Bul([{ b: 'Availability', t: '99.9%' }, { b: 'Data residency', t: 'in-region' }, { b: 'Auditability', t: 'field history + event log' }])),
+    H('Architecture Overview', 'Target-state system landscape'),
+    <div className="archdiag">
+      <svg viewBox="0 0 640 300" width="100%" preserveAspectRatio="xMidYMid meet">
+        {/* connectors first (under boxes) */}
+        <g stroke="var(--z-slate)" strokeWidth="1.5" fill="none">
+          <line x1="320" y1="76" x2="320" y2="120" />
+          <line x1="320" y1="172" x2="105" y2="212" /><line x1="320" y1="172" x2="320" y2="212" /><line x1="320" y1="172" x2="535" y2="212" />
+          <line x1="470" y1="50" x2="500" y2="50" strokeDasharray="4 3" />
+        </g>
+        <g className="al" fontSize="8" fill="var(--z-slate)">
+          <text x="326" y="100">sync</text><text x="180" y="196">real-time</text><text x="326" y="196">event</text><text x="470" y="196">batch</text>
+        </g>
+        {/* experience layer */}
+        <g>
+          <rect x="170" y="22" width="300" height="54" rx="6" fill="var(--z-teal)" />
+          <text x="320" y="45" textAnchor="middle" fill="#fff" fontSize="13" fontWeight="700">Experience · Salesforce FSC</text>
+          <text x="320" y="63" textAnchor="middle" fill="#eafaf7" fontSize="10">Service · Wealth · Member 360</text>
+        </g>
+        {/* data cloud */}
+        <g>
+          <rect x="500" y="24" width="120" height="50" rx="6" fill="var(--z-teal-light)" />
+          <text x="560" y="46" textAnchor="middle" fill="var(--z-dark)" fontSize="11" fontWeight="700">Data Cloud</text>
+          <text x="560" y="62" textAnchor="middle" fill="var(--z-dark)" fontSize="9">Unified profile</text>
+        </g>
+        {/* integration layer */}
+        <g>
+          <rect x="170" y="120" width="300" height="52" rx="6" fill="var(--z-dark)" />
+          <text x="320" y="143" textAnchor="middle" fill="#fff" fontSize="12" fontWeight="700">Integration · MuleSoft</text>
+          <text x="320" y="160" textAnchor="middle" fill="rgba(255,255,255,.75)" fontSize="9">API-led · events · orchestration</text>
+        </g>
+        {/* systems row */}
+        {[['Core banking', 20], ['MDM', 235], ['Marketing', 450]].map(([n, x]) => (
+          <g key={n as string}>
+            <rect x={x as number} y="212" width="170" height="54" rx="6" fill="#fff" stroke="var(--z-purple-lt)" />
+            <text x={(x as number) + 85} y="236" textAnchor="middle" fill="var(--z-dark)" fontSize="11" fontWeight="700">{n}</text>
+            <text x={(x as number) + 85} y="252" textAnchor="middle" fill="var(--z-slate)" fontSize="9">system of record</text>
+          </g>
+        ))}
+      </svg>
+    </div>,
+    <div className="arch-nfr"><span className="nfr-l">Non-functional</span>
+      <span>Availability <b>99.9%</b></span><span>Data residency <b>in-region</b></span><span>Audit <b>field history + event log</b></span></div>,
   ],
 }
 
@@ -273,10 +370,27 @@ const dashboard: DemoDef = {
   input: 'Integrated delivery data', source: 'Auctor · live',
   steps: ['Connecting to project systems…', 'Aggregating metrics…', 'Rendering charts…', 'Publishing the view…'],
   blocks: [
-    H('Project Overview', 'Live · refreshed 2 min ago'),
-    Kpis([{ n: '86%', l: 'On track' }, { n: '6/8', l: 'Sprints done' }, { n: '12', l: 'Open risks' }, { n: '94%', l: 'Velocity' }]),
-    BarChart([55, 72, 48, 83, 66, 90, 77]),
-    RAG([{ k: 'Discovery', chip: Ch('Complete', 'g') }, { k: 'Design', chip: Ch('Complete', 'g') }, { k: 'Build', chip: Ch('In progress', 'a') }, { k: 'UAT', chip: Ch('Upcoming', 'n') }]),
+    <div className="db-head"><b>Project Overview</b><span className="db-live"><i />Live · refreshed 2 min ago</span></div>,
+    <div className="db-tiles">
+      {[{ n: '86%', l: 'On track', d: '+4', up: true, s: [70, 74, 78, 80, 82, 86] },
+        { n: '6/8', l: 'Sprints done', d: 'on plan', up: true, s: [1, 2, 3, 4, 5, 6] },
+        { n: '12', l: 'Open risks', d: '-3', up: true, s: [18, 17, 15, 14, 13, 12] },
+        { n: '94%', l: 'Velocity', d: '+6', up: true, s: [80, 84, 88, 90, 92, 94] }].map((t, i) => (
+        <div className="db-tile" key={i}>
+          <div className="dt-top"><div className="dt-n">{t.n}</div>{Spark(t.s, t.up)}</div>
+          <div className="dt-l">{t.l}<i className={t.d.startsWith('-') || t.up ? 'up' : 'down'}>{t.d}</i></div>
+        </div>))}
+    </div>,
+    <div className="db-charts">
+      <div className="db-card"><div className="dbc-h">Completion vs plan <span>wk 6 of 12</span></div><Completion /></div>
+      <div className="db-card health"><div className="dbc-h">Health score</div><div className="db-donut">{Donut(86)}<span className="hgood">On track</span></div></div>
+    </div>,
+    <div className="db-ws">
+      {[['Discovery', 100, 'g', 'Complete'], ['Design', 100, 'g', 'Complete'], ['Build', 62, 'a', 'In progress'], ['UAT', 0, 'n', 'Upcoming']].map((r, i) => (
+        <div className="wsr" key={i}><span className="wsn">{r[0] as string}</span>
+          <span className="wsbar"><i style={{ width: `${r[1] as number}%` }} /></span>
+          <span className="wsp">{r[1] as number}%</span><i className={`ch ${r[2]}`}>{r[3] as string}</i></div>))}
+    </div>,
   ],
 }
 
@@ -297,8 +411,14 @@ const uiMock: DemoDef = {
   input: 'Described screen · Financial Account', source: 'Claude · Lightning components',
   steps: ['Reading the described screen…', 'Selecting Lightning components…', 'Laying out fields & sections…', 'Rendering the mock…'],
   blocks: [
-    Wireframe('FIN ACCT', 'Wealth Account — J. Rivera', [['Type', 'Investment'], ['Status', 'Active'], ['Balance', '$248,900'], ['Advisor', '—']],
-      [{ label: 'Account name' }, { label: 'Primary owner' }, { label: 'Risk profile' }, { label: 'Advisor ', warn: true, req: true }, { label: 'Notes', full: true, tall: true }]),
+    Wireframe('FIN ACCT', 'Wealth Account — J. Rivera',
+      ['Prospect', 'Onboarding', 'Funded', 'Active', 'Review'], 3,
+      [['Type', 'Investment'], ['Status', 'Active'], ['Balance', '$248,900'], ['Advisor', '—']],
+      [{ label: 'Account name', val: 'Rivera Family Trust' }, { label: 'Primary owner', val: 'J. Rivera' },
+        { label: 'Risk profile', val: 'Moderate' }, { label: 'Advisor ', warn: true, req: true },
+        { label: 'Notes', full: true, tall: true, val: 'Rollover from prior custodian complete; schedule Q3 review.' }],
+      [{ t: 'Funded', s: '$248,900 · 2 days ago' }, { t: 'KYC complete', s: 'verified' }, { t: 'Opened', s: 'by M. Lee' }],
+      [{ r: 'Holdings', s: '12 positions' }, { r: 'Beneficiaries', s: '2 listed' }]),
   ],
 }
 

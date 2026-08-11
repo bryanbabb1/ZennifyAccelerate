@@ -174,10 +174,11 @@ export default function EcosystemOverview() {
             {caps.length ? caps.map(c => {
               const m = mstate(c)
               return (
-                <div className="cap" key={c.name} onClick={() => setDrawer(c)}>
+                <div className={`cap ${getDemo(c) ? 'hasdemo' : ''}`} key={c.name} onClick={() => setDrawer(c)}>
+                  {getDemo(c) ? <span className="bolt" title="See it in action">⚡</span> : null}
                   <div className="top"><span className="nm">{c.name}</span><span className={`tag ${KINDTAG[c.kind] || 'tag-slate'} kt`}>{c.kind}</span></div>
                   <p>{(c.desc || '').slice(0, 120)}</p>
-                  <div style={{ marginTop: 8 }}><span className={`mstate ${m[0]}`}>{m[1]}</span>{getDemo(c) ? <span className="demoflag" title="See it in action">⚡ Live demo</span> : null}</div>
+                  <div style={{ marginTop: 8 }}><span className={`mstate ${m[0]}`}>{m[1]}</span></div>
                 </div>
               )
             }) : <div className="cap"><p>Cross-cutting capabilities support this stage.</p></div>}
@@ -243,13 +244,13 @@ export default function EcosystemOverview() {
               {list.map(a => {
                 const m = mstate(a)
                 return (
-                  <div className="item" key={a.name} onClick={() => setDrawer(a)}>
+                  <div className={`item ${getDemo(a) ? 'hasdemo' : ''}`} key={a.name} onClick={() => setDrawer(a)}>
+                    {getDemo(a) ? <span className="bolt" title="See it in action">⚡</span> : null}
                     <div className="top"><span className="nm">{a.name}</span><span className={`tag ${KINDTAG[a.kind] || 'tag-slate'} kt`}>{a.kind}</span></div>
                     <div className="desc">{(a.desc || '').slice(0, 105)}{(a.desc || '').length > 105 ? '…' : ''}</div>
                     {a.headline ? <div className="qstat">{a.before && a.after ? <span className="qba"><b className="qb">{a.before}</b> → <b className="qa">{a.after}</b></span> : null}<span className="qh">{a.headline}</span></div> : null}
                     <div className="foot">
                       <span className={`mstate ${m[0]}`}>{m[1]}</span>
-                      {getDemo(a) ? <span className="demoflag" title="See it in action">⚡ Live demo</span> : null}
                       {(a.stages || []).slice(0, 3).map(s => <span className="sc" key={s}>{s.toUpperCase()}</span>)}
                     </div>
                   </div>
