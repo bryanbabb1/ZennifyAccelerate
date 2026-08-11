@@ -321,3 +321,27 @@
 .eco .wiw .ri,.eco .wiw .re{font-style:normal;font-size:9.5px;font-weight:700;padding:2px 7px;border-radius:20px;white-space:nowrap}
 .eco .wiw .ri.hi{background:var(--z-teal);color:#fff}.eco .wiw .ri.md{background:var(--z-teal-light);color:var(--z-dark)}
 .eco .wiw .re.hi{background:#fff3e0;color:var(--z-orange)}.eco .wiw .re.md{background:var(--z-lt);color:var(--z-slate)}.eco .wiw .re.lo{background:var(--z-mint);color:var(--z-dark)}
+
+/* demo indicator badge on cards */
+.eco .demoflag{font-size:9.5px;font-weight:700;color:var(--z-orange);background:#fff3e0;border-radius:20px;padding:2px 8px;letter-spacing:.2px;white-space:nowrap}
+.eco .item .foot{flex-wrap:wrap}
+/* generic demo primitives */
+.eco .wiw .gtbl{border:1px solid var(--z-purple-lt);border-radius:var(--z-radius);overflow:hidden}
+.eco .wiw .gtbl .gr{display:grid;gap:10px;padding:9px 13px;border-bottom:1px solid var(--z-purple-lt);font-size:12px;color:var(--z-dark);align-items:center;line-height:1.45}
+.eco .wiw .gtbl .gr:last-child{border-bottom:none}
+.eco .wiw .gtbl .gr.head{background:var(--z-lt);font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.4px;color:var(--z-slate)}
+.eco .wiw .gtbl .gr b{color:var(--z-dark)}
+.eco .wiw .gtbl .gr em{font-style:normal;color:var(--z-slate);font-weight:700;margin-left:4px}
+.eco .wiw .ch{font-style:normal;font-size:10px;font-weight:700;padding:2px 8px;border-radius:20px;white-space:nowrap;display:inline-block}
+.eco .wiw .ch.g{background:var(--z-mint);color:var(--z-dark)}
+.eco .wiw .ch.a{background:#fff3e0;color:var(--z-orange)}
+.eco .wiw .ch.r{background:var(--z-orange);color:#fff}
+.eco .wiw .ch.n{background:var(--z-lt);color:var(--z-slate)}
+.eco .wiw .ch.t{background:var(--z-teal);color:#fff}
+.eco .wiw .ch.d{background:var(--z-dark);color:#fff}
+.eco .wiw .tl{padding-left:16px}
+.eco .wiw .tl .ti{position:relative;padding:0 0 12px 4px;font-size:12px;color:var(--z-dark);line-height:1.4}
+.eco .wiw .tl .ti::before{content:'';position:absolute;left:-12px;top:3px;width:8px;height:8px;border-radius:50%;background:var(--z-teal);z-index:1}
+.eco .wiw .tl .ti::after{content:'';position:absolute;left:-9px;top:10px;bottom:-2px;width:2px;background:var(--z-purple-lt)}
+.eco .wiw .tl .ti:last-child::after{display:none}
+.eco .wiw .tl .tt{font-weight:700;color:var(--z-teal);font-size:11px;margin-right:8px}
