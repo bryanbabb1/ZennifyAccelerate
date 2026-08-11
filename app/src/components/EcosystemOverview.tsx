@@ -2,7 +2,7 @@ import { useEffect, useMemo, useState } from 'react'
 import '../ecosystem.css'
 import { ITEMS, STAGES, STAGE_VALUE, STAGE_IMPACT, PILLARS, EcoItem } from '../data/ecosystem'
 import { LOGO_WHITE, LOGO_DARK, BADGE, ICONS } from '../data/assetsData'
-import WatchItWork from './WatchItWork'
+import { getDemo, DemoRunner } from './CapabilityDemo'
 
 const KINDTAG: Record<string, string> = {
   Skill: 'tag-teal', Agent: 'tag-blue', 'Claude Project': 'tag-purple',
@@ -25,6 +25,8 @@ export default function EcosystemOverview() {
   const [q, setQ] = useState('')
   const [catalogOpen, setCatalogOpen] = useState(false)
   const [drawer, setDrawer] = useState<EcoItem | null>(null)
+  const [demoOn, setDemoOn] = useState(false)
+  useEffect(() => { setDemoOn(false) }, [drawer])
   // Hydrate from last-known-good live data cached in localStorage so returning
   // visitors see the full, correct set instantly instead of the smaller baked
   // fallback flipping ~seconds later. Falls back to the baked ITEMS on first visit.
@@ -109,7 +111,6 @@ export default function EcosystemOverview() {
         <img className="logo" src={LOGO_DARK} alt="Zennify" />
         <div className="links">
           <a href="#model">The model</a>
-          <a href="#watch">See it work</a>
           <a href="#lifecycle">Lifecycle</a>
           <a href="#measure">Value</a>
           <a href="#explore">Explore</a>
@@ -146,9 +147,6 @@ export default function EcosystemOverview() {
           ))}
         </div>
       </div></section>
-
-      {/* Watch it work — generate-it demo */}
-      <WatchItWork />
 
       {/* Lifecycle */}
       <section id="lifecycle" className="lifewrap"><div className="wrap">
@@ -265,16 +263,27 @@ export default function EcosystemOverview() {
 
       <footer><div className="wrap"><span className="c">&copy; 2026 Zennify &middot; AI Ecosystem Overview</span><img src={BADGE} alt="Zennify" /></div></footer>
 
-      {/* Drawer */}
+      {/* Modal */}
       <div className={`scrim ${drawer ? 'on' : ''}`} onClick={() => setDrawer(null)} />
       <div className={`drawer ${drawer ? 'on' : ''}`}>
         {drawer && (() => {
           const m = mstate(drawer)
           const stages = (drawer.stages || [])
+          const hasDemo = !!getDemo(drawer)
           return (
             <>
               <button className="close" onClick={() => setDrawer(null)}>&times;</button>
-              <div className="dhead"><span className={`tag ${KINDTAG[drawer.kind] || 'tag-slate'}`}>{drawer.kind}</span><h3>{drawer.name}</h3></div>
+              <div className="dhead">
+                <span className={`tag ${KINDTAG[drawer.kind] || 'tag-slate'}`}>{drawer.kind}</span><h3>{drawer.name}</h3>
+                {hasDemo ? (
+                  <button className={`seeit ${demoOn ? 'back' : ''}`} onClick={() => setDemoOn(v => !v)}>
+                    {demoOn ? '‹ Back to details' : '▸ See it in action'}
+                  </button>
+                ) : null}
+              </div>
+              {demoOn && hasDemo ? (
+                <div className="dbody demo-body"><DemoRunner item={drawer} /></div>
+              ) : (
               <div className="dbody">
                 <div className="lbl">What it is</div>
                 <div className="val">{drawer.desc || 'A capability in the Zennify AI ecosystem.'}</div>
@@ -318,6 +327,7 @@ export default function EcosystemOverview() {
                 <div className="lbl">Lifecycle stage</div>
                 <div className="row">{stages.length ? stages.map(s => <span className="tag tag-dark" key={s}>{stageName[s] || s}</span>) : <span className="tag tag-mint">Runs across the lifecycle</span>}</div>
               </div>
+              )}
             </>
           )
         })()}
