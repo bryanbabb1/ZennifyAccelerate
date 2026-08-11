@@ -277,3 +277,47 @@
 .eco .wiw .finding .dot{width:9px;height:9px;border-radius:50%;flex:none;margin-top:4px}
 .eco .wiw .finding .dot.r{background:var(--z-orange)}.eco .wiw .finding .dot.a{background:#f0c000}.eco .wiw .finding .dot.n{background:var(--z-teal)}
 @media(max-width:760px){.eco .demo-grid{grid-template-columns:1fr}.eco .wiw .kpis{grid-template-columns:1fr 1fr}.eco .wiw .deck-row{grid-template-columns:1fr}}
+
+/* Rich demo artifacts (BRD, Estimating, Maturity) */
+.eco .wiw .doc-h.nofill{border:none;padding:0}
+/* requirement table (BRD) */
+.eco .wiw .reqtbl{border:1px solid var(--z-purple-lt);border-radius:var(--z-radius);overflow:hidden}
+.eco .wiw .reqrow{display:grid;grid-template-columns:64px 1fr 62px;gap:10px;padding:10px 13px;border-bottom:1px solid var(--z-purple-lt);font-size:12px;line-height:1.45;color:var(--z-dark)}
+.eco .wiw .reqrow:last-child{border-bottom:none}
+.eco .wiw .reqrow.head{background:var(--z-lt);font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.4px;color:var(--z-slate)}
+.eco .wiw .reqrow .rid{font-weight:700;color:var(--z-teal);font-size:11px}
+.eco .wiw .reqrow em{font-style:normal;color:var(--z-slate);font-weight:700;margin-left:4px}
+.eco .wiw .pr{font-style:normal;font-size:10px;font-weight:700;padding:2px 8px;border-radius:20px;white-space:nowrap}
+.eco .wiw .pr.must{background:var(--z-dark);color:#fff}.eco .wiw .pr.should{background:var(--z-mint);color:var(--z-dark)}
+.eco .wiw .trace{background:var(--z-ice);border-radius:var(--z-radius);padding:11px 13px;font-size:12px;color:var(--z-dark);line-height:1.5}
+/* estimate table */
+.eco .wiw .esttbl{border:1px solid var(--z-purple-lt);border-radius:var(--z-radius);overflow:hidden}
+.eco .wiw .estrow{display:grid;grid-template-columns:1fr 70px 90px;gap:10px;align-items:center;padding:9px 13px;border-bottom:1px solid var(--z-purple-lt);font-size:12.5px;color:var(--z-dark)}
+.eco .wiw .estrow:last-child{border-bottom:none}
+.eco .wiw .estrow.head{background:var(--z-lt);font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.4px;color:var(--z-slate)}
+.eco .wiw .estrow .h{font-weight:700;text-align:right}
+.eco .wiw .estrow.total{background:var(--z-dark);color:#fff;font-weight:700}
+.eco .wiw .estrow.total .h{color:var(--z-teal-light);font-size:15px}
+.eco .wiw .cf{font-style:normal;font-size:10px;font-weight:700;padding:2px 8px;border-radius:20px}
+.eco .wiw .cf.hi{background:var(--z-mint);color:var(--z-dark)}.eco .wiw .cf.md{background:#fff3e0;color:var(--z-orange)}
+.eco .wiw .estvar{display:flex;align-items:center;gap:14px;background:var(--z-ice);border-radius:var(--z-radius);padding:12px 15px}
+.eco .wiw .estvar .ev-n{font-size:30px;font-weight:700;color:var(--z-teal);line-height:1}
+.eco .wiw .estvar .ev-t b{display:block;font-size:13px;color:var(--z-dark)}
+.eco .wiw .estvar .ev-t span{font-size:11.5px;color:var(--z-slate)}
+/* maturity assessment */
+.eco .wiw .dma-top{display:flex;align-items:center;justify-content:space-between;gap:10px}
+.eco .wiw .tier{font-size:11px;font-weight:700;color:#fff;background:var(--z-teal);border-radius:20px;padding:4px 12px;white-space:nowrap}
+.eco .wiw .mbars{display:flex;flex-direction:column;gap:9px;background:#fff;border:1px solid var(--z-purple-lt);border-radius:var(--z-radius);padding:14px 16px}
+.eco .wiw .mbar{display:grid;grid-template-columns:130px 1fr 26px;gap:10px;align-items:center}
+.eco .wiw .mbar .ml{font-size:11.5px;color:var(--z-dark)}
+.eco .wiw .mbar .mt{height:8px;background:var(--z-lt);border-radius:5px;overflow:hidden}
+.eco .wiw .mbar .mt i{display:block;height:100%;background:var(--z-teal);border-radius:5px}
+.eco .wiw .mbar .mv{font-size:12px;font-weight:700;color:var(--z-dark);text-align:right}
+.eco .wiw .recs{background:var(--z-ice);border-radius:var(--z-radius);padding:13px 15px}
+.eco .wiw .rec-l{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;color:var(--z-slate);margin-bottom:9px}
+.eco .wiw .rec{display:flex;justify-content:space-between;align-items:center;gap:10px;padding:7px 0;border-top:1px solid rgba(28,74,77,.1);font-size:12.5px;color:var(--z-dark)}
+.eco .wiw .rec:first-of-type{border-top:none}
+.eco .wiw .rc{display:flex;gap:6px;flex:none}
+.eco .wiw .ri,.eco .wiw .re{font-style:normal;font-size:9.5px;font-weight:700;padding:2px 7px;border-radius:20px;white-space:nowrap}
+.eco .wiw .ri.hi{background:var(--z-teal);color:#fff}.eco .wiw .ri.md{background:var(--z-teal-light);color:var(--z-dark)}
+.eco .wiw .re.hi{background:#fff3e0;color:var(--z-orange)}.eco .wiw .re.md{background:var(--z-lt);color:var(--z-slate)}.eco .wiw .re.lo{background:var(--z-mint);color:var(--z-dark)}
