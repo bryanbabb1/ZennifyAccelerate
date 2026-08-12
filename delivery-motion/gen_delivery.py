@@ -1,7 +1,7 @@
 # Zennify deck: "AI-Enabled Services Delivery". Mirrors the GESA spine:
 # Constraint/Starved/Enabled funnel with the constraint marching down, and the
 # human-in-the-loop "machine assembles / your people decide" effort shift.
-import base64, json, math
+import base64, json, math, os
 
 SK = "/root/.claude/skills/synced/zennify-html-artifacts"
 FONTS=f"{SK}/assets/fonts"; LOGOS=f"{SK}/assets/logos"
@@ -13,6 +13,7 @@ def font_css():
     return "".join(f"@font-face{{font-family:'DM Sans';font-weight:{w};font-style:{s};src:url('data:font/truetype;base64,{b64(f'{FONTS}/{fn}')}') format('truetype')}}\n" for fn,w,s in faces)
 def logo(fn): return f"data:image/png;base64,{b64(f'{LOGOS}/{fn}')}"
 WHITE,DARK,BADGE=logo("zennify_logo_white.png"),logo("zennify_logo_dark.png"),logo("zennify_badge.png")
+CITY=f"data:image/jpeg;base64,{b64(os.path.join(os.path.dirname(os.path.abspath(__file__)),'city.jpg'))}"
 
 TOKENS=""":root{--z-dark:#1C4A4D;--z-teal:#27BBAF;--z-teal-light:#62D7B8;--z-mint:#B0EDD3;
 --z-white:#FFFFFF;--z-lt:#F2F4F9;--z-ice:#E8F7F6;--z-orange:#FE9732;--z-blue:#3D81F6;
@@ -48,15 +49,15 @@ h1{font-size:37px;font-weight:700;line-height:1.06;letter-spacing:-.5px;color:va
 .dots{display:flex;gap:6px}.dot{width:7px;height:7px;border-radius:50%;background:rgba(255,255,255,.3);cursor:pointer}.dot.on{background:var(--z-teal-light)}
 .count{font-size:11px;color:rgba(255,255,255,.7);font-weight:500;min-width:38px;text-align:center}
 .prog{position:fixed;top:0;left:0;height:3px;background:var(--z-teal);z-index:90;transition:width .3s}
-.cover{display:grid;grid-template-columns:1.12fr .88fr;height:100%}
-.cover .l{background:var(--z-dark);color:#fff;padding:48px;display:flex;flex-direction:column}
-.cover .r{background:var(--z-ice);display:flex;align-items:center;justify-content:center;padding:44px}
-.cover h1{color:#fff;font-size:36px;margin-top:auto}
-.cover .sub{color:rgba(255,255,255,.82);font-size:15px;line-height:1.55;margin-top:16px;max-width:450px}
-.motif{display:flex;flex-direction:column;gap:8px;align-items:center;width:100%}
-.motif .mseg{height:38px;border-radius:var(--z-radius);display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;color:#fff;background:var(--z-teal)}
-.motif .mseg.d{background:var(--z-dark)}.motif .marr{color:var(--z-slate);font-size:12px;line-height:.3}
-.covmark{width:190px;height:190px;border-radius:34px}
+.slide.cover{background:#fff}
+.cover .wm{position:absolute;top:34px;right:48px;height:26px;z-index:4}
+.cover .inner{position:absolute;top:0;left:0;padding:56px 52px 0;z-index:3}
+.cover h1{color:var(--z-dark);font-size:46px;font-weight:500;letter-spacing:-.6px;line-height:1.04;margin:0;max-width:600px}
+.cover .sub{margin-top:14px;font-size:12px;letter-spacing:1.7px;text-transform:uppercase;font-weight:700;color:var(--z-teal)}
+.cover .metaline{margin-top:20px;font-size:12px;color:var(--z-slate);font-weight:500;line-height:1.65;max-width:440px}
+.cover .city{position:absolute;left:0;right:0;bottom:0;width:100%;height:57%;object-fit:cover;object-position:50% 100%;z-index:1;pointer-events:none}
+.cover .cityfade{position:absolute;left:0;right:0;top:43%;height:92px;z-index:2;background:linear-gradient(to bottom,#fff 0%,rgba(255,255,255,.72) 40%,rgba(255,255,255,0) 100%);pointer-events:none}
+.cover .legal{position:absolute;left:52px;bottom:16px;font-size:9px;letter-spacing:.6px;color:rgba(255,255,255,.95);font-weight:700;z-index:5;text-shadow:0 1px 3px rgba(11,34,36,.5)}
 .cols2{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-top:22px}
 .card{background:var(--z-lt);border-radius:var(--z-radius);padding:20px 22px}
 .card.out{background:var(--z-white);border:1px solid var(--z-purple-lt)}
@@ -398,19 +399,18 @@ def res_chart():
             f'<path d="{lt}" fill="none" stroke="var(--z-teal)" stroke-width="2.5" stroke-linecap="round"/>{dt}{di}</svg>')
 
 SL=[]
-motif=('<div class="motif">'
- '<div class="mseg" style="width:100%">Intake</div><div class="marr">&darr;</div>'
- '<div class="mseg" style="width:84%">Design</div><div class="marr">&darr;</div>'
- '<div class="mseg d" style="width:68%">Build</div><div class="marr">&darr;</div>'
- '<div class="mseg" style="width:54%">Test</div><div class="marr">&darr;</div>'
- '<div class="mseg" style="width:42%">Release</div></div>')
 # 0 cover
-SL.append(f'''<div class="slide dark active" data-i="0"><div class="cover">
-<div class="l"><img class="logo" src="{WHITE}" alt="Zennify" style="margin-bottom:auto">
-<span class="eyebrow rv">AI-enabled services delivery</span>
+SL.append(f'''<div class="slide cover active" data-i="0">
+<img class="wm rv" src="{DARK}" alt="Zennify">
+<div class="inner">
 <h1 class="rv">Your teams, delivering on an AI value chain.</h1>
-<p class="sub rv">We reapply the skills, agents, and processes proven across our delivery work, and enable them inside your teams&rsquo; own implementation lifecycle, one part at a time.</p>
-</div><div class="r"><img class="covmark" src="{BADGE}" alt="Zennify"></div></div></div>''')
+<div class="sub rv">AI-enabled services delivery</div>
+<div class="metaline rv">We reapply the skills, agents, and processes proven across our delivery work &mdash; enabled inside your teams&rsquo; own implementation lifecycle, one part at a time.</div>
+</div>
+<span class="cityfade"></span>
+<img class="city" src="{CITY}" alt="">
+<span class="legal">&copy; 2026 Zennify &middot; Confidential</span>
+</div>''')
 # 1 what changed
 SL.append(f'''<div class="slide" data-i="1"><div class="pad">
 <span class="eyebrow rv">What changed</span>
