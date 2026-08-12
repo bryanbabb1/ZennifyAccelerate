@@ -122,7 +122,7 @@ h1{font-size:37px;font-weight:700;line-height:1.06;letter-spacing:-.5px;color:va
 .pout{background:var(--z-white);border:1px solid var(--z-purple-lt);border-radius:var(--z-radius);overflow:hidden;display:flex;flex-direction:column}
 .pouth{padding:8px 14px;background:var(--z-lt);border-bottom:1px solid var(--z-purple-lt);font-size:11px;font-weight:700;color:var(--z-dark);display:flex;justify-content:space-between;align-items:center}
 .pouth .flag{font-size:9px;font-weight:700;letter-spacing:.4px;text-transform:uppercase;color:var(--z-teal)}
-.poutb{padding:13px;overflow:auto;flex:1}
+.poutb{padding:13px;overflow:auto;flex:1;display:flex;flex-direction:column;min-height:0}
 .pgen{display:flex;flex-direction:column;align-items:center;justify-content:center;height:100%;gap:12px;color:var(--z-slate)}
 .spin{width:16px;height:16px;border-radius:50%;border:2px solid rgba(39,187,175,.3);border-top-color:var(--z-teal);animation:sp .7s linear infinite}
 @keyframes sp{to{transform:rotate(360deg)}}
@@ -168,7 +168,8 @@ h1{font-size:37px;font-weight:700;line-height:1.06;letter-spacing:-.5px;color:va
 .awf .wact::before{content:'';position:absolute;left:11px;top:11px;width:6px;height:6px;border-radius:50%;background:var(--z-teal)}
 .awf .wact b{font-size:10.5px;color:var(--z-dark)}.awf .wact span{font-size:9.5px;color:var(--z-slate);display:block}
 .whint{font-size:10.5px;color:var(--z-teal);font-style:italic;margin-top:8px}
-.adiag{background:var(--z-lt);border-radius:var(--z-radius);padding:8px 10px}
+.adiag{background:var(--z-lt);border-radius:var(--z-radius);padding:8px 10px;flex:1;min-height:0;display:flex;align-items:center;justify-content:center}
+.adiag svg{height:100%;width:100%}
 .atc{display:grid;grid-template-columns:52px 1fr 1fr;gap:8px;padding:6px 0;border-bottom:1px solid var(--z-purple-lt);font-size:11px;line-height:1.3}
 .atc:last-child{border:none}.atc b{color:var(--z-teal);font-size:10px}.atc .ex{color:var(--z-slate)}
 .acov{font-size:11px;color:var(--z-slate);font-style:italic;margin-top:7px}
@@ -211,19 +212,19 @@ h1{font-size:37px;font-weight:700;line-height:1.06;letter-spacing:-.5px;color:va
 /* modal */
 .mscrim{position:fixed;inset:0;background:rgba(28,74,77,.5);opacity:0;pointer-events:none;transition:opacity .18s;z-index:70}
 .mscrim.on{opacity:1;pointer-events:auto}
-.modal{position:fixed;top:50%;left:50%;transform:translate(-50%,-48%) scale(.98);width:720px;max-width:94vw;background:#fff;border-radius:var(--z-radius);z-index:71;opacity:0;pointer-events:none;transition:opacity .18s,transform .18s;overflow:hidden}
+.modal{position:fixed;top:50%;left:50%;transform:translate(-50%,-48%) scale(.98);width:840px;max-width:94vw;background:#fff;border-radius:var(--z-radius);z-index:71;opacity:0;pointer-events:none;transition:opacity .18s,transform .18s;overflow:hidden}
 .modal.on{opacity:1;pointer-events:auto;transform:translate(-50%,-50%) scale(1)}
-.modal .mh{background:var(--z-dark);color:#fff;padding:30px 36px;position:relative}
+.modal .mh{background:var(--z-dark);color:#fff;padding:36px 44px;position:relative}
 .modal .mh .mt{font-size:12px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:var(--z-teal-light)}
-.modal .mh h3{font-size:30px;font-weight:700;color:#fff;margin-top:10px;line-height:1.1}
+.modal .mh h3{font-size:35px;font-weight:700;color:#fff;line-height:1.1}
 .modal .mclose{position:absolute;top:22px;right:24px;background:rgba(255,255,255,.14);border:none;color:#fff;width:34px;height:34px;border-radius:var(--z-radius);font-size:18px;cursor:pointer}
-.modal .mb{padding:28px 36px 32px}
-.modal .msum{font-size:16px;line-height:1.6;color:var(--z-dark)}
-.modal .msec{font-size:11px;font-weight:700;letter-spacing:.8px;text-transform:uppercase;color:var(--z-teal);margin:22px 0 12px}
+.modal .mb{padding:34px 44px 40px}
+.modal .msum{font-size:19px;line-height:1.6;color:var(--z-dark)}
+.modal .msec{font-size:12.5px;font-weight:700;letter-spacing:.8px;text-transform:uppercase;color:var(--z-teal);margin:26px 0 14px}
 .modal ul{list-style:none;display:flex;flex-direction:column;gap:9px}
-.modal li{position:relative;padding-left:18px;font-size:14px;line-height:1.5;color:var(--z-dark)}
-.modal li::before{content:'\25CF';position:absolute;left:0;top:6px;font-size:6px;color:var(--z-teal)}
-.modal .mcols{display:grid;grid-template-columns:1fr 1fr;gap:30px}
+.modal li{position:relative;padding-left:20px;font-size:16px;line-height:1.55;color:var(--z-dark);margin-bottom:6px}
+.modal li::before{content:'\25CF';position:absolute;left:0;top:7px;font-size:7px;color:var(--z-teal)}
+.modal .mcols{display:grid;grid-template-columns:1fr 1fr;gap:38px}
 /* steps + close */
 .steps{display:flex;gap:10px;margin-top:24px}
 .pstep{flex:1;background:var(--z-lt);border-radius:var(--z-radius);padding:18px}
@@ -284,10 +285,10 @@ A_DESIGN=('<div class="atbl">'
           '<div class="atr"><span class="al">Reporting</span><span class="ar">Cases by branch, by type, by SLA status</span></div></div>'
           '<div class="acall"><b>Decision:</b> configuration over code &mdash; Flow-based routing keeps it admin-maintainable and auditable.</div>'
           '<div class="hgate"><span class="hgi">&#10003;</span><b>Your architect owns the design</b> &mdash; accept, change, or reject.</div>')
-A_DIAG=('<div class="adiag"><svg viewBox="0 0 440 236" width="100%" preserveAspectRatio="xMidYMid meet">'
+A_DIAG=('<div class="adiag"><svg viewBox="0 0 440 244" width="100%" preserveAspectRatio="xMidYMid meet">'
         '<g stroke="var(--z-slate)" stroke-width="1.5" fill="none">'
         '<line x1="220" y1="60" x2="220" y2="94"/><line x1="220" y1="138" x2="110" y2="172"/><line x1="200" y1="196" x2="240" y2="196"/></g>'
-        '<g font-size="8" fill="var(--z-slate)"><text x="226" y="82">user action</text><text x="203" y="190">platform event</text></g>'
+        '<g font-size="8" fill="var(--z-slate)"><text x="226" y="82">user action</text><text x="220" y="234" text-anchor="middle">platform event</text></g>'
         '<g><rect x="90" y="16" width="260" height="44" rx="6" fill="var(--z-teal)"/>'
         '<text x="220" y="35" text-anchor="middle" fill="#fff" font-size="12" font-weight="700">Experience</text>'
         '<text x="220" y="50" text-anchor="middle" fill="#eafaf7" font-size="9">Lightning record page + quick action</text></g>'
@@ -542,7 +543,7 @@ SL.append(f'''<div class="slide dark close" data-i="11"><div class="pad" style="
 <span class="eyebrow rv">AI-enabled services delivery</span>
 <h1 class="rv">A delivery lifecycle that gets faster every time you run it.</h1>
 <p class="lead rv">Let&rsquo;s start with the stage that costs you the most, prove it on your data, and enable the rest of the lifecycle together.</p>
-<span class="cta rv">Map your accelerated delivery lifecycle</span>
+<span class="cta rv">Map your AI accelerated delivery lifecycle</span>
 </div>{foot()}</div>''')
 
 N=len(SL)
@@ -575,7 +576,7 @@ function paintFunnel(){{
   else{{el.classList.add('starved');st.textContent='Starved';}}
  }}
  const p=PH[Math.min(phase,PH.length-1)];
- document.getElementById('fp-k').textContent=p.k;document.getElementById('fp-b').innerHTML=p.b;document.getElementById('fp-note').innerHTML=p.note;
+ document.getElementById('fp-k').innerHTML=p.k;document.getElementById('fp-b').innerHTML=p.b;document.getElementById('fp-note').innerHTML=p.note;
  document.getElementById('enbtn').textContent=phase>=NP?'↻ Reset':'Enable next phase →';
 }}
 function nextPhase(){{phase=phase>=NP?0:phase+1;paintFunnel();}}
