@@ -1,10 +1,10 @@
-# Zennify deck: "AI-Enabled Services Delivery" (client-facing, about enabling the
-# client's teams). Bottleneck funnel + manual, deep, differentiated generate pipeline +
-# results-cascade + skills rolodex. No time-savings estimates on the funnel.
-import base64, json
+# Zennify deck: "AI-Enabled Services Delivery". Mirrors the GESA spine:
+# Constraint/Starved/Enabled funnel with the constraint marching down, and the
+# human-in-the-loop "machine assembles / your people decide" effort shift.
+import base64, json, math
 
 SK = "/root/.claude/skills/synced/zennify-html-artifacts"
-FONTS=f"{SK}/assets/fonts"; LOGOS=f"{SK}/assets/logos"; ICONS=f"{SK}/assets/icons"
+FONTS=f"{SK}/assets/fonts"; LOGOS=f"{SK}/assets/logos"
 def b64(p):
     with open(p,"rb") as f: return base64.b64encode(f.read()).decode()
 def font_css():
@@ -25,12 +25,12 @@ html,body{width:100%;height:100%;background:#0e2a2c;overflow:hidden;font-family:
 #deck{position:relative;width:100vw;height:100vh;display:flex;align-items:center;justify-content:center}
 .slide{position:absolute;width:960px;height:540px;overflow:hidden;display:none;flex-direction:column;background:var(--z-white);transform-origin:center center}
 .slide.active{display:flex}.slide.dark{background:var(--z-dark);color:#fff}
-.pad{padding:38px 48px;flex:1;display:flex;flex-direction:column;min-height:0}
+.pad{padding:36px 48px;flex:1;display:flex;flex-direction:column;min-height:0}
 .eyebrow{font-size:11px;font-weight:700;letter-spacing:1.7px;text-transform:uppercase;color:var(--z-teal)}
 .slide.dark .eyebrow{color:var(--z-teal-light)}
-h1{font-size:38px;font-weight:700;line-height:1.06;letter-spacing:-.5px;color:var(--z-dark)}
+h1{font-size:37px;font-weight:700;line-height:1.06;letter-spacing:-.5px;color:var(--z-dark)}
 .slide.dark h1{color:#fff}
-.lead{font-size:15px;line-height:1.55;color:var(--z-slate);margin-top:13px;max-width:700px}
+.lead{font-size:15px;line-height:1.55;color:var(--z-slate);margin-top:12px;max-width:720px}
 .slide.dark .lead{color:rgba(255,255,255,.82)}
 .logo{height:26px;width:auto;align-self:flex-start}
 .foot{display:flex;justify-content:space-between;align-items:center;padding:9px 22px;border-top:1px solid var(--z-purple-lt)}
@@ -41,31 +41,27 @@ h1{font-size:38px;font-weight:700;line-height:1.06;letter-spacing:-.5px;color:va
 .slide.active .rv{animation:rv .5s cubic-bezier(.22,.8,.28,1) forwards}
 .slide.active .rv:nth-child(2){animation-delay:.05s}.slide.active .rv:nth-child(3){animation-delay:.12s}
 .slide.active .rv:nth-child(4){animation-delay:.19s}.slide.active .rv:nth-child(5){animation-delay:.26s}
-.slide.active .rv:nth-child(6){animation-delay:.33s}
 @keyframes rv{to{opacity:1;transform:none}}
-.nav{position:fixed;bottom:16px;left:50%;transform:translateX(-50%);display:flex;align-items:center;gap:14px;z-index:50;background:rgba(28,74,77,.92);border-radius:30px;padding:8px 16px}
+.nav{position:fixed;bottom:16px;left:50%;transform:translateX(-50%);display:flex;align-items:center;gap:14px;z-index:80;background:rgba(28,74,77,.92);border-radius:30px;padding:8px 16px}
 .nav button{background:none;border:none;color:#fff;font-size:16px;cursor:pointer;width:24px;height:24px;line-height:1;opacity:.85}
 .nav button:hover{opacity:1}
 .dots{display:flex;gap:6px}.dot{width:7px;height:7px;border-radius:50%;background:rgba(255,255,255,.3);cursor:pointer}.dot.on{background:var(--z-teal-light)}
 .count{font-size:11px;color:rgba(255,255,255,.7);font-weight:500;min-width:38px;text-align:center}
-.prog{position:fixed;top:0;left:0;height:3px;background:var(--z-teal);z-index:60;transition:width .3s}
+.prog{position:fixed;top:0;left:0;height:3px;background:var(--z-teal);z-index:90;transition:width .3s}
 .cover{display:grid;grid-template-columns:1.12fr .88fr;height:100%}
 .cover .l{background:var(--z-dark);color:#fff;padding:48px;display:flex;flex-direction:column}
-.cover .r{background:var(--z-ice);display:flex;align-items:center;justify-content:center;padding:40px}
+.cover .r{background:var(--z-ice);display:flex;align-items:center;justify-content:center;padding:44px}
 .cover h1{color:#fff;font-size:36px;margin-top:auto}
-.cover .sub{color:rgba(255,255,255,.82);font-size:15px;line-height:1.55;margin-top:16px;max-width:450px;margin-bottom:8px}
-/* cover motif */
+.cover .sub{color:rgba(255,255,255,.82);font-size:15px;line-height:1.55;margin-top:16px;max-width:450px}
 .motif{display:flex;flex-direction:column;gap:8px;align-items:center;width:100%}
-.motif .mseg{height:40px;border-radius:var(--z-radius);display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;color:#fff;background:var(--z-teal)}
-.motif .mseg.d{background:var(--z-dark)}
-.motif .marr{color:var(--z-slate);font-size:13px;line-height:.4}
+.motif .mseg{height:38px;border-radius:var(--z-radius);display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;color:#fff;background:var(--z-teal)}
+.motif .mseg.d{background:var(--z-dark)}.motif .marr{color:var(--z-slate);font-size:12px;line-height:.3}
 .cols2{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-top:22px}
 .card{background:var(--z-lt);border-radius:var(--z-radius);padding:20px 22px}
 .card.out{background:var(--z-white);border:1px solid var(--z-purple-lt)}
 .card .ch{font-size:11px;font-weight:700;letter-spacing:.6px;text-transform:uppercase;color:var(--z-slate);margin-bottom:10px}
 .card.acc .ch{color:var(--z-teal)}
 .card p{font-size:13px;line-height:1.5;color:var(--z-dark)}
-.card .ico{width:26px;height:26px;margin-bottom:12px}
 .grid3{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-top:22px}
 .gc{background:var(--z-lt);border-radius:var(--z-radius);padding:18px 20px}
 .gc b{font-size:14px;display:block;color:var(--z-dark);margin-bottom:5px}
@@ -74,57 +70,78 @@ h1{font-size:38px;font-weight:700;line-height:1.06;letter-spacing:-.5px;color:va
 .belief{display:flex;gap:12px;align-items:flex-start;background:rgba(255,255,255,.06);border-radius:var(--z-radius);padding:13px 16px}
 .belief .n{font-size:15px;font-weight:700;color:var(--z-teal-light);flex:none;width:22px}
 .belief p{font-size:14px;line-height:1.4;color:#fff}
-/* bottleneck funnel */
-.enfun{display:grid;grid-template-columns:440px 1fr;gap:36px;margin-top:14px;flex:1;min-height:0;align-items:center}
-.funnel2{display:flex;flex-direction:column;gap:4px}
-.fseg2{height:56px;border:none;cursor:pointer;display:flex;align-items:center;justify-content:center;font-family:var(--z-font);font-size:14px;font-weight:700;color:var(--z-slate);background:var(--z-lt);transition:background .45s,color .45s}
-.fseg2.on{background:var(--z-teal);color:#fff}
-.fseg2.bottleneck{background:var(--z-orange);color:#fff;animation:pulseb 1.6s ease-in-out infinite}
-@keyframes pulseb{0%,100%{opacity:.82}50%{opacity:1}}
-.endesc-state{font-size:11px;font-weight:700;letter-spacing:.7px;text-transform:uppercase;color:var(--z-orange)}
-.endesc-state.done{color:var(--z-teal)}
-.endesc h3{font-size:20px;color:var(--z-dark);margin:8px 0 10px;line-height:1.15}
-.endesc p{font-size:14px;line-height:1.55;color:var(--z-slate);max-width:400px}
+/* funnel constraint/starved/enabled */
+.enfun{display:grid;grid-template-columns:440px 1fr;gap:34px;margin-top:8px;flex:1;min-height:0;align-items:center}
+.funcol{display:flex;flex-direction:column}
+.flabel{font-size:10px;font-weight:700;letter-spacing:.5px;text-transform:uppercase;color:var(--z-slate);text-align:center}
+.funnel2{display:flex;flex-direction:column;gap:4px;margin:6px 0}
+.fseg2{height:60px;border:none;cursor:pointer;display:flex;flex-direction:column;align-items:center;justify-content:center;font-family:var(--z-font);background:var(--z-lt);transition:background .45s}
+.fseg2 .fsn{font-size:13.5px;font-weight:700;color:var(--z-slate);transition:color .45s}
+.fseg2 .fst{font-size:8.5px;font-weight:700;letter-spacing:.7px;text-transform:uppercase;margin-top:3px;color:var(--z-slate)}
+.fseg2.enabled{background:var(--z-teal)}.fseg2.enabled .fsn{color:#fff}.fseg2.enabled .fst{color:rgba(255,255,255,.85)}
+.fseg2.starved{background:var(--z-lt)}.fseg2.starved .fsn{color:var(--z-slate)}.fseg2.starved .fst{color:var(--z-slate)}
+.fseg2.constraint{background:var(--z-orange);animation:pulseb 1.6s ease-in-out infinite}.fseg2.constraint .fsn{color:#fff}.fseg2.constraint .fst{color:#fff}
+@keyframes pulseb{0%,100%{opacity:.84}50%{opacity:1}}
+.fpeyebrow{font-size:10px;font-weight:700;letter-spacing:.7px;text-transform:uppercase;color:var(--z-teal)}
+.fphead{font-size:20px;font-weight:700;color:var(--z-dark);margin:8px 0 9px;line-height:1.18}
+.fpnote{font-size:14px;line-height:1.55;color:var(--z-slate);max-width:400px}
+.fpnote b{color:var(--z-orange)}
 .enbtn{margin-top:18px;font-family:var(--z-font);font-size:13px;font-weight:700;color:#fff;background:var(--z-dark);border:none;border-radius:var(--z-radius);padding:12px 20px;cursor:pointer}
 .enbtn:hover{background:var(--z-teal)}
-/* manual pipeline */
+/* human slide */
+.hcols{display:grid;grid-template-columns:1fr 70px 1fr;gap:0;margin-top:18px;align-items:stretch}
+.hpanel{background:rgba(255,255,255,.06);border-radius:var(--z-radius);padding:18px 20px}
+.hpanel .he{font-size:10px;font-weight:700;letter-spacing:.6px;text-transform:uppercase;color:var(--z-teal-light);margin-bottom:12px}
+.hrow{margin-bottom:11px}.hrow b{font-size:13px;color:#fff}.hrow span{font-size:11.5px;color:rgba(255,255,255,.72);display:block;line-height:1.4;margin-top:1px}
+.hpanel .hf{font-size:11.5px;color:var(--z-teal-light);font-weight:700;margin-top:14px;padding-top:12px;border-top:1px solid rgba(255,255,255,.12)}
+.handoff{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px}
+.handoff .hl{font-size:9px;font-weight:700;letter-spacing:.6px;text-transform:uppercase;color:rgba(255,255,255,.5);writing-mode:vertical-rl;transform:rotate(180deg)}
+.handoff .ha{color:var(--z-teal-light);font-size:20px}
+.shiftband{display:grid;grid-template-columns:1fr 40px 1fr;gap:10px;align-items:center;margin-top:16px;background:rgba(255,255,255,.05);border-radius:var(--z-radius);padding:14px 18px}
+.shiftband .sb b{font-size:11px;font-weight:700;letter-spacing:.5px;text-transform:uppercase;color:rgba(255,255,255,.55)}
+.shiftband .sb.now b{color:var(--z-teal-light)}
+.shiftband .sb p{font-size:12.5px;color:rgba(255,255,255,.85);line-height:1.4;margin-top:4px}
+.shiftband .sarr{text-align:center;color:var(--z-teal-light);font-size:20px}
+/* pipeline */
 .pipehdr{display:flex;align-items:center;gap:7px;margin-top:12px;flex-wrap:wrap}
 .ppill{display:flex;align-items:center;gap:6px;font-size:11px;font-weight:700;color:var(--z-slate);background:var(--z-lt);border-radius:20px;padding:5px 11px;transition:all .2s}
 .ppill.done{color:var(--z-dark)}.ppill.done .pd{background:var(--z-teal)}
 .ppill.cur{color:#fff;background:var(--z-dark)}.ppill.cur .pd{background:var(--z-teal-light)}
 .ppill .pd{width:7px;height:7px;border-radius:50%;background:var(--z-purple-lt)}
 .ppill .parrow{color:var(--z-purple-lt);margin:0 -1px}
-.pipe2{display:grid;grid-template-columns:230px 1fr;gap:18px;margin-top:14px;flex:1;min-height:0}
-.pin{background:var(--z-lt);border-radius:var(--z-radius);padding:14px 16px;display:flex;flex-direction:column}
+.pipe2{display:grid;grid-template-columns:220px 1fr;gap:16px;margin-top:12px;flex:1;min-height:0}
+.pin{background:var(--z-lt);border-radius:var(--z-radius);padding:13px 15px;display:flex;flex-direction:column}
 .pin .pil{font-size:10px;font-weight:700;letter-spacing:.5px;text-transform:uppercase;color:var(--z-slate)}
 .pin .pifrom{font-size:11px;color:var(--z-teal);font-weight:700;margin:6px 0 8px}
-.pin .pibody{font-size:12px;line-height:1.5;color:var(--z-dark)}
-.pin .pibody.note{font-style:italic}
+.pin .pibody{font-size:12px;line-height:1.5;color:var(--z-dark)}.pin .pibody.note{font-style:italic}
 .pnext{margin-top:auto;font-family:var(--z-font);font-size:12.5px;font-weight:700;color:#fff;background:var(--z-dark);border:none;border-radius:var(--z-radius);padding:11px 14px;cursor:pointer;text-align:left}
 .pnext:hover{background:var(--z-teal)}.pnext:disabled{opacity:.6;cursor:default}
 .pout{background:var(--z-white);border:1px solid var(--z-purple-lt);border-radius:var(--z-radius);overflow:hidden;display:flex;flex-direction:column}
-.pout .pouth{padding:8px 14px;background:var(--z-lt);border-bottom:1px solid var(--z-purple-lt);font-size:11px;font-weight:700;color:var(--z-dark);display:flex;justify-content:space-between;align-items:center}
-.pout .pouth .flag{font-size:9px;font-weight:700;letter-spacing:.4px;text-transform:uppercase;color:var(--z-teal)}
-.pout .poutb{padding:14px;overflow:auto;flex:1}
+.pouth{padding:8px 14px;background:var(--z-lt);border-bottom:1px solid var(--z-purple-lt);font-size:11px;font-weight:700;color:var(--z-dark);display:flex;justify-content:space-between;align-items:center}
+.pouth .flag{font-size:9px;font-weight:700;letter-spacing:.4px;text-transform:uppercase;color:var(--z-teal)}
+.poutb{padding:13px;overflow:auto;flex:1}
 .pgen{display:flex;flex-direction:column;align-items:center;justify-content:center;height:100%;gap:12px;color:var(--z-slate)}
 .spin{width:16px;height:16px;border-radius:50%;border:2px solid rgba(39,187,175,.3);border-top-color:var(--z-teal);animation:sp .7s linear infinite}
 @keyframes sp{to{transform:rotate(360deg)}}
 .pgen .gtxt{font-size:12px;font-weight:600;color:var(--z-dark)}
-.pstart{display:flex;flex-direction:column;align-items:center;justify-content:center;height:100%;gap:12px;color:var(--z-slate);text-align:center;font-size:12px}
+.pstart{display:flex;align-items:center;justify-content:center;height:100%;color:var(--z-slate);text-align:center;font-size:12px;padding:0 20px;line-height:1.5}
+.hgate{margin-top:11px;padding-top:9px;border-top:1px dashed var(--z-purple-lt);font-size:11px;color:var(--z-dark);display:flex;align-items:center;gap:7px}
+.hgate .hgi{width:15px;height:15px;border-radius:50%;background:var(--z-mint);color:var(--z-dark);font-size:9px;font-weight:700;display:flex;align-items:center;justify-content:center;flex:none}
+.hgate b{color:var(--z-teal)}
 /* rich artifacts */
-.afind{display:flex;gap:8px;align-items:flex-start;margin-bottom:9px;font-size:12px;line-height:1.4;color:var(--z-dark)}
+.afind{display:flex;gap:8px;align-items:flex-start;margin-bottom:8px;font-size:12px;line-height:1.4;color:var(--z-dark)}
 .afind .fd{width:8px;height:8px;border-radius:50%;flex:none;margin-top:4px}
 .fd.n{background:var(--z-teal)}.fd.a{background:#f0c000}.fd.r{background:var(--z-orange)}
-.acall{background:var(--z-ice);border-radius:var(--z-radius);padding:9px 12px;font-size:11.5px;color:var(--z-dark);margin-top:4px}.acall b{color:var(--z-teal)}
-.astory{background:var(--z-ice);border-radius:var(--z-radius);padding:11px 13px;margin-bottom:9px}
+.acall{background:var(--z-ice);border-radius:var(--z-radius);padding:9px 12px;font-size:11.5px;color:var(--z-dark);margin-top:2px}.acall b{color:var(--z-teal)}
+.astory{background:var(--z-ice);border-radius:var(--z-radius);padding:11px 13px;margin-bottom:8px}
 .astory .sk{font-size:10px;font-weight:700;color:#fff;background:var(--z-teal);border-radius:3px;padding:2px 7px}
 .astory .snm{font-size:12px;font-weight:700;color:var(--z-dark);margin-left:6px}
 .astory p{font-size:11.5px;line-height:1.5;color:var(--z-dark);margin:7px 0 6px}.astory p b{color:var(--z-teal)}
 .astory ul{list-style:none;display:flex;flex-direction:column;gap:3px}
 .astory li{position:relative;padding-left:14px;font-size:10.5px;line-height:1.35;color:var(--z-dark)}
 .astory li::before{content:'\2713';position:absolute;left:0;color:var(--z-teal);font-weight:700;font-size:10px}
-.atbl{border:1px solid var(--z-purple-lt);border-radius:var(--z-radius);overflow:hidden;margin-bottom:10px}
-.atr{display:grid;grid-template-columns:110px 1fr;gap:10px;padding:9px 13px;border-bottom:1px solid var(--z-purple-lt);font-size:12px}
+.atbl{border:1px solid var(--z-purple-lt);border-radius:var(--z-radius);overflow:hidden;margin-bottom:9px}
+.atr{display:grid;grid-template-columns:104px 1fr;gap:10px;padding:8px 13px;border-bottom:1px solid var(--z-purple-lt);font-size:12px}
 .atr:last-child{border:none}.atr .al{font-weight:700;color:var(--z-dark)}.atr .ar{color:var(--z-slate)}
 .awf{border:1px solid var(--z-purple-lt);border-radius:var(--z-radius);overflow:hidden}
 .awf .wt{display:flex;align-items:center;gap:7px;padding:8px 11px;border-bottom:1px solid var(--z-purple-lt)}
@@ -137,39 +154,55 @@ h1{font-size:38px;font-weight:700;line-height:1.06;letter-spacing:-.5px;color:va
 .awf .wfi span{font-size:8.5px;color:var(--z-slate);display:block}.awf .wfi span em{font-style:normal;color:var(--z-orange);font-weight:700}
 .awf .wfi .bx{height:13px;border:1px solid var(--z-purple-lt);border-radius:2px;background:#fbfcfe;margin-top:2px}
 .awf .wfi.warn .bx{border-color:var(--z-orange);background:#fff7ef}.awf .wfi.full{grid-column:1/-1}
-.atc{display:grid;grid-template-columns:56px 1fr 1fr;gap:8px;padding:7px 0;border-bottom:1px solid var(--z-purple-lt);font-size:11px;line-height:1.3}
+.atc{display:grid;grid-template-columns:52px 1fr 1fr;gap:8px;padding:6px 0;border-bottom:1px solid var(--z-purple-lt);font-size:11px;line-height:1.3}
 .atc:last-child{border:none}.atc b{color:var(--z-teal);font-size:10px}.atc .ex{color:var(--z-slate)}
-.acov{font-size:11px;color:var(--z-slate);font-style:italic;margin-top:8px}
+.acov{font-size:11px;color:var(--z-slate);font-style:italic;margin-top:7px}
 /* results cascade */
-.rescols{display:grid;grid-template-columns:1.3fr 1fr;gap:24px;margin-top:20px;align-items:center}
-.reschart{background:var(--z-lt);border-radius:var(--z-radius);padding:18px}
-.reschart .rct{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.4px;color:var(--z-slate);display:flex;justify-content:space-between;margin-bottom:10px}
-.reschart .leg{display:flex;gap:14px;margin-top:10px;font-size:10px;color:var(--z-slate)}
-.reschart .leg i{display:inline-block;width:14px;height:3px;border-radius:2px;margin-right:5px;vertical-align:middle}
-.restiles{display:flex;flex-direction:column;gap:12px}
-.rtile{background:var(--z-lt);border-radius:var(--z-radius);padding:14px 16px}
-.rtile b{font-size:20px;color:var(--z-dark)}.rtile .u{font-size:12px;color:var(--z-teal);font-weight:700}
-.rtile span{font-size:11px;color:var(--z-slate);display:block;margin-top:2px}
-.resnote{margin-top:16px;font-size:11.5px;color:var(--z-slate);font-style:italic;line-height:1.5}
-.resnote b{color:#1C6B3A;font-style:normal}
-/* offer + rolodex */
-.offer{display:grid;grid-template-columns:1fr 1fr;gap:22px;margin-top:20px;align-items:center}
+.rescols{display:grid;grid-template-columns:1.35fr 1fr;gap:24px;margin-top:18px;align-items:center}
+.reschart{background:var(--z-lt);border-radius:var(--z-radius);padding:16px 18px}
+.reschart .rct{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.4px;color:var(--z-slate);margin-bottom:8px}
+.reschart .rcx{display:flex;justify-content:space-between;font-size:9px;color:var(--z-slate);margin-top:6px}
+.restiles{display:flex;flex-direction:column;gap:11px}
+.rtile{background:var(--z-lt);border-radius:var(--z-radius);padding:13px 16px}
+.rtile b{font-size:13px;color:var(--z-teal);font-weight:700}
+.rtile span{font-size:12px;color:var(--z-slate);display:block;margin-top:3px;line-height:1.4}
+.resnote{margin-top:16px;font-size:12px;color:var(--z-slate);line-height:1.5;font-style:italic}
+/* offer + rolodex + modal */
+.offer{display:grid;grid-template-columns:1fr 1fr;gap:24px;margin-top:16px;align-items:center}
 .olist{list-style:none;display:flex;flex-direction:column;gap:9px}
 .olist li{position:relative;padding-left:16px;font-size:13px;line-height:1.45;color:var(--z-dark)}
 .olist li::before{content:'\25CF';position:absolute;left:0;top:5px;font-size:6px;color:var(--z-teal)}
 .subh{font-size:11px;font-weight:700;letter-spacing:.6px;text-transform:uppercase;color:var(--z-teal);margin-bottom:12px}
-.rolo{display:flex;flex-direction:column;align-items:center}
-.rolostack{position:relative;width:280px;height:150px}
-.rolocard{position:absolute;inset:0;background:var(--z-white);border:1px solid var(--z-purple-lt);border-radius:var(--z-radius);padding:18px 20px;display:flex;flex-direction:column;justify-content:center}
-.rolocard.b1{transform:translateY(10px) scale(.95);opacity:.5;z-index:1}
-.rolocard.b2{transform:translateY(20px) scale(.9);opacity:.3;z-index:0}
-.rolocard.front{z-index:2}
-.rolocard .rt{font-size:9px;font-weight:700;letter-spacing:.4px;text-transform:uppercase;color:#fff;background:var(--z-teal);border-radius:var(--z-radius-sm);padding:2px 8px;align-self:flex-start}
-.rolocard .rn{font-size:17px;font-weight:700;color:var(--z-dark);margin:9px 0 6px}
-.rolocard .rd{font-size:12px;line-height:1.45;color:var(--z-slate)}
-.spinbtn{margin-top:18px;font-family:var(--z-font);font-size:13px;font-weight:700;color:#fff;background:var(--z-dark);border:none;border-radius:var(--z-radius);padding:11px 22px;cursor:pointer}
-.spinbtn:hover{background:var(--z-teal)}
-.roms{font-size:11px;color:var(--z-slate);margin-top:10px}
+.roms{font-size:11px;color:var(--z-slate);margin-top:12px}
+.rolo{display:flex;flex-direction:column;align-items:center;justify-content:center}
+.rolodex{position:relative;width:300px;height:180px;cursor:pointer;perspective:900px}
+.rolospindle{position:absolute;top:-8px;left:50%;transform:translateX(-50%);width:120px;height:14px;background:var(--z-slate);border-radius:8px;z-index:5;display:flex;align-items:center;justify-content:space-between;padding:0 16px}
+.rolospindle::before,.rolospindle::after{content:'';width:8px;height:8px;border-radius:50%;background:var(--z-lt)}
+.rolostack .b{position:absolute;inset:0;top:6px;background:#fff;border:1px solid var(--z-purple-lt);border-radius:var(--z-radius)}
+.rolostack .b1{transform:translateY(8px) scale(.97);opacity:.55}.rolostack .b2{transform:translateY(16px) scale(.94);opacity:.3}
+.rolofront{position:absolute;inset:0;top:6px;background:#fff;border:1px solid var(--z-purple-lt);border-radius:var(--z-radius);padding:20px 22px;display:flex;flex-direction:column;justify-content:center;z-index:4;transform-origin:top center;backface-visibility:hidden}
+.rolofront.flip{animation:flipc .16s ease}
+@keyframes flipc{0%{transform:rotateX(0)}50%{transform:rotateX(-38deg)}100%{transform:rotateX(0)}}
+.rolofront .rt{font-size:9px;font-weight:700;letter-spacing:.4px;text-transform:uppercase;color:#fff;background:var(--z-teal);border-radius:var(--z-radius-sm);padding:2px 8px;align-self:flex-start}
+.rolofront .rn{font-size:18px;font-weight:700;color:var(--z-dark);margin:10px 0 6px}
+.rolofront .rd{font-size:12px;line-height:1.45;color:var(--z-slate)}
+.rolohint{font-size:11px;color:var(--z-slate);margin-top:14px}
+/* modal */
+.mscrim{position:fixed;inset:0;background:rgba(28,74,77,.5);opacity:0;pointer-events:none;transition:opacity .18s;z-index:70}
+.mscrim.on{opacity:1;pointer-events:auto}
+.modal{position:fixed;top:50%;left:50%;transform:translate(-50%,-48%) scale(.98);width:560px;max-width:92vw;background:#fff;border-radius:var(--z-radius);z-index:71;opacity:0;pointer-events:none;transition:opacity .18s,transform .18s;overflow:hidden}
+.modal.on{opacity:1;pointer-events:auto;transform:translate(-50%,-50%) scale(1)}
+.modal .mh{background:var(--z-dark);color:#fff;padding:20px 24px;position:relative}
+.modal .mh .mt{font-size:10px;font-weight:700;letter-spacing:.5px;text-transform:uppercase;color:var(--z-teal-light)}
+.modal .mh h3{font-size:21px;color:#fff;margin-top:6px}
+.modal .mclose{position:absolute;top:16px;right:18px;background:rgba(255,255,255,.14);border:none;color:#fff;width:28px;height:28px;border-radius:var(--z-radius);font-size:15px;cursor:pointer}
+.modal .mb{padding:20px 24px}
+.modal .msum{font-size:13px;line-height:1.55;color:var(--z-dark)}
+.modal .msec{font-size:10px;font-weight:700;letter-spacing:.5px;text-transform:uppercase;color:var(--z-slate);margin:16px 0 8px}
+.modal ul{list-style:none;display:flex;flex-direction:column;gap:6px}
+.modal li{position:relative;padding-left:15px;font-size:12.5px;line-height:1.4;color:var(--z-dark)}
+.modal li::before{content:'\25CF';position:absolute;left:0;top:5px;font-size:5px;color:var(--z-teal)}
+.modal .mcols{display:grid;grid-template-columns:1fr 1fr;gap:20px}
 /* steps + close */
 .steps{display:flex;gap:10px;margin-top:24px}
 .pstep{flex:1;background:var(--z-lt);border-radius:var(--z-radius);padding:18px}
@@ -182,113 +215,147 @@ h1{font-size:38px;font-weight:700;line-height:1.06;letter-spacing:-.5px;color:va
 def foot():
     return f'<div class="foot"><span class="c">&copy; 2026 Zennify &middot; Confidential &middot; AI-Enabled Services Delivery</span><img src="{BADGE}" alt="Zennify"></div>'
 
-# ---- data ----
-STAGES2=["Discovery","Solution design","Build","UAT","Go-Live"]
-BOTTLE=[
- "Discovery is the first constraint. Turning workshops into a complete, traceable backlog takes weeks, and every stage downstream waits on it.",
- "With discovery flowing, design becomes the constraint. Teams start building before the blueprint is settled, and rework follows.",
- "Now build is the constraint. Developer hours go to boilerplate and test-writing instead of judgment.",
- "UAT becomes the constraint. Test prep and defect triage stretch the go-live window.",
- "Go-live is the last constraint. Cutover is manual, and the risk lands on a single weekend.",
+# ---- funnel (GESA-mirrored) ----
+SEGMENTS=[("Front of funnel","Discovery, stories, design, approvals"),
+          ("Build","Development against the backlog"),
+          ("Test","QA against acceptance criteria"),
+          ("Release &amp; adoption","Deploy, change, training")]
+PHASES=[
+ ("We are here","One team carries the top of the funnel","Everything upstream of build passes through a few people. Nothing downstream is broken, it is starved, waiting on the work above."),
+ ("Enable the front of the funnel","Discovery, stories, design and approvals drafted for review","The top of the funnel opens. More build-ready work reaches the sprint, so the constraint moves to build."),
+ ("Enable build","AI-assisted development across the team","Build absorbs the higher volume. The pressure moves again, to test."),
+ ("Enable test","Test scripts generated from acceptance criteria","Coverage stops inheriting gaps in the story. The last narrow point is getting the work adopted."),
+ ("Enable release &amp; adoption","Go-live material, training, and throughput in view","The funnel is open end to end. Every stage moves together, and the next constraint shows up in the data, not in an argument."),
 ]
-ENDMSG="Every part is enabled. The delivery motion runs end to end, with no single bottleneck, from intake to production."
-STAGES2_JSON=json.dumps(STAGES2); BOTTLE_JSON=json.dumps(BOTTLE); ENDMSG_JSON=json.dumps(ENDMSG)
-
+SEG_JSON=json.dumps([{"n":s[0],"d":s[1]} for s in SEGMENTS])
+PH_JSON=json.dumps([{"k":p[0],"b":p[1],"note":p[2]} for p in PHASES])
 def funnel_segs():
-    bounds=[100,88,77,67,58,50]
+    bounds=[100,84,70,58,48]
     out=""
-    for i,name in enumerate(STAGES2):
+    for i,s in enumerate(SEGMENTS):
         top=bounds[i]; bot=bounds[i+1]
         clip=f"polygon({(100-top)/2:.1f}% 0,{(100+top)/2:.1f}% 0,{(100+bot)/2:.1f}% 100%,{(100-bot)/2:.1f}% 100%)"
-        out+=f'<button class="fseg2" data-i="{i}" onclick="enableTo({i})" style="clip-path:{clip};-webkit-clip-path:{clip}">{name}</button>'
+        out+=f'<button class="fseg2" data-i="{i}" onclick="setPhase({i})" style="clip-path:{clip};-webkit-clip-path:{clip}"><div class="fsn">{s[0]}</div><div class="fst" id="fst{i}"></div></button>'
     return out
 
-# manual pipeline artifacts (rich, distinct) + input summaries
+# ---- pipeline artifacts (rich) + human gate ----
 A_FIND=('<div class="afind"><span class="fd r"></span>Cases are logged across three systems, and the originating branch is often lost.</div>'
         '<div class="afind"><span class="fd a"></span>No single owner for follow-up once the call ends.</div>'
         '<div class="afind"><span class="fd a"></span>Reporting can\'t break cases down by branch.</div>'
         '<div class="afind"><span class="fd n"></span>Security and sharing model are already sound.</div>'
-        '<div class="acall"><b>Gap flagged:</b> no SLA on response time, and no way to measure it.</div>')
+        '<div class="acall"><b>Gap flagged:</b> no SLA on response time, and no way to measure it.</div>'
+        '<div class="hgate"><span class="hgi">&#10003;</span>Drafted for review &mdash; <b>your BA confirms</b> before it becomes stories.</div>')
 A_STORY=('<div class="astory"><span class="sk">US-118</span><span class="snm">Member case intake</span>'
          '<p><b>As a</b> branch rep, <b>I want</b> to log an issue in one screen <b>so that</b> nothing falls through.</p>'
-         '<ul><li>One-screen capture of member, branch, type, description.</li><li>Branch is required on every case.</li></ul></div>'
+         '<ul><li>One-screen capture of member, branch, type, description.</li><li>Branch is required on every case.</li><li>Submit routes the case to the branch queue.</li></ul></div>'
          '<div class="astory"><span class="sk">US-119</span><span class="snm">Route to owning branch</span>'
          '<p><b>As a</b> manager, <b>I want</b> new cases in my queue <b>so that</b> my team owns follow-up.</p>'
-         '<ul><li>Case routes to the originating branch on submit.</li><li>Reassignment is logged.</li></ul></div>')
+         '<ul><li>Case routes to the originating branch on submit.</li><li>Reassignment is logged.</li></ul></div>'
+         '<div class="hgate"><span class="hgi">&#10003;</span><b>Your product owner grooms</b> and accepts before design.</div>')
 A_DESIGN=('<div class="atbl">'
           '<div class="atr"><span class="al">UI</span><span class="ar">Lightning record page + quick action</span></div>'
           '<div class="atr"><span class="al">Automation</span><span class="ar">Flow for routing; no Apex</span></div>'
           '<div class="atr"><span class="al">Data</span><span class="ar">Case + custom Branch lookup</span></div>'
           '<div class="atr"><span class="al">Integration</span><span class="ar">Platform event to core banking</span></div></div>'
-          '<div class="acall"><b>Decision:</b> configuration over code keeps routing admin-maintainable.</div>')
+          '<div class="acall"><b>Decision:</b> configuration over code keeps routing admin-maintainable.</div>'
+          '<div class="hgate"><span class="hgi">&#10003;</span><b>Your architect owns the design</b> &mdash; accept, change, or reject.</div>')
 A_WIRE=('<div class="awf"><div class="wt"><span class="wo">CASE</span><span class="wtt">New Member Case</span></div>'
         '<div class="wpath"><span class="wch cur">New</span><span class="wch">In progress</span><span class="wch">Escalated</span><span class="wch">Resolved</span><span class="wch">Closed</span></div>'
         '<div class="wff"><div class="wfi"><span>Subject</span><div class="bx"></div></div><div class="wfi"><span>Member</span><div class="bx"></div></div>'
         '<div class="wfi"><span>Case Type</span><div class="bx"></div></div><div class="wfi warn"><span>Branch <em>required</em></span><div class="bx"></div></div>'
-        '<div class="wfi full"><span>Description</span><div class="bx" style="height:24px"></div></div></div></div>')
+        '<div class="wfi full"><span>Description</span><div class="bx" style="height:22px"></div></div></div></div>'
+        '<div class="hgate"><span class="hgi">&#10003;</span>Adjusted, not built from zero &mdash; <b>your team tweaks</b> the screen.</div>')
 A_TEST=('<div class="atc"><b>TC-01</b><span>Create with all fields</span><span class="ex">Saved, routed to queue</span></div>'
         '<div class="atc"><b>TC-02</b><span>Submit with no branch</span><span class="ex">Blocked, error shown</span></div>'
         '<div class="atc"><b>TC-03</b><span>Duplicate member + subject</span><span class="ex">Warn, allow override</span></div>'
         '<div class="atc"><b>TC-04</b><span>SLA passes 4h</span><span class="ex">Case escalates</span></div>'
-        '<div class="acov">14 cases generated: happy path, edge, and negative. ~92% coverage.</div>')
+        '<div class="acov">14 cases: happy path, edge, and negative. ~92% coverage.</div>'
+        '<div class="hgate"><span class="hgi">&#10003;</span><b>Your QA signs off</b> the suite before the release gate.</div>')
 PIPE=[
- {"stage":"Discovery findings","frm":"Workshop notes","in":'"When a member calls the branch, the rep opens three systems to log it, and the branch is often lost."',"innote":True,"gen":["Reading workshop notes…","Clustering needs…","Flagging gaps & risks…"],"art":A_FIND},
- {"stage":"User stories","frm":"Discovery findings","in":"3 issues and 1 gap, prioritized.","innote":False,"gen":["Splitting findings into stories…","Writing acceptance criteria…","Grooming the backlog…"],"art":A_STORY},
- {"stage":"Solution design","frm":"User stories","in":"2 build-ready stories with acceptance criteria.","innote":False,"gen":["Selecting components & patterns…","Designing the data model…"],"art":A_DESIGN},
+ {"stage":"Discovery findings","frm":"Workshop notes","in":'"When a member calls the branch, the rep opens three systems to log it, and the branch is often lost."',"innote":True,"gen":["Reading workshop notes…","Clustering needs…","Flagging gaps & risks…","Tracing to the source…"],"art":A_FIND},
+ {"stage":"User stories","frm":"Discovery findings","in":"3 issues and 1 gap, prioritized and traced to the source.","innote":False,"gen":["Splitting findings into stories…","Writing acceptance criteria…","Grooming the backlog…"],"art":A_STORY},
+ {"stage":"Solution design","frm":"User stories","in":"2 build-ready stories with acceptance criteria.","innote":False,"gen":["Selecting components & patterns…","Designing the data model…","Documenting the decision…"],"art":A_DESIGN},
  {"stage":"Wireframe","frm":"Solution design","in":"A build-ready design: Case object, Flow routing.","innote":False,"gen":["Choosing Lightning components…","Laying out fields…","Rendering the screen…"],"art":A_WIRE},
  {"stage":"Test cases","frm":"Wireframe + stories","in":"The Case screen and its acceptance criteria.","innote":False,"gen":["Deriving scenarios…","Writing expected results…","Covering edge & negative…"],"art":A_TEST},
 ]
 PIPE_JSON=json.dumps(PIPE)
 
-# rolodex skills
+# ---- rolodex skills (with modal detail) ----
 SKILLS=[
- ("Skill","Business Requirements Document","Turns discovery workshops into a complete, traceable requirements doc."),
- ("Skill","Story & Design Writer","A build-ready user story and an editable Salesforce wireframe."),
- ("Skill","Solution Design","A build-ready blueprint your team develops against."),
- ("Skill","QA Test Writer","Executable test cases generated straight from the stories."),
- ("Skill","Data Model Advisor","Defensible schema decisions, with risks flagged early."),
- ("Skill","Deployment Runbook","A minute-by-minute cutover plan with rollback triggers."),
- ("Skill","Architecture Health Check","A scored risk read on an inherited environment."),
- ("Skill","Test Strategy & UAT Plan","Coverage, entry and exit criteria, and a clear go/no-go."),
- ("Skill","Weekly Status Report","Live status, risks, and asks, drawn from your systems."),
- ("Skill","Change & Enablement Plan","Turns a launch into real, measured adoption."),
- ("Agent","Testing & Quality Agent","Automated regression coverage across a delivery."),
- ("Skill","Discovery Session Planning","A structured discovery agenda and question bank."),
- ("Skill","Documentation Writer","Clear user guides, data dictionaries, and release notes."),
- ("Skill","Quarterly Business Review","Outcomes, adoption, and the forward roadmap."),
- ("Skill","Live Project Dashboard","One always-current view of program health."),
- ("Skill","Sprint Recap","A branded, data-backed recap every sprint."),
+ ("Skill","Business Requirements Document","Turns discovery workshops and notes into a complete, traceable requirements document.",
+  ["Translating discovery into a delivery backlog","Defining scope for a new build","Aligning business and technical teams on “done”"],
+  ["A structured BRD with acceptance criteria","A requirement-to-objective traceability matrix"]),
+ ("Skill","Story & Design Writer","Turns requirements into paired user stories and matching solution-design detail, in lockstep.",
+  ["Detailing a feature from requirement to design","Keeping backlog and design aligned","Producing build-ready, traceable stories"],
+  ["Build-ready user stories with acceptance criteria","An editable Salesforce wireframe"]),
+ ("Skill","Solution Design","Translates requirements into a build-ready solution design, from blueprint to configuration detail.",
+  ["Designing a platform build","A build-ready blueprint before Sprint 1","Documenting design decisions for sign-off"],
+  ["A solution blueprint","Documented, defensible design decisions"]),
+ ("Skill","QA Test Writer","Generates executable test cases directly from user stories: happy path, edge, and negative.",
+  ["Building test coverage for a release","Covering edge cases in a critical feature","Standing up regression for launch"],
+  ["A full test-case suite from the stories","Coverage across happy, edge, and negative"]),
+ ("Skill","Data Model Advisor","Guides sound, defensible data-model decisions and reviews schemas for problems.",
+  ["Designing the data model for a build","Reviewing a schema for scale","Making a defensible structural decision early"],
+  ["A recommended data model","Flagged risks and over-customization"]),
+ ("Skill","Deployment Runbook","Produces the operational playbook for go-live: cutover, rollback, hypercare, handover.",
+  ["Planning a go-live weekend","Coordinating cutover and rollback","Setting up hypercare and handover"],
+  ["A minute-by-minute cutover runbook","Rollback triggers and a hypercare model"]),
+ ("Skill","Architecture Health Check","Reviews an existing or inherited environment and flags risks, tech debt, and constraints.",
+  ["Assessing an inherited org","De-risking a modernization","Reviewing an org for tech debt"],
+  ["A scored risk read","Prioritized remediation"]),
+ ("Skill","Test Strategy & UAT Plan","Lays out how the solution is tested and validated before go-live.",
+  ["Planning UAT for a launch","Defining go/no-go criteria","Structuring defect triage"],
+  ["A test strategy and UAT plan","Entry/exit criteria and a go/no-go gate"]),
+ ("Skill","Weekly Status Report","Produces the client-facing weekly status from live project systems.",
+  ["Weekly status for a program","Keeping a sponsor informed","Standardizing reporting across workstreams"],
+  ["A branded weekly status report","Live RAG, risks, and asks"]),
+ ("Skill","Change & Enablement Plan","Builds the people side of change: stakeholders, comms, training, and a 90-day adoption plan.",
+  ["Driving adoption of a new platform","Training client teams","Planning comms for a rollout"],
+  ["A stakeholder and comms plan","A 90-day adoption plan"]),
+ ("Skill","Discovery Session Planning","Plans the full discovery phase: sessions, sequencing, question banks, facilitator guides.",
+  ["Planning discovery for a transformation","Sequencing workshops across teams","Building a diagnostic agenda"],
+  ["A discovery agenda and schedule","Question banks and facilitator guides"]),
+ ("Agent","Testing & Quality Agent","Generates test cases, automates regression coverage, and triages defects across a delivery.",
+  ["Automating regression for a release","Triaging defects during UAT","Scaling coverage across a build"],
+  ["Automated regression coverage","Continuous defect triage"]),
 ]
-SKILLS_JSON=json.dumps([{"t":s[0],"n":s[1],"d":s[2]} for s in SKILLS])
+SKILLS_JSON=json.dumps([{"t":s[0],"n":s[1],"s":s[2],"u":s[3],"d":s[4]} for s in SKILLS])
 
-# results cascade chart (SVG): 5 enable steps; cycle time down, throughput up
+# ---- flowing results curve ----
+def smooth_path(pts):
+    if len(pts)<2: return ""
+    d=f"M{pts[0][0]:.1f},{pts[0][1]:.1f}"
+    for i in range(len(pts)-1):
+        p0=pts[i-1] if i>0 else pts[0]; p1=pts[i]; p2=pts[i+1]; p3=pts[i+2] if i+2<len(pts) else p2
+        c1x=p1[0]+(p2[0]-p0[0])/6; c1y=p1[1]+(p2[1]-p0[1])/6
+        c2x=p2[0]-(p3[0]-p1[0])/6; c2y=p2[1]-(p3[1]-p1[1])/6
+        d+=f" C{c1x:.1f},{c1y:.1f} {c2x:.1f},{c2y:.1f} {p2[0]:.1f},{p2[1]:.1f}"
+    return d
 def res_chart():
-    W,Hc=300,150; xs=[10+i*(W-20)/4 for i in range(5)]
-    cyc=[92,74,58,42,26]  # cycle-time index (down)
-    thr=[30,46,60,74,88]  # throughput index (up)
-    def pts(v): return " ".join(f"{xs[i]:.0f},{Hc-8-(val/100)*(Hc-24):.0f}" for i,val in enumerate(v))
-    dots="".join(f'<circle cx="{xs[i]:.0f}" cy="{Hc-8-(cyc[i]/100)*(Hc-24):.0f}" r="3" fill="var(--z-orange)"/>' for i in range(5))
-    dots+="".join(f'<circle cx="{xs[i]:.0f}" cy="{Hc-8-(thr[i]/100)*(Hc-24):.0f}" r="3" fill="var(--z-teal)"/>' for i in range(5))
+    W,Hc=320,150; xs=[16+i*(W-32)/4 for i in range(5)]
+    thr=[26,42,58,74,90]
+    pts=[(xs[i],Hc-14-(thr[i]/100)*(Hc-34)) for i in range(5)]
+    line=smooth_path(pts)
+    area=line+f" L{pts[-1][0]:.1f},{Hc-8} L{pts[0][0]:.1f},{Hc-8} Z"
+    dots="".join(f'<circle cx="{p[0]:.1f}" cy="{p[1]:.1f}" r="3.5" fill="var(--z-teal)"/>' for p in pts)
     return (f'<svg viewBox="0 0 {W} {Hc}" width="100%" style="height:150px">'
-            f'<polyline points="{pts(cyc)}" fill="none" stroke="var(--z-orange)" stroke-width="2.5" stroke-linejoin="round"/>'
-            f'<polyline points="{pts(thr)}" fill="none" stroke="var(--z-teal)" stroke-width="2.5" stroke-linejoin="round"/>{dots}</svg>')
+            f'<path d="{area}" fill="var(--z-ice)"/>'
+            f'<path d="{line}" fill="none" stroke="var(--z-teal)" stroke-width="2.5" stroke-linecap="round"/>{dots}</svg>')
 
 SL=[]
-# 1 cover — no tags, motif instead of icon
 motif=('<div class="motif">'
- '<div class="mseg" style="width:100%">Discovery</div><div class="marr">&darr;</div>'
- '<div class="mseg" style="width:84%">Design</div><div class="marr">&darr;</div>'
- '<div class="mseg d" style="width:68%">Build</div><div class="marr">&darr;</div>'
- '<div class="mseg" style="width:52%">UAT</div><div class="marr">&darr;</div>'
- '<div class="mseg" style="width:40%">Go-Live</div></div>')
+ '<div class="mseg" style="width:100%">Front of funnel</div><div class="marr">&darr;</div>'
+ '<div class="mseg d" style="width:80%">Build</div><div class="marr">&darr;</div>'
+ '<div class="mseg" style="width:62%">Test</div><div class="marr">&darr;</div>'
+ '<div class="mseg" style="width:48%">Release &amp; adoption</div></div>')
+# 0 cover
 SL.append(f'''<div class="slide dark active" data-i="0"><div class="cover">
 <div class="l"><img class="logo" src="{WHITE}" alt="Zennify" style="margin-bottom:auto">
 <span class="eyebrow rv">AI-enabled services delivery</span>
 <h1 class="rv">Your teams, delivering on an AI value chain.</h1>
 <p class="sub rv">We reapply the skills, agents, and processes proven across our delivery work, and enable them inside your teams&rsquo; own implementation lifecycle, one part at a time.</p>
-</div><div class="r">{motif}</div>
-</div></div>''')
-# 2 what changed
+</div><div class="r">{motif}</div></div></div>''')
+# 1 what changed
 SL.append(f'''<div class="slide" data-i="1"><div class="pad">
 <span class="eyebrow rv">What changed</span>
 <h1 class="rv">AI moved from pilot to production inside delivery.</h1>
@@ -297,7 +364,7 @@ SL.append(f'''<div class="slide" data-i="1"><div class="pad">
 <div class="card out"><div class="ch">Point tools, in isolation</div><p>An assistant here, a script there, used by whoever knows about them. Effort goes up. Consistency across your teams does not.</p></div>
 <div class="card acc"><div class="ch">Enabled across the lifecycle</div><p>Proven skills, agents, and processes enabled part by part inside your teams&rsquo; existing process, and measured on your platform.</p></div>
 </div></div>{foot()}</div>''')
-# 3 cost of waiting
+# 2 cost of waiting
 SL.append(f'''<div class="slide" data-i="2"><div class="pad">
 <span class="eyebrow rv">Where the time goes</span>
 <h1 class="rv">Run the old way, each stage quietly costs your teams.</h1>
@@ -308,7 +375,7 @@ SL.append(f'''<div class="slide" data-i="2"><div class="pad">
 </div>
 <p class="lead rv">None of this is an AI problem. It is exactly where AI, enabled inside your process, helps your teams most.</p>
 </div>{foot()}</div>''')
-# 4 POV
+# 3 POV
 SL.append(f'''<div class="slide dark" data-i="3"><div class="pad">
 <span class="eyebrow rv">How we work</span>
 <h1 class="rv">We enable each part of your funnel. We don&rsquo;t replace your teams.</h1>
@@ -317,63 +384,80 @@ SL.append(f'''<div class="slide dark" data-i="3"><div class="pad">
 <div class="belief"><span class="n">1</span><p>We enable your process. We don&rsquo;t replace it.</p></div>
 <div class="belief"><span class="n">2</span><p>We start where the constraint is, and enable one part at a time.</p></div>
 <div class="belief"><span class="n">3</span><p>Everything runs, and is measured, on your own platform.</p></div>
-</div>
-</div>{foot()}</div>''')
-# 5 bottleneck funnel
+</div></div>{foot()}</div>''')
+# 4 funnel (GESA mirror)
 SL.append(f'''<div class="slide" data-i="4"><div class="pad">
-<span class="eyebrow">Your delivery funnel</span>
-<h1 style="font-size:31px">Enable a part, and the bottleneck moves down the line.</h1>
+<span class="eyebrow">How it scales</span>
+<h1 style="font-size:31px">Relieve the top of the funnel. Then follow it down.</h1>
+<p style="font-size:13px;color:var(--z-slate);margin-top:6px">Every stage is throttled by the one above it. Step through and watch the constraint move.</p>
 <div class="enfun">
-<div class="funnel2" id="funnel2">{funnel_segs()}</div>
-<div><div class="endesc-state" id="en-state">Bottleneck &middot; Discovery</div>
-<h3 id="en-title" style="display:none"></h3>
-<p id="en-line"></p>
-<button class="enbtn" id="enbtn" onclick="enableNext()">Enable Discovery &rarr;</button></div>
+<div class="funcol"><div class="flabel">Requests in</div><div class="funnel2" id="funnel2">{funnel_segs()}</div><div class="flabel">Delivered value out</div></div>
+<div><div class="fpeyebrow" id="fp-k"></div><div class="fphead" id="fp-b"></div><p class="fpnote" id="fp-note"></p>
+<button class="enbtn" id="enbtn" onclick="nextPhase()">Enable next phase &rarr;</button></div>
+</div></div>{foot()}</div>''')
+# 5 human-in-the-loop
+SL.append(f'''<div class="slide dark" data-i="5"><div class="pad">
+<span class="eyebrow rv">Where AI fits</span>
+<h1 class="rv">The machine assembles. Your people decide.</h1>
+<div class="hcols rv">
+<div class="hpanel"><div class="he">AI &middot; does the assembly</div>
+<div class="hrow"><b>Connects</b><span>Transcripts, prior decisions, standards, and live org metadata into one context.</span></div>
+<div class="hrow"><b>Drafts</b><span>Requirements, stories, acceptance criteria, design, and wireframes.</span></div>
+<div class="hrow"><b>Challenges</b><span>Missing scenarios and design risk, flagged before a developer sees the ticket.</span></div>
+<div class="hf">Volume work, in minutes, at consistent quality.</div></div>
+<div class="handoff"><span class="ha">&rarr;</span><span class="hl">Hand-off</span></div>
+<div class="hpanel"><div class="he">Your people &middot; stay in control</div>
+<div class="hrow"><b>Validate the need</b><span>Your team confirms what the business asked for, source in hand.</span></div>
+<div class="hrow"><b>Own the design</b><span>Accept, change, or reject. Feasibility stays with your technical group.</span></div>
+<div class="hrow"><b>Release it</b><span>Nothing reaches a sprint without a human decision. Every gate is a person.</span></div>
+<div class="hf">Judgement work, where it changes the outcome.</div></div>
 </div>
+<div class="shiftband rv"><div class="sb"><b>Today</b><p>Your teams produce every artifact from scratch.</p></div>
+<div class="sarr">&rarr;</div>
+<div class="sb now"><b>The shift</b><p>Your teams review, correct, and approve. Same people, same standards, judgement applied where it is worth the most.</p></div></div>
 </div>{foot()}</div>''')
-# 6 manual pipeline
-SL.append(f'''<div class="slide" data-i="5"><div class="pad">
+# 6 pipeline
+SL.append(f'''<div class="slide" data-i="6"><div class="pad">
 <span class="eyebrow">One part feeds the next</span>
-<h1 style="font-size:29px">Step through it. Each output becomes the next input.</h1>
+<h1 style="font-size:28px">Step through it. The machine drafts; your people approve.</h1>
 <div class="pipehdr" id="pipehdr"></div>
 <div class="pipe2">
 <div class="pin"><div class="pil">Input</div><div class="pifrom" id="pin-from"></div><div class="pibody" id="pin-body"></div>
 <button class="pnext" id="pnext" onclick="pipeNext()"></button></div>
 <div class="pout"><div class="pouth"><span id="pout-title">Output</span><span class="flag" id="pout-flag"></span></div>
-<div class="poutb" id="pout-body"><div class="pstart">Step through the delivery pipeline. Each artifact is generated, then feeds the next.</div></div></div>
-</div>
-</div>{foot()}</div>''')
-# 7 results cascade
-SL.append(f'''<div class="slide" data-i="6"><div class="pad">
+<div class="poutb" id="pout-body"><div class="pstart">Step through the delivery pipeline. Each artifact is drafted, reviewed by your team, and feeds the next.</div></div></div>
+</div></div>{foot()}</div>''')
+# 7 results
+SL.append(f'''<div class="slide" data-i="7"><div class="pad">
 <span class="eyebrow rv">Measurable results</span>
 <h1 class="rv">Results compound as the enablement cascades.</h1>
 <div class="rescols rv">
-<div class="reschart"><div class="rct"><span>Intake &rarr; production</span><span>per part enabled</span></div>{res_chart()}
-<div class="leg"><span><i style="background:var(--z-orange)"></i>Time to production</span><span><i style="background:var(--z-teal)"></i>Throughput</span></div></div>
+<div class="reschart"><div class="rct">Delivered throughput</div>{res_chart()}
+<div class="rcx"><span>Front</span><span>Build</span><span>Test</span><span>Release</span><span>End to end</span></div></div>
 <div class="restiles">
-<div class="rtile"><b class="u">Higher</b><span>throughput per delivery team, sprint over sprint</span></div>
-<div class="rtile"><b>Shorter</b> <span class="u" style="font-size:inherit"></span><span>time from intake to production as each part enables</span></div>
-<div class="rtile"><b>Less</b><span>rework, because each stage hands off cleaner work</span></div>
-</div>
-</div>
-<p class="resnote rv">Two of these are already <b>measured on Salesforce</b>: estimate variance tightened from ~5% to ~1%, and a recent AI-run engagement delivered above the margin it was sold at. The rest we measure on your data as each part enables.</p>
+<div class="rtile"><b>More throughput</b><span>the same team ships more, sprint over sprint</span></div>
+<div class="rtile"><b>Faster to production</b><span>time from intake to live keeps dropping</span></div>
+<div class="rtile"><b>Less rework</b><span>each stage hands off cleaner work to the next</span></div>
+</div></div>
+<p class="resnote rv">These are the outcomes we measure on your own delivery, on your data, as each part enables, not our averages. You set the baseline; the cascade shows the gain.</p>
 </div>{foot()}</div>''')
 # 8 offer + rolodex
-SL.append(f'''<div class="slide" data-i="7"><div class="pad">
+SL.append(f'''<div class="slide" data-i="8"><div class="pad">
 <span class="eyebrow rv">What we bring</span>
-<h1 class="rv">Proven capability, ready to enable in your process.</h1>
+<h1 class="rv">A library of skills, ready to enable in your process.</h1>
 <div class="offer rv">
 <div><div class="subh">What we bring</div>
 <ul class="olist"><li>The delivery value chain, enabled inside your teams&rsquo; existing process.</li><li>A working set of skills and agents, configured on your org.</li><li>Your teams enabled to run the motion, with us alongside.</li></ul>
-<div class="roms">A library of skills and agents at your disposal &mdash; spin to explore a few.</div></div>
-<div class="rolo"><div class="rolostack" id="rolostack">
-<div class="rolocard b2"></div><div class="rolocard b1"></div>
-<div class="rolocard front" id="rolofront"><span class="rt" id="ro-t"></span><div class="rn" id="ro-n"></div><div class="rd" id="ro-d"></div></div>
-</div><button class="spinbtn" id="spinbtn" onclick="spinRolo()">&#8635; Spin the wheel</button></div>
-</div>
-</div>{foot()}</div>''')
-# 9 fit (no salesforce)
-SL.append(f'''<div class="slide" data-i="8"><div class="pad">
+<div class="roms">Thumb through a few of the skills in the library. Click one to see what it does.</div></div>
+<div class="rolo">
+<div class="rolodex" id="rolodex" onmouseenter="roloHover(true)" onmouseleave="roloHover(false)" onclick="openSkill()">
+<div class="rolospindle"></div>
+<div class="rolostack"><div class="b b2"></div><div class="b b1"></div></div>
+<div class="rolofront" id="rolofront"><span class="rt" id="ro-t"></span><div class="rn" id="ro-n"></div><div class="rd" id="ro-d"></div></div>
+</div><div class="rolohint">Hover to thumb through &middot; click to open</div></div>
+</div></div>{foot()}</div>''')
+# 9 fit
+SL.append(f'''<div class="slide" data-i="9"><div class="pad">
 <span class="eyebrow rv">Is this you?</span>
 <h1 class="rv">Built for teams that deliver, again and again.</h1>
 <div class="cols2 rv" style="margin-top:20px">
@@ -383,7 +467,7 @@ SL.append(f'''<div class="slide" data-i="8"><div class="pad">
 <ul class="olist"><li>You want a single AI feature or chatbot, not a delivery motion.</li><li>There&rsquo;s no appetite to change how delivery runs.</li><li>Measuring results isn&rsquo;t a priority yet.</li></ul></div>
 </div></div>{foot()}</div>''')
 # 10 next step
-SL.append(f'''<div class="slide" data-i="9"><div class="pad">
+SL.append(f'''<div class="slide" data-i="10"><div class="pad">
 <span class="eyebrow rv">The next step</span>
 <h1 class="rv">Enable one part. Prove it. Scale it together.</h1>
 <div class="steps rv">
@@ -394,7 +478,7 @@ SL.append(f'''<div class="slide" data-i="9"><div class="pad">
 <p class="lead rv" style="margin-top:22px">One part in, you have proven, measurable results you can see, enough to green-light the rest of the AI-enabled delivery motion.</p>
 </div>{foot()}</div>''')
 # 11 close
-SL.append(f'''<div class="slide dark close" data-i="10"><div class="pad" style="justify-content:center">
+SL.append(f'''<div class="slide dark close" data-i="11"><div class="pad" style="justify-content:center">
 <img class="logo rv" src="{WHITE}" alt="Zennify" style="margin-bottom:26px">
 <span class="eyebrow rv">AI-enabled services delivery</span>
 <h1 class="rv">A delivery lifecycle that gets faster every time you run it.</h1>
@@ -404,7 +488,7 @@ SL.append(f'''<div class="slide dark close" data-i="10"><div class="pad" style="
 
 N=len(SL)
 dots="".join(f'<span class="dot {"on" if i==0 else ""}" onclick="go({i})"></span>' for i in range(N))
-FLOW_SLIDE=5; ROLO_SLIDE=7
+FLOW_SLIDE=6; ROLO_SLIDE=8
 
 JS=f"""
 const N={N};let cur=0;const slides=[...document.querySelectorAll('.slide')];
@@ -420,74 +504,89 @@ function render(){{
 }}
 function go(n){{cur=Math.max(0,Math.min(N-1,n));render();}}
 function next(){{go(cur+1);}}function prev(){{go(cur-1);}}
-addEventListener('keydown',e=>{{if(e.key==='ArrowRight'||e.key===' '){{e.preventDefault();next();}}if(e.key==='ArrowLeft')prev();}});
-// bottleneck funnel
-const STAGES2={STAGES2_JSON},BOTTLE={BOTTLE_JSON},ENDMSG={ENDMSG_JSON},EN=STAGES2.length;let enabled=0;
+addEventListener('keydown',e=>{{if(e.key==='Escape'){{closeSkill();return;}}if(e.key==='ArrowRight'||e.key===' '){{e.preventDefault();next();}}if(e.key==='ArrowLeft')prev();}});
+// funnel: constraint / starved / enabled
+const SEG={SEG_JSON},PH={PH_JSON},NP=SEG.length;let phase=0;
 function paintFunnel(){{
- document.querySelectorAll('#funnel2 .fseg2').forEach((b,i)=>{{
-  b.classList.toggle('on',i<enabled);
-  b.classList.toggle('bottleneck',i===enabled&&enabled<EN);
- }});
- const st=document.getElementById('en-state'),ln=document.getElementById('en-line'),btn=document.getElementById('enbtn');
- if(enabled>=EN){{st.textContent='End to end · enabled';st.className='endesc-state done';ln.textContent=ENDMSG;btn.textContent='↻ Reset';}}
- else{{st.textContent='Bottleneck · '+STAGES2[enabled];st.className='endesc-state';ln.textContent=BOTTLE[enabled];btn.textContent='Enable '+STAGES2[enabled]+' →';}}
+ for(let i=0;i<NP;i++){{
+  const el=document.querySelectorAll('#funnel2 .fseg2')[i];const st=document.getElementById('fst'+i);
+  el.classList.remove('enabled','starved','constraint');
+  if(phase>=NP||i<phase){{el.classList.add('enabled');st.textContent='Enabled';}}
+  else if(i===phase){{el.classList.add('constraint');st.textContent='Constraint';}}
+  else{{el.classList.add('starved');st.textContent='Starved';}}
+ }}
+ const p=PH[Math.min(phase,PH.length-1)];
+ document.getElementById('fp-k').textContent=p.k;document.getElementById('fp-b').innerHTML=p.b;document.getElementById('fp-note').innerHTML=p.note;
+ document.getElementById('enbtn').textContent=phase>=NP?'↻ Reset':'Enable next phase →';
 }}
-function enableNext(){{enabled=enabled>=EN?0:enabled+1;paintFunnel();}}
-function enableTo(i){{enabled=(i+1===enabled)?i:i+1;paintFunnel();}}
+function nextPhase(){{phase=phase>=NP?0:phase+1;paintFunnel();}}
+function setPhase(i){{phase=i;paintFunnel();}}
 paintFunnel();
 // manual pipeline
-const PIPE={PIPE_JSON};let pStep=0,pBusy=false,pTimers=[];
+const PIPE={PIPE_JSON};let pDone=0,pBusy=false,pTimers=[];
 function clearP(){{pTimers.forEach(t=>clearTimeout(t));pTimers=[];}}
-function renderPHdr(done){{
+function renderPHdr(genIdx){{
  document.getElementById('pipehdr').innerHTML=PIPE.map((p,i)=>{{
-  const cls=i<done?'done':i===done?'cur':'';const a=i<PIPE.length-1?'<span class=parrow>&rsaquo;</span>':'';
+  const cls=(i===genIdx)?'cur':(i<pDone?'done':'');const a=i<PIPE.length-1?'<span class=parrow>&rsaquo;</span>':'';
   return `<span class="ppill ${{cls}}"><span class=pd></span>${{p.stage}}</span>${{a}}`;}}).join('');
 }}
 function renderInput(i){{
- const p=PIPE[i];
- document.getElementById('pin-from').textContent='from '+p.frm;
+ const p=PIPE[i];document.getElementById('pin-from').textContent='from '+p.frm;
  const bd=document.getElementById('pin-body');bd.className='pibody'+(p.innote?' note':'');bd.innerHTML=p.in;
- const btn=document.getElementById('pnext');btn.disabled=false;
- btn.textContent=(i===0?'▶ Generate ':'Generate next: ')+p.stage+' →';
+ const btn=document.getElementById('pnext');btn.disabled=false;btn.textContent=(i===0?'▶ Generate ':'Generate next: ')+p.stage+' →';
 }}
-function resetPipe(){{clearP();pStep=0;pBusy=false;renderPHdr(0);renderInput(0);
+function resetPipe(){{clearP();pDone=0;pBusy=false;renderPHdr(0);renderInput(0);
  document.getElementById('pout-title').textContent='Output';document.getElementById('pout-flag').textContent='';
- document.getElementById('pout-body').innerHTML='<div class="pstart">Step through the delivery pipeline. Each artifact is generated, then feeds the next.</div>';
-}}
+ document.getElementById('pout-body').innerHTML='<div class="pstart">Step through the delivery pipeline. Each artifact is drafted, reviewed by your team, and feeds the next.</div>';}}
 function pipeNext(){{
  if(pBusy)return;
- if(pStep>=PIPE.length){{resetPipe();return;}}
- pBusy=true;const p=PIPE[pStep];const btn=document.getElementById('pnext');btn.disabled=true;btn.textContent='Generating…';
+ if(pDone>=PIPE.length){{resetPipe();return;}}
+ const s=pDone;const p=PIPE[s];pBusy=true;
+ const btn=document.getElementById('pnext');btn.disabled=true;btn.textContent='Generating…';
+ renderPHdr(s);  // highlight the step being generated, not the next
  document.getElementById('pout-title').textContent=p.stage;document.getElementById('pout-flag').textContent='';
  const body=document.getElementById('pout-body');
  body.innerHTML='<div class="pgen"><span class="spin"></span><span class="gtxt" id="pgt">'+p.gen[0]+'</span></div>';
  let g=0;const gt=document.getElementById('pgt');
- const tick=setInterval(()=>{{g++;if(g<p.gen.length)gt.textContent=p.gen[g];}},620);
+ const tick=setInterval(()=>{{g++;if(g<p.gen.length)gt.textContent=p.gen[g];}},640);
  pTimers.push(setTimeout(()=>{{
-  clearInterval(tick);body.innerHTML=p.art;document.getElementById('pout-flag').textContent='Generated';
-  pStep++;renderPHdr(pStep);pBusy=false;
-  if(pStep>=PIPE.length){{const b=document.getElementById('pnext');b.disabled=false;b.textContent='↻ Start over';document.getElementById('pin-from').textContent='complete';document.getElementById('pin-body').className='pibody';document.getElementById('pin-body').textContent='Discovery notes became stories, design, a screen, and tests — one motion.';}}
-  else renderInput(pStep);
- }},p.gen.length*620+300));
+  clearInterval(tick);body.innerHTML=p.art;document.getElementById('pout-flag').textContent='Drafted for review';
+  pDone=s+1;renderPHdr(s);pBusy=false;   // keep the just-generated step highlighted
+  if(pDone>=PIPE.length){{const b=document.getElementById('pnext');b.disabled=false;b.textContent='↻ Start over';
+    document.getElementById('pin-from').textContent='complete';document.getElementById('pin-body').className='pibody';
+    document.getElementById('pin-body').textContent='Notes became stories, design, a screen, and tests, each reviewed by your team along the way.';}}
+  else renderInput(pDone);
+ }},p.gen.length*640+300));
 }}
-// rolodex
-const SKILLS={SKILLS_JSON};let roloInit=false,roloIdx=0,roloSpin=null;
+// rolodex + modal
+const SKILLS={SKILLS_JSON};let roloInit=false,roloIdx=0,roloTimer=null;
 function showRolo(i){{roloIdx=i;const s=SKILLS[i];
- document.getElementById('ro-t').textContent=s.t;document.getElementById('ro-n').textContent=s.n;document.getElementById('ro-d').textContent=s.d;}}
-function spinRolo(){{
- if(roloSpin)return;let n=0;const total=16+Math.floor(SKILLS.length*Math.random());let d=45;
- function tick(){{roloIdx=(roloIdx+1)%SKILLS.length;showRolo(roloIdx);n++;
-  if(n>=total){{roloSpin=null;return;}}
-  if(n>total-6)d+=45;roloSpin=setTimeout(tick,d);}}
- roloSpin=setTimeout(tick,d);
+ document.getElementById('ro-t').textContent=s.t;document.getElementById('ro-n').textContent=s.n;document.getElementById('ro-d').textContent=s.s;
+ const f=document.getElementById('rolofront');f.classList.remove('flip');void f.offsetWidth;f.classList.add('flip');}}
+function roloHover(on){{
+ if(on){{if(roloTimer)return;roloTimer=setInterval(()=>showRolo((roloIdx+1)%SKILLS.length),320);}}
+ else{{clearInterval(roloTimer);roloTimer=null;}}
 }}
+function openSkill(){{const s=SKILLS[roloIdx];
+ document.getElementById('mo-t').textContent=s.t;document.getElementById('mo-n').textContent=s.n;
+ document.getElementById('mo-s').textContent=s.s;
+ document.getElementById('mo-u').innerHTML=s.u.map(x=>`<li>${{x}}</li>`).join('');
+ document.getElementById('mo-d').innerHTML=s.d.map(x=>`<li>${{x}}</li>`).join('');
+ document.getElementById('mscrim').classList.add('on');document.getElementById('modal').classList.add('on');}}
+function closeSkill(){{document.getElementById('mscrim').classList.remove('on');document.getElementById('modal').classList.remove('on');}}
 render();
 """
+
+MODAL=f'''<div class="mscrim" id="mscrim" onclick="closeSkill()"></div>
+<div class="modal" id="modal"><div class="mh"><div class="mt" id="mo-t"></div><h3 id="mo-n"></h3><button class="mclose" onclick="closeSkill()">&times;</button></div>
+<div class="mb"><div class="msum" id="mo-s"></div>
+<div class="mcols"><div><div class="msec">Use cases</div><ul id="mo-u"></ul></div><div><div class="msec">Deliverables</div><ul id="mo-d"></ul></div></div>
+</div></div>'''
 
 HTML=f'''<!doctype html><html lang="en"><head><meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>Zennify &middot; AI-Enabled Services Delivery</title><style>{CSS}</style></head>
-<body><div class="prog" id="prog"></div><div id="deck">{"".join(SL)}</div>
+<body><div class="prog" id="prog"></div><div id="deck">{"".join(SL)}</div>{MODAL}
 <div class="nav"><button onclick="prev()">&#8249;</button><div class="dots">{dots}</div><button onclick="next()">&#8250;</button><span class="count" id="count">1 / {N}</span></div>
 <script>{JS}</script></body></html>'''
 open("delivery.html","w").write(HTML)
