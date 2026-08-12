@@ -88,19 +88,20 @@ h1{font-size:37px;font-weight:700;line-height:1.06;letter-spacing:-.5px;color:va
 .fpnote b{color:var(--z-orange)}
 .enbtn{margin-top:18px;font-family:var(--z-font);font-size:13px;font-weight:700;color:#fff;background:var(--z-dark);border:none;border-radius:var(--z-radius);padding:12px 20px;cursor:pointer}
 .enbtn:hover{background:var(--z-teal)}
-/* human slide */
+/* human slide (light) */
 .hcols{display:grid;grid-template-columns:1fr 70px 1fr;gap:0;margin-top:18px;align-items:stretch}
-.hpanel{background:rgba(255,255,255,.06);border-radius:var(--z-radius);padding:18px 20px}
-.hpanel .he{font-size:10px;font-weight:700;letter-spacing:.6px;text-transform:uppercase;color:var(--z-teal-light);margin-bottom:12px}
-.hrow{margin-bottom:11px}.hrow b{font-size:13px;color:#fff}.hrow span{font-size:11.5px;color:rgba(255,255,255,.72);display:block;line-height:1.4;margin-top:1px}
-.hpanel .hf{font-size:11.5px;color:var(--z-teal-light);font-weight:700;margin-top:14px;padding-top:12px;border-top:1px solid rgba(255,255,255,.12)}
+.hpanel{background:var(--z-lt);border-radius:var(--z-radius);padding:18px 20px}
+.hpanel.ai{background:var(--z-ice)}
+.hpanel .he{font-size:10px;font-weight:700;letter-spacing:.6px;text-transform:uppercase;color:var(--z-teal);margin-bottom:12px}
+.hrow{margin-bottom:11px}.hrow b{font-size:13px;color:var(--z-dark)}.hrow span{font-size:11.5px;color:var(--z-slate);display:block;line-height:1.4;margin-top:1px}
+.hpanel .hf{font-size:11.5px;color:var(--z-teal);font-weight:700;margin-top:14px;padding-top:12px;border-top:1px solid var(--z-purple-lt)}
 .handoff{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px}
-.handoff .hl{font-size:9px;font-weight:700;letter-spacing:.6px;text-transform:uppercase;color:rgba(255,255,255,.5);writing-mode:vertical-rl;transform:rotate(180deg)}
-.handoff .ha{color:var(--z-teal-light);font-size:20px}
-.shiftband{display:grid;grid-template-columns:1fr 40px 1fr;gap:10px;align-items:center;margin-top:16px;background:rgba(255,255,255,.05);border-radius:var(--z-radius);padding:14px 18px}
+.handoff .hl{font-size:9px;font-weight:700;letter-spacing:.6px;text-transform:uppercase;color:var(--z-slate);writing-mode:vertical-rl;transform:rotate(180deg)}
+.handoff .ha{color:var(--z-teal);font-size:20px}
+.shiftband{display:grid;grid-template-columns:1fr 40px 1fr;gap:10px;align-items:center;margin-top:16px;background:var(--z-dark);border-radius:var(--z-radius);padding:14px 18px}
 .shiftband .sb b{font-size:11px;font-weight:700;letter-spacing:.5px;text-transform:uppercase;color:rgba(255,255,255,.55)}
 .shiftband .sb.now b{color:var(--z-teal-light)}
-.shiftband .sb p{font-size:12.5px;color:rgba(255,255,255,.85);line-height:1.4;margin-top:4px}
+.shiftband .sb p{font-size:12.5px;color:rgba(255,255,255,.9);line-height:1.4;margin-top:4px}
 .shiftband .sarr{text-align:center;color:var(--z-teal-light);font-size:20px}
 /* pipeline */
 .pipehdr{display:flex;align-items:center;gap:7px;margin-top:12px;flex-wrap:wrap}
@@ -154,13 +155,27 @@ h1{font-size:37px;font-weight:700;line-height:1.06;letter-spacing:-.5px;color:va
 .awf .wfi span{font-size:8.5px;color:var(--z-slate);display:block}.awf .wfi span em{font-style:normal;color:var(--z-orange);font-weight:700}
 .awf .wfi .bx{height:13px;border:1px solid var(--z-purple-lt);border-radius:2px;background:#fbfcfe;margin-top:2px}
 .awf .wfi.warn .bx{border-color:var(--z-orange);background:#fff7ef}.awf .wfi.full{grid-column:1/-1}
+.awf .wt .wlive{margin-left:auto;font-size:8px;font-weight:700;letter-spacing:.4px;text-transform:uppercase;color:var(--z-teal);background:var(--z-ice);border-radius:20px;padding:2px 8px}
+.awf .wch{cursor:pointer}
+.awf .wtabs{display:flex;gap:16px;padding:0 11px;border-bottom:1px solid var(--z-purple-lt);background:#fff}
+.awf .wtab{font-size:9.5px;color:var(--z-slate);padding:7px 0;border-bottom:2px solid transparent;cursor:pointer}
+.awf .wtab.on{color:#0176d3;border-bottom-color:#0176d3;font-weight:700}
+.awf .wrel{display:flex;justify-content:space-between;padding:8px 11px;border-bottom:1px solid var(--z-purple-lt);font-size:10.5px;color:var(--z-dark)}
+.awf .wrel:last-child{border:none}.awf .wrel .ws{color:var(--z-slate)}
+.awf .wact{padding:7px 11px;position:relative;padding-left:22px}
+.awf .wact::before{content:'';position:absolute;left:11px;top:11px;width:6px;height:6px;border-radius:50%;background:var(--z-teal)}
+.awf .wact b{font-size:10.5px;color:var(--z-dark)}.awf .wact span{font-size:9.5px;color:var(--z-slate);display:block}
+.whint{font-size:10.5px;color:var(--z-teal);font-style:italic;margin-top:8px}
 .atc{display:grid;grid-template-columns:52px 1fr 1fr;gap:8px;padding:6px 0;border-bottom:1px solid var(--z-purple-lt);font-size:11px;line-height:1.3}
 .atc:last-child{border:none}.atc b{color:var(--z-teal);font-size:10px}.atc .ex{color:var(--z-slate)}
 .acov{font-size:11px;color:var(--z-slate);font-style:italic;margin-top:7px}
 /* results cascade */
 .rescols{display:grid;grid-template-columns:1.35fr 1fr;gap:24px;margin-top:18px;align-items:center}
 .reschart{background:var(--z-lt);border-radius:var(--z-radius);padding:16px 18px}
-.reschart .rct{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.4px;color:var(--z-slate);margin-bottom:8px}
+.reschart .rlegend{display:flex;gap:16px;margin-bottom:8px}
+.reschart .rlegend span{font-size:10px;font-weight:700;color:var(--z-slate);display:inline-flex;align-items:center}
+.reschart .rlegend i{width:14px;height:3px;border-radius:2px;margin-right:6px}
+.reschart .rlegend .lt{background:var(--z-teal)}.reschart .rlegend .lo{background:var(--z-orange)}
 .reschart .rcx{display:flex;justify-content:space-between;font-size:9px;color:var(--z-slate);margin-top:6px}
 .restiles{display:flex;flex-direction:column;gap:11px}
 .rtile{background:var(--z-lt);border-radius:var(--z-radius);padding:13px 16px}
@@ -186,7 +201,10 @@ h1{font-size:37px;font-weight:700;line-height:1.06;letter-spacing:-.5px;color:va
 .rolofront .rt{font-size:9px;font-weight:700;letter-spacing:.4px;text-transform:uppercase;color:#fff;background:var(--z-teal);border-radius:var(--z-radius-sm);padding:2px 8px;align-self:flex-start}
 .rolofront .rn{font-size:18px;font-weight:700;color:var(--z-dark);margin:10px 0 6px}
 .rolofront .rd{font-size:12px;line-height:1.45;color:var(--z-slate)}
-.rolohint{font-size:11px;color:var(--z-slate);margin-top:14px}
+.roarrow{background:var(--z-lt);border:1px solid var(--z-purple-lt);border-radius:var(--z-radius);color:var(--z-dark);font-size:13px;cursor:pointer;width:44px;height:26px;line-height:1}
+.roarrow:hover{border-color:var(--z-teal);color:var(--z-teal)}
+.rolo .rolodex{margin:10px 0}
+.rolohint{font-size:11px;color:var(--z-slate);margin-top:12px}
 /* modal */
 .mscrim{position:fixed;inset:0;background:rgba(28,74,77,.5);opacity:0;pointer-events:none;transition:opacity .18s;z-index:70}
 .mscrim.on{opacity:1;pointer-events:auto}
@@ -216,21 +234,23 @@ def foot():
     return f'<div class="foot"><span class="c">&copy; 2026 Zennify &middot; Confidential &middot; AI-Enabled Services Delivery</span><img src="{BADGE}" alt="Zennify"></div>'
 
 # ---- funnel (GESA-mirrored) ----
-SEGMENTS=[("Front of funnel","Discovery, stories, design, approvals"),
+SEGMENTS=[("Intake","Discovery, requirements, approvals"),
+          ("Design","Stories, solution design, wireframes"),
           ("Build","Development against the backlog"),
           ("Test","QA against acceptance criteria"),
           ("Release &amp; adoption","Deploy, change, training")]
 PHASES=[
- ("We are here","One team carries the top of the funnel","Everything upstream of build passes through a few people. Nothing downstream is broken, it is starved, waiting on the work above."),
- ("Enable the front of the funnel","Discovery, stories, design and approvals drafted for review","The top of the funnel opens. More build-ready work reaches the sprint, so the constraint moves to build."),
+ ("We are here","The top of the funnel holds the interpretive work","Intake and design are where the manual, interpretive work concentrates. Nothing downstream is broken, it is starved, waiting on that work to reach it."),
+ ("Enable intake","Discovery and requirements drafted for review","Intake opens. Structured, traceable requirements reach design faster, so the constraint moves to design."),
+ ("Enable design","Stories, solution design and wireframes drafted for review","Design keeps pace with intake. More build-ready work reaches the sprint, so the constraint moves to build."),
  ("Enable build","AI-assisted development across the team","Build absorbs the higher volume. The pressure moves again, to test."),
  ("Enable test","Test scripts generated from acceptance criteria","Coverage stops inheriting gaps in the story. The last narrow point is getting the work adopted."),
- ("Enable release &amp; adoption","Go-live material, training, and throughput in view","The funnel is open end to end. Every stage moves together, and the next constraint shows up in the data, not in an argument."),
+ ("Enable release &amp; adoption","Go-live material, training, and throughput in view","The funnel is open end to end, from intake to a live, adopted platform."),
 ]
 SEG_JSON=json.dumps([{"n":s[0],"d":s[1]} for s in SEGMENTS])
 PH_JSON=json.dumps([{"k":p[0],"b":p[1],"note":p[2]} for p in PHASES])
 def funnel_segs():
-    bounds=[100,84,70,58,48]
+    bounds=[100,86,73,62,52,44]
     out=""
     for i,s in enumerate(SEGMENTS):
         top=bounds[i]; bot=bounds[i+1]
@@ -253,17 +273,38 @@ A_STORY=('<div class="astory"><span class="sk">US-118</span><span class="snm">Me
          '<ul><li>Case routes to the originating branch on submit.</li><li>Reassignment is logged.</li></ul></div>'
          '<div class="hgate"><span class="hgi">&#10003;</span><b>Your product owner grooms</b> and accepts before design.</div>')
 A_DESIGN=('<div class="atbl">'
-          '<div class="atr"><span class="al">UI</span><span class="ar">Lightning record page + quick action</span></div>'
-          '<div class="atr"><span class="al">Automation</span><span class="ar">Flow for routing; no Apex</span></div>'
-          '<div class="atr"><span class="al">Data</span><span class="ar">Case + custom Branch lookup</span></div>'
-          '<div class="atr"><span class="al">Integration</span><span class="ar">Platform event to core banking</span></div></div>'
-          '<div class="acall"><b>Decision:</b> configuration over code keeps routing admin-maintainable.</div>'
+          '<div class="atr"><span class="al">UI</span><span class="ar">Lightning record page + quick action for one-screen intake</span></div>'
+          '<div class="atr"><span class="al">Objects</span><span class="ar">Case + custom Branch__c lookup; SLA field on Case</span></div>'
+          '<div class="atr"><span class="al">Automation</span><span class="ar">Record-triggered Flow routes to the branch queue; no Apex</span></div>'
+          '<div class="atr"><span class="al">Sharing</span><span class="ar">Role hierarchy + branch-based sharing rule</span></div>'
+          '<div class="atr"><span class="al">Integration</span><span class="ar">Platform event to core banking; idempotent, retried</span></div>'
+          '<div class="atr"><span class="al">Reporting</span><span class="ar">Cases by branch, by type, by SLA status</span></div></div>'
+          '<div class="acall"><b>Decision:</b> configuration over code &mdash; Flow-based routing keeps it admin-maintainable and auditable.</div>'
           '<div class="hgate"><span class="hgi">&#10003;</span><b>Your architect owns the design</b> &mdash; accept, change, or reject.</div>')
-A_WIRE=('<div class="awf"><div class="wt"><span class="wo">CASE</span><span class="wtt">New Member Case</span></div>'
-        '<div class="wpath"><span class="wch cur">New</span><span class="wch">In progress</span><span class="wch">Escalated</span><span class="wch">Resolved</span><span class="wch">Closed</span></div>'
-        '<div class="wff"><div class="wfi"><span>Subject</span><div class="bx"></div></div><div class="wfi"><span>Member</span><div class="bx"></div></div>'
+A_ARCH=('<div class="afind"><span class="fd n"></span><b>Automation</b> &mdash; Flow-based routing approved; no Apex, no trigger sprawl.</div>'
+        '<div class="afind"><span class="fd n"></span><b>Security</b> &mdash; sharing model verified against the requirement; no gaps.</div>'
+        '<div class="afind"><span class="fd a"></span><b>Scale</b> &mdash; one Flow near SOQL limits at peak volume; add a guard.</div>'
+        '<div class="afind"><span class="fd r"></span><b>Data</b> &mdash; Branch captured as free text; change to a lookup before build.</div>'
+        '<div class="acall"><b>Verdict:</b> approved to build once the Branch field becomes a lookup.</div>'
+        '<div class="hgate"><span class="hgi">&#10003;</span><b>Your architect signs off</b> the review before build starts.</div>')
+A_WIRE=('<div class="awf"><div class="wt"><span class="wo">CASE</span><span class="wtt">New Member Case</span><span class="wlive">live mock</span></div>'
+        '<div class="wpath">'
+        '<span class="wch cur" onclick="wfPath(this)">New</span><span class="wch" onclick="wfPath(this)">In progress</span>'
+        '<span class="wch" onclick="wfPath(this)">Escalated</span><span class="wch" onclick="wfPath(this)">Resolved</span>'
+        '<span class="wch" onclick="wfPath(this)">Closed</span></div>'
+        '<div class="wtabs"><span class="wtab on" onclick="wfTab(this,\'d\')">Details</span>'
+        '<span class="wtab" onclick="wfTab(this,\'r\')">Related</span><span class="wtab" onclick="wfTab(this,\'a\')">Activity</span></div>'
+        '<div class="wpane" id="wp-d"><div class="wff">'
+        '<div class="wfi"><span>Subject</span><div class="bx"></div></div><div class="wfi"><span>Member</span><div class="bx"></div></div>'
         '<div class="wfi"><span>Case Type</span><div class="bx"></div></div><div class="wfi warn"><span>Branch <em>required</em></span><div class="bx"></div></div>'
         '<div class="wfi full"><span>Description</span><div class="bx" style="height:22px"></div></div></div></div>'
+        '<div class="wpane" id="wp-r" style="display:none"><div class="wrel"><span>Member &middot; J. Rivera</span><span class="ws">3 open cases</span></div>'
+        '<div class="wrel"><span>Account &middot; ****4821</span><span class="ws">Checking</span></div>'
+        '<div class="wrel"><span>Branch &middot; Downtown</span><span class="ws">Queue owner</span></div></div>'
+        '<div class="wpane" id="wp-a" style="display:none"><div class="wact"><b>Case created</b><span>by S. Chen &middot; just now</span></div>'
+        '<div class="wact"><b>Auto-assigned</b><span>Downtown branch queue</span></div>'
+        '<div class="wact"><b>SLA started</b><span>4h response target</span></div></div></div>'
+        '<div class="whint">Click the path stages or the tabs &mdash; the mock is live.</div>'
         '<div class="hgate"><span class="hgi">&#10003;</span>Adjusted, not built from zero &mdash; <b>your team tweaks</b> the screen.</div>')
 A_TEST=('<div class="atc"><b>TC-01</b><span>Create with all fields</span><span class="ex">Saved, routed to queue</span></div>'
         '<div class="atc"><b>TC-02</b><span>Submit with no branch</span><span class="ex">Blocked, error shown</span></div>'
@@ -275,7 +316,8 @@ PIPE=[
  {"stage":"Discovery findings","frm":"Workshop notes","in":'"When a member calls the branch, the rep opens three systems to log it, and the branch is often lost."',"innote":True,"gen":["Reading workshop notes…","Clustering needs…","Flagging gaps & risks…","Tracing to the source…"],"art":A_FIND},
  {"stage":"User stories","frm":"Discovery findings","in":"3 issues and 1 gap, prioritized and traced to the source.","innote":False,"gen":["Splitting findings into stories…","Writing acceptance criteria…","Grooming the backlog…"],"art":A_STORY},
  {"stage":"Solution design","frm":"User stories","in":"2 build-ready stories with acceptance criteria.","innote":False,"gen":["Selecting components & patterns…","Designing the data model…","Documenting the decision…"],"art":A_DESIGN},
- {"stage":"Wireframe","frm":"Solution design","in":"A build-ready design: Case object, Flow routing.","innote":False,"gen":["Choosing Lightning components…","Laying out fields…","Rendering the screen…"],"art":A_WIRE},
+ {"stage":"Architecture review","frm":"Solution design","in":"The proposed design: objects, automation, sharing, integration.","innote":False,"gen":["Checking automation & limits…","Reviewing the security model…","Flagging risks…"],"art":A_ARCH},
+ {"stage":"Wireframe","frm":"Approved design","in":"A reviewed, build-ready design, one risk fixed.","innote":False,"gen":["Choosing Lightning components…","Laying out fields…","Rendering the live mock…"],"art":A_WIRE},
  {"stage":"Test cases","frm":"Wireframe + stories","in":"The Case screen and its acceptance criteria.","innote":False,"gen":["Deriving scenarios…","Writing expected results…","Covering edge & negative…"],"art":A_TEST},
 ]
 PIPE_JSON=json.dumps(PIPE)
@@ -306,9 +348,6 @@ SKILLS=[
  ("Skill","Test Strategy & UAT Plan","Lays out how the solution is tested and validated before go-live.",
   ["Planning UAT for a launch","Defining go/no-go criteria","Structuring defect triage"],
   ["A test strategy and UAT plan","Entry/exit criteria and a go/no-go gate"]),
- ("Skill","Weekly Status Report","Produces the client-facing weekly status from live project systems.",
-  ["Weekly status for a program","Keeping a sponsor informed","Standardizing reporting across workstreams"],
-  ["A branded weekly status report","Live RAG, risks, and asks"]),
  ("Skill","Change & Enablement Plan","Builds the people side of change: stakeholders, comms, training, and a 90-day adoption plan.",
   ["Driving adoption of a new platform","Training client teams","Planning comms for a rollout"],
   ["A stakeholder and comms plan","A 90-day adoption plan"]),
@@ -332,22 +371,27 @@ def smooth_path(pts):
         d+=f" C{c1x:.1f},{c1y:.1f} {c2x:.1f},{c2y:.1f} {p2[0]:.1f},{p2[1]:.1f}"
     return d
 def res_chart():
-    W,Hc=320,150; xs=[16+i*(W-32)/4 for i in range(5)]
-    thr=[26,42,58,74,90]
-    pts=[(xs[i],Hc-14-(thr[i]/100)*(Hc-34)) for i in range(5)]
-    line=smooth_path(pts)
-    area=line+f" L{pts[-1][0]:.1f},{Hc-8} L{pts[0][0]:.1f},{Hc-8} Z"
-    dots="".join(f'<circle cx="{p[0]:.1f}" cy="{p[1]:.1f}" r="3.5" fill="var(--z-teal)"/>' for p in pts)
+    W,Hc=320,150
+    xs=[16+i*(W-32)/4 for i in range(5)]
+    def ypts(v): return [(xs[i],Hc-16-(v[i]/100)*(Hc-38)) for i in range(5)]
+    thr=ypts([26,42,58,74,90])      # throughput up (teal)
+    tim=ypts([90,73,56,40,26])      # time to production down (orange)
+    lt=smooth_path(thr); li=smooth_path(tim)
+    area=lt+f" L{thr[-1][0]:.1f},{Hc-8} L{thr[0][0]:.1f},{Hc-8} Z"
+    dt="".join(f'<circle cx="{p[0]:.1f}" cy="{p[1]:.1f}" r="3.2" fill="var(--z-teal)"/>' for p in thr)
+    di="".join(f'<circle cx="{p[0]:.1f}" cy="{p[1]:.1f}" r="3.2" fill="var(--z-orange)"/>' for p in tim)
     return (f'<svg viewBox="0 0 {W} {Hc}" width="100%" style="height:150px">'
             f'<path d="{area}" fill="var(--z-ice)"/>'
-            f'<path d="{line}" fill="none" stroke="var(--z-teal)" stroke-width="2.5" stroke-linecap="round"/>{dots}</svg>')
+            f'<path d="{li}" fill="none" stroke="var(--z-orange)" stroke-width="2.5" stroke-linecap="round"/>'
+            f'<path d="{lt}" fill="none" stroke="var(--z-teal)" stroke-width="2.5" stroke-linecap="round"/>{dt}{di}</svg>')
 
 SL=[]
 motif=('<div class="motif">'
- '<div class="mseg" style="width:100%">Front of funnel</div><div class="marr">&darr;</div>'
- '<div class="mseg d" style="width:80%">Build</div><div class="marr">&darr;</div>'
- '<div class="mseg" style="width:62%">Test</div><div class="marr">&darr;</div>'
- '<div class="mseg" style="width:48%">Release &amp; adoption</div></div>')
+ '<div class="mseg" style="width:100%">Intake</div><div class="marr">&darr;</div>'
+ '<div class="mseg" style="width:84%">Design</div><div class="marr">&darr;</div>'
+ '<div class="mseg d" style="width:68%">Build</div><div class="marr">&darr;</div>'
+ '<div class="mseg" style="width:54%">Test</div><div class="marr">&darr;</div>'
+ '<div class="mseg" style="width:42%">Release</div></div>')
 # 0 cover
 SL.append(f'''<div class="slide dark active" data-i="0"><div class="cover">
 <div class="l"><img class="logo" src="{WHITE}" alt="Zennify" style="margin-bottom:auto">
@@ -396,11 +440,11 @@ SL.append(f'''<div class="slide" data-i="4"><div class="pad">
 <button class="enbtn" id="enbtn" onclick="nextPhase()">Enable next phase &rarr;</button></div>
 </div></div>{foot()}</div>''')
 # 5 human-in-the-loop
-SL.append(f'''<div class="slide dark" data-i="5"><div class="pad">
+SL.append(f'''<div class="slide" data-i="5"><div class="pad">
 <span class="eyebrow rv">Where AI fits</span>
 <h1 class="rv">The machine assembles. Your people decide.</h1>
 <div class="hcols rv">
-<div class="hpanel"><div class="he">AI &middot; does the assembly</div>
+<div class="hpanel ai"><div class="he">AI &middot; does the assembly</div>
 <div class="hrow"><b>Connects</b><span>Transcripts, prior decisions, standards, and live org metadata into one context.</span></div>
 <div class="hrow"><b>Drafts</b><span>Requirements, stories, acceptance criteria, design, and wireframes.</span></div>
 <div class="hrow"><b>Challenges</b><span>Missing scenarios and design risk, flagged before a developer sees the ticket.</span></div>
@@ -432,14 +476,14 @@ SL.append(f'''<div class="slide" data-i="7"><div class="pad">
 <span class="eyebrow rv">Measurable results</span>
 <h1 class="rv">Results compound as the enablement cascades.</h1>
 <div class="rescols rv">
-<div class="reschart"><div class="rct">Delivered throughput</div>{res_chart()}
-<div class="rcx"><span>Front</span><span>Build</span><span>Test</span><span>Release</span><span>End to end</span></div></div>
+<div class="reschart"><div class="rlegend"><span><i class="lt"></i>Throughput</span><span><i class="lo"></i>Time to production</span></div>{res_chart()}
+<div class="rcx"><span>Intake</span><span>Design</span><span>Build</span><span>Test</span><span>Release</span></div></div>
 <div class="restiles">
 <div class="rtile"><b>More throughput</b><span>the same team ships more, sprint over sprint</span></div>
 <div class="rtile"><b>Faster to production</b><span>time from intake to live keeps dropping</span></div>
 <div class="rtile"><b>Less rework</b><span>each stage hands off cleaner work to the next</span></div>
 </div></div>
-<p class="resnote rv">These are the outcomes we measure on your own delivery, on your data, as each part enables, not our averages. You set the baseline; the cascade shows the gain.</p>
+<p class="resnote rv">These are outcomes that can be measured on your own delivery, using your own data, as each part of the funnel is enabled.</p>
 </div>{foot()}</div>''')
 # 8 offer + rolodex
 SL.append(f'''<div class="slide" data-i="8"><div class="pad">
@@ -448,13 +492,16 @@ SL.append(f'''<div class="slide" data-i="8"><div class="pad">
 <div class="offer rv">
 <div><div class="subh">What we bring</div>
 <ul class="olist"><li>The delivery value chain, enabled inside your teams&rsquo; existing process.</li><li>A working set of skills and agents, configured on your org.</li><li>Your teams enabled to run the motion, with us alongside.</li></ul>
-<div class="roms">Thumb through a few of the skills in the library. Click one to see what it does.</div></div>
+<div class="roms">Browse the skills that power the funnel. Click a card to see what it does.</div></div>
 <div class="rolo">
-<div class="rolodex" id="rolodex" onmouseenter="roloHover(true)" onmouseleave="roloHover(false)" onclick="openSkill()">
+<button class="roarrow" onclick="roloStep(-1)">&#9650;</button>
+<div class="rolodex" id="rolodex" onclick="openSkill()">
 <div class="rolospindle"></div>
 <div class="rolostack"><div class="b b2"></div><div class="b b1"></div></div>
 <div class="rolofront" id="rolofront"><span class="rt" id="ro-t"></span><div class="rn" id="ro-n"></div><div class="rd" id="ro-d"></div></div>
-</div><div class="rolohint">Hover to thumb through &middot; click to open</div></div>
+</div>
+<button class="roarrow" onclick="roloStep(1)">&#9660;</button>
+<div class="rolohint" id="rolohint"></div></div>
 </div></div>{foot()}</div>''')
 # 9 fit
 SL.append(f'''<div class="slide" data-i="9"><div class="pad">
@@ -558,15 +605,16 @@ function pipeNext(){{
   else renderInput(pDone);
  }},p.gen.length*640+300));
 }}
+// interactive wireframe (inside the pipeline artifact)
+function wfPath(el){{el.parentNode.querySelectorAll('.wch').forEach(x=>x.classList.remove('cur'));el.classList.add('cur');}}
+function wfTab(el,k){{el.parentNode.querySelectorAll('.wtab').forEach(x=>x.classList.remove('on'));el.classList.add('on');['d','r','a'].forEach(p=>{{const n=document.getElementById('wp-'+p);if(n)n.style.display=(p===k)?'':'none';}});}}
 // rolodex + modal
-const SKILLS={SKILLS_JSON};let roloInit=false,roloIdx=0,roloTimer=null;
-function showRolo(i){{roloIdx=i;const s=SKILLS[i];
+const SKILLS={SKILLS_JSON};let roloInit=false,roloIdx=0;
+function showRolo(i){{roloIdx=(i+SKILLS.length)%SKILLS.length;const s=SKILLS[roloIdx];
  document.getElementById('ro-t').textContent=s.t;document.getElementById('ro-n').textContent=s.n;document.getElementById('ro-d').textContent=s.s;
+ document.getElementById('rolohint').textContent=(roloIdx+1)+' / '+SKILLS.length+'  ·  click for details';
  const f=document.getElementById('rolofront');f.classList.remove('flip');void f.offsetWidth;f.classList.add('flip');}}
-function roloHover(on){{
- if(on){{if(roloTimer)return;roloTimer=setInterval(()=>showRolo((roloIdx+1)%SKILLS.length),320);}}
- else{{clearInterval(roloTimer);roloTimer=null;}}
-}}
+function roloStep(d){{showRolo(roloIdx+d);}}
 function openSkill(){{const s=SKILLS[roloIdx];
  document.getElementById('mo-t').textContent=s.t;document.getElementById('mo-n').textContent=s.n;
  document.getElementById('mo-s').textContent=s.s;
