@@ -1,6 +1,7 @@
-# Immersive Zennify deck: "AI-Advanced Delivery" motion (sales side removed).
-# Delivery value chain as a funnel + a flowing generate-it pipeline where each
-# artifact cascades into the next: Discovery -> stories -> design -> wireframe -> tests.
+# Immersive Zennify deck: "AI-Advanced Delivery" — client-facing, about enabling the
+# client's own teams. Progressive-enable funnel (GESA-style) + flowing generate-it
+# pipeline (Discovery -> stories -> design -> wireframe -> tests). No per-stage numbers,
+# no named skills, no time-savings estimates (may re-add later).
 import base64, json
 
 SK = "/root/.claude/skills/synced/zennify-html-artifacts"
@@ -33,7 +34,7 @@ html,body{width:100%;height:100%;background:#0e2a2c;overflow:hidden;font-family:
 .slide.dark .eyebrow{color:var(--z-teal-light)}
 h1{font-size:38px;font-weight:700;line-height:1.06;letter-spacing:-.5px;color:var(--z-dark)}
 .slide.dark h1{color:#fff}
-.lead{font-size:15px;line-height:1.55;color:var(--z-slate);margin-top:13px;max-width:680px}
+.lead{font-size:15px;line-height:1.55;color:var(--z-slate);margin-top:13px;max-width:700px}
 .slide.dark .lead{color:rgba(255,255,255,.82)}
 .logo{height:26px;width:auto;align-self:flex-start}
 .foot{display:flex;justify-content:space-between;align-items:center;padding:9px 22px;border-top:1px solid var(--z-purple-lt)}
@@ -52,7 +53,6 @@ h1{font-size:38px;font-weight:700;line-height:1.06;letter-spacing:-.5px;color:va
 .dots{display:flex;gap:6px}.dot{width:7px;height:7px;border-radius:50%;background:rgba(255,255,255,.3);cursor:pointer}.dot.on{background:var(--z-teal-light)}
 .count{font-size:11px;color:rgba(255,255,255,.7);font-weight:500;min-width:38px;text-align:center}
 .prog{position:fixed;top:0;left:0;height:3px;background:var(--z-teal);z-index:60;transition:width .3s}
-/* cover */
 .cover{display:grid;grid-template-columns:1.15fr .85fr;height:100%}
 .cover .l{background:var(--z-dark);color:#fff;padding:48px;display:flex;flex-direction:column}
 .cover .r{background:var(--z-ice);display:flex;align-items:center;justify-content:center;padding:34px}
@@ -76,25 +76,16 @@ h1{font-size:38px;font-weight:700;line-height:1.06;letter-spacing:-.5px;color:va
 .belief{display:flex;gap:12px;align-items:flex-start;background:rgba(255,255,255,.06);border-radius:var(--z-radius);padding:13px 16px}
 .belief .n{font-size:15px;font-weight:700;color:var(--z-teal-light);flex:none;width:22px}
 .belief p{font-size:14px;line-height:1.4;color:#fff}
-.notdo{margin-top:16px;font-size:13px;color:rgba(255,255,255,.75);line-height:1.5}.notdo b{color:var(--z-orange)}
-/* FUNNEL */
-.funwrap{display:grid;grid-template-columns:420px 1fr;gap:24px;margin-top:14px;flex:1;min-height:0}
-.funnel{display:flex;flex-direction:column;gap:6px;align-items:center;padding-top:6px}
-.fseg{border-radius:var(--z-radius);padding:11px 14px;cursor:pointer;text-align:center;transition:all .15s;background:var(--z-lt);border:1px solid transparent;display:flex;flex-direction:column;align-items:center}
-.fseg:hover{border-color:var(--z-teal)}
-.fseg.on{background:var(--z-dark)}
-.fseg .fc{font-size:10px;font-weight:700;letter-spacing:.4px;color:var(--z-teal)}.fseg.on .fc{color:var(--z-teal-light)}
-.fseg .fn{font-size:13px;font-weight:700;color:var(--z-dark);margin-top:1px}.fseg.on .fn{color:#fff}
-.sdcard{background:var(--z-dark);color:#fff;border-radius:var(--z-radius);padding:22px 24px;align-self:start}
-.sdcard .st{font-size:10px;font-weight:700;letter-spacing:.6px;text-transform:uppercase;color:var(--z-teal-light)}
-.sdcard h3{font-size:20px;color:#fff;margin:8px 0 10px;line-height:1.15}
-.sdcard p{font-size:13px;color:rgba(255,255,255,.82);line-height:1.5}
-.sdcard .impact{margin-top:16px;padding-top:14px;border-top:1px solid rgba(255,255,255,.12)}
-.sdcard .impact .in{font-size:24px;font-weight:700;color:var(--z-teal-light);line-height:1}
-.sdcard .impact .il{font-size:11px;color:rgba(255,255,255,.6);margin-top:4px}
-.scaps{display:flex;gap:9px;margin-top:14px}
-.scap{flex:1;background:rgba(255,255,255,.08);border-radius:var(--z-radius);padding:10px 12px}
-.scap b{font-size:12px;color:#fff}.scap span{font-size:10.5px;color:rgba(255,255,255,.7);display:block;margin-top:2px;line-height:1.35}
+/* ENABLE FUNNEL (GESA-style progressive enable) */
+.enfun{display:grid;grid-template-columns:460px 1fr;gap:34px;margin-top:14px;flex:1;min-height:0;align-items:center}
+.funnel2{display:flex;flex-direction:column;gap:4px}
+.fseg2{height:54px;border:none;cursor:pointer;display:flex;align-items:center;justify-content:center;font-family:var(--z-font);font-size:14px;font-weight:700;color:var(--z-slate);background:var(--z-lt);transition:background .45s,color .45s}
+.fseg2.on{background:var(--z-teal);color:#fff}
+.fseg2.cur{background:var(--z-dark);color:#fff}
+.enbtn{align-self:flex-start;margin-top:16px;font-family:var(--z-font);font-size:13px;font-weight:700;color:#fff;background:var(--z-dark);border:none;border-radius:var(--z-radius);padding:12px 20px;cursor:pointer}
+.enbtn:hover{background:var(--z-teal)}
+.endesc-state{font-size:11px;font-weight:700;letter-spacing:.7px;text-transform:uppercase;color:var(--z-teal)}
+.endesc p{font-size:17px;line-height:1.55;color:var(--z-dark);margin-top:12px;max-width:380px}
 /* FLOW PIPELINE */
 .pipehdr{display:flex;align-items:center;gap:8px;margin-top:12px;flex-wrap:wrap}
 .ppill{display:flex;align-items:center;gap:6px;font-size:11px;font-weight:700;color:var(--z-slate);background:var(--z-lt);border-radius:20px;padding:5px 12px;transition:all .2s}
@@ -107,8 +98,7 @@ h1{font-size:38px;font-weight:700;line-height:1.06;letter-spacing:-.5px;color:va
 .pcard{width:250px;flex:none;background:var(--z-white);border:1px solid var(--z-purple-lt);border-radius:var(--z-radius);display:flex;flex-direction:column;overflow:hidden;animation:rv .4s ease both}
 .pcard .pch{padding:9px 12px;background:var(--z-lt);border-bottom:1px solid var(--z-purple-lt)}
 .pcard .pcs{font-size:12px;font-weight:700;color:var(--z-dark)}
-.pcard .pcf{font-size:9.5px;color:var(--z-slate);margin-top:1px}
-.pcard .pcf b{color:var(--z-teal)}
+.pcard .pcf{font-size:9.5px;color:var(--z-slate);margin-top:1px}.pcard .pcf b{color:var(--z-teal)}
 .pcard .pcbody{padding:12px;flex:1;overflow:hidden;font-size:11px}
 .pcard .pcgen{display:flex;flex-direction:column;align-items:center;justify-content:center;height:100%;gap:10px;text-align:center;color:var(--z-slate)}
 .spin{width:15px;height:15px;border-radius:50%;border:2px solid rgba(39,187,175,.3);border-top-color:var(--z-teal);animation:sp .7s linear infinite}
@@ -121,7 +111,6 @@ h1{font-size:38px;font-weight:700;line-height:1.06;letter-spacing:-.5px;color:va
 .replay{font-family:var(--z-font);font-size:12px;font-weight:700;color:var(--z-dark);background:var(--z-white);border:1px solid var(--z-purple-lt);border-radius:var(--z-radius);padding:8px 14px;cursor:pointer}
 .replay:hover{border-color:var(--z-teal);color:var(--z-teal)}
 .pctrl .hint{font-size:11px;color:var(--z-slate)}
-/* pipeline artifacts */
 .fnd{display:flex;gap:7px;align-items:flex-start;margin-bottom:7px;line-height:1.35}
 .fdot{width:7px;height:7px;border-radius:50%;flex:none;margin-top:4px}
 .fdot.n{background:var(--z-teal)}.fdot.a{background:#f0c000}.fdot.r{background:var(--z-orange)}
@@ -141,7 +130,6 @@ h1{font-size:38px;font-weight:700;line-height:1.06;letter-spacing:-.5px;color:va
 .wf .wfi.warn .bx{border-color:var(--z-orange);background:#fff7ef}.wf .wfi.full{grid-column:1/-1}
 .tc{font-size:10px;padding:5px 0;border-bottom:1px solid var(--z-purple-lt);line-height:1.35}.tc:last-child{border:none}
 .tc b{color:var(--z-teal);font-size:9.5px;margin-right:5px}
-/* proof */
 .proofs{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-top:22px}
 .proof{background:var(--z-lt);border-radius:var(--z-radius);padding:22px 24px;display:flex;align-items:center;gap:20px}
 .proof .ba{display:flex;align-items:baseline;gap:10px}
@@ -171,26 +159,26 @@ h1{font-size:38px;font-weight:700;line-height:1.06;letter-spacing:-.5px;color:va
 def foot(dark=False):
     return f'<div class="foot"><span class="c">&copy; 2026 Zennify &middot; Confidential &middot; AI-Advanced Delivery</span><img src="{BADGE}" alt="Zennify"></div>'
 
-# ---- delivery funnel stages ----
-FUNNEL=[
- ("D2","Discovery","Diagnose, don't wish-list","Structured discovery maps every real need to a capability and a story, so scope is grounded in evidence.","~75%","faster requirements",[("BRD","Workshops become a complete, traceable requirements doc."),("Story & Design Writer","Build-ready stories and editable wireframes.")]),
- ("D3","Solution design","Design once, build with confidence","A build-ready solution and architecture are set before the first sprint, so development starts with answers.","~70%","faster design",[("Solution Design","A blueprint your team develops against."),("Data Model Advisor","Defensible schema, risks flagged early.")]),
- ("D4","Build","Build faster, review tighter","AI-assisted development, stories, and QA accelerate the build while holding the quality line.","~80%","less effort on stories & tests",[("QA Test Writer","Executable tests generated from the stories."),("Sprint Recap","A data-backed recap every sprint.")]),
- ("D5","UAT","Prove it works","Testing turns go-live from a leap of faith into an evidence-based go/no-go.","~75%","faster UAT setup",[("Test Strategy & UAT","Coverage, criteria, and a clear go/no-go."),("Weekly Status","Live status and risk from your systems.")]),
- ("D7","Go-Live","Go live without surprises","Runbooks, cutover, and hypercare make go-live a controlled, rehearsed event.","~70%","faster cutover prep",[("Deployment Runbook","Minute-by-minute cutover with rollback."),("Live Dashboard","One always-current view of health.")]),
- ("D8","Run & grow","Value compounds after launch","A BAU operating model and QBRs keep the platform improving, so adoption and value compound.","~80%","faster QBR & close-out",[("Quarterly Business Review","Outcomes, adoption, roadmap."),("Change & Enablement","Turns launch into measured adoption.")]),
+# enable funnel: names + plain (no numbers/skills)
+STAGES2=["Discovery","Solution design","Build","UAT","Go-Live","Run & grow"]
+ENDESC=[
+ "Workshops become a structured, traceable backlog your teams can build straight from.",
+ "Requirements become a build-ready design before the first sprint, so your teams start with answers.",
+ "Your developers spend their time on judgment, not boilerplate, and the quality line holds.",
+ "Testing becomes an evidence-based go/no-go your stakeholders can trust.",
+ "Cutover becomes a rehearsed, controlled event, not a leap of faith.",
+ "After launch, your teams keep adoption and value compounding, quarter over quarter.",
 ]
-FUNNEL_JSON=json.dumps([{"code":f[0],"name":f[1],"title":f[2],"desc":f[3],"stat":f[4],"statl":f[5],"caps":[{"n":c[0],"d":c[1]} for c in f[6]]} for f in FUNNEL])
-
+STAGES2_JSON=json.dumps(STAGES2); ENDESC_JSON=json.dumps(ENDESC)
 def funnel_segs():
-    widths=[100,88,77,66,55,45]
+    bounds=[100,88,76,66,57,49,42]
     out=""
-    for i,f in enumerate(FUNNEL):
-        on="on" if i==0 else ""
-        out+=f'<button class="fseg {on}" style="width:{widths[i]}%" onclick="pickF({i})"><div class="fc">{f[0]}</div><div class="fn">{f[1]}</div></button>'
+    for i,name in enumerate(STAGES2):
+        top=bounds[i]; bot=bounds[i+1]
+        clip=f"polygon({(100-top)/2:.1f}% 0,{(100+top)/2:.1f}% 0,{(100+bot)/2:.1f}% 100%,{(100-bot)/2:.1f}% 100%)"
+        out+=f'<button class="fseg2" data-i="{i}" onclick="enableTo({i})" style="clip-path:{clip};-webkit-clip-path:{clip}">{name}</button>'
     return out
 
-# ---- flowing pipeline steps (artifacts cascade) ----
 def art_findings():
     return ('<div class="fnd"><span class="fdot n"></span>Cases logged across 3 systems; originating branch often lost.</div>'
             '<div class="fnd"><span class="fdot a"></span>No single owner for follow-up after the call.</div>'
@@ -223,124 +211,112 @@ PIPE=[
 PIPE_JSON=json.dumps(PIPE)
 
 SL=[]
-# 1 cover
 SL.append(f'''<div class="slide dark active" data-i="0"><div class="cover">
 <div class="l"><img class="logo" src="{WHITE}" alt="Zennify" style="margin-bottom:auto">
 <span class="eyebrow rv">AI-advanced delivery</span>
-<h1 class="rv">Your implementation, delivered on an AI value chain.</h1>
-<p class="sub rv">The skills, agents, and processes Zennify&rsquo;s delivery teams run every day, reapplied inside your institution&rsquo;s own implementation, from kickoff to long after go-live.</p>
-<div class="tagrow rv"><span class="tag">Financial services</span><span class="tag">Delivery motion</span><span class="tag">Zennify Accelerate</span></div>
+<h1 class="rv">Your teams, delivering on an AI value chain.</h1>
+<p class="sub rv">We reapply the skills, agents, and processes proven across our delivery work, and enable them inside your teams&rsquo; own implementation lifecycle, one part at a time.</p>
+<div class="tagrow rv"><span class="tag">Financial services</span><span class="tag">Your delivery lifecycle</span><span class="tag">Zennify Accelerate</span></div>
 </div><div class="r"><img src="{idk('Route.png')}" style="width:120px;height:120px;opacity:.9"></div>
 </div></div>''')
-# 2 what changed
 SL.append(f'''<div class="slide" data-i="1"><div class="pad">
 <span class="eyebrow rv">What changed</span>
 <h1 class="rv">AI moved from pilot to production inside delivery.</h1>
-<p class="lead rv">The question is no longer whether to use AI on an implementation. It is whether your delivery motion is built to compound it, at every stage, on your data, under your controls.</p>
+<p class="lead rv">The question for your teams is no longer whether to use AI on an implementation. It is whether each part of your delivery lifecycle is set up to use it well, on your data and under your controls.</p>
 <div class="cols2 rv">
-<div class="card out"><img class="ico" src="{idk('Puzzle.png')}"><div class="ch">The bolt-on era</div><p>Isolated pilots and point tools, run by whoever is staffed. Effort goes up. Consistency, and proof, do not.</p></div>
-<div class="card acc"><img class="ico" src="{idk('Route.png')}"><div class="ch">The value-chain era</div><p>A coordinated chain of skills, agents, and processes across the delivery lifecycle, reapplied to every engagement and measured on your platform.</p></div>
+<div class="card out"><img class="ico" src="{idk('Puzzle.png')}"><div class="ch">Point tools, in isolation</div><p>An assistant here, a script there, used by whoever knows about them. Effort goes up. Consistency across your teams does not.</p></div>
+<div class="card acc"><img class="ico" src="{idk('Route.png')}"><div class="ch">Enabled across the lifecycle</div><p>Proven skills, agents, and processes enabled part by part inside your teams&rsquo; existing process, and measured on your platform.</p></div>
 </div></div>{foot()}</div>''')
-# 3 cost of waiting
 SL.append(f'''<div class="slide" data-i="2"><div class="pad">
-<span class="eyebrow rv">The cost of waiting</span>
-<h1 class="rv">Every delivery stage run the old way is time and margin you don&rsquo;t get back.</h1>
+<span class="eyebrow rv">Where the time goes</span>
+<h1 class="rv">Run the old way, each stage quietly costs your teams.</h1>
 <div class="grid3 rv">
-<div class="gc"><img class="ico" src="{idk('Zoom_In.png')}"><b>Discovery drags</b><span>Weeks to turn workshops into a build-ready, traceable backlog.</span></div>
-<div class="gc"><img class="ico" src="{idk('Git_Branch.png')}"><b>Rework piles up</b><span>Requirements drift from design drift from build, and the client pays for it.</span></div>
-<div class="gc"><img class="ico" src="{idk('Chart_Bar.png')}"><b>Status is opaque</b><span>Leadership finds out about risk late, when it is expensive to fix.</span></div>
+<div class="gc"><img class="ico" src="{idk('Zoom_In.png')}"><b>Discovery drags</b><span>It takes weeks to turn workshops into a build-ready, traceable backlog.</span></div>
+<div class="gc"><img class="ico" src="{idk('Git_Branch.png')}"><b>Rework piles up</b><span>Requirements drift from design drift from build, and it surfaces late.</span></div>
+<div class="gc"><img class="ico" src="{idk('Chart_Bar.png')}"><b>Status is hard to see</b><span>Leadership learns about risk when it is already expensive to fix.</span></div>
 </div>
-<p class="lead rv">None of this is an AI problem. It is a delivery-model problem that AI, run as a value chain, is now built to solve.</p>
+<p class="lead rv">None of this is an AI problem. It is where AI, enabled inside your process, helps your teams most.</p>
 </div>{foot()}</div>''')
-# 4 POV
 SL.append(f'''<div class="slide dark" data-i="3"><div class="pad">
-<span class="eyebrow rv">Our point of view</span>
-<h1 class="rv">Stop bolting AI onto delivery. Run the whole lifecycle as one value chain.</h1>
-<p class="lead rv">The institutions that win will treat AI as a delivery operating model, governed and reapplied to every engagement, not a set of features their teams switch on. The advantage is not the model. It is the value chain around it.</p>
+<span class="eyebrow rv">How we work</span>
+<h1 class="rv">We enable each part of your funnel. We don&rsquo;t replace your teams.</h1>
+<p class="lead rv">This is not a rip-and-replace, or another tool for your people to learn on their own. We bring proven skills, agents, and processes, and enable them stage by stage inside your existing delivery lifecycle, on your platform and under your governance.</p>
 <div class="beliefs rv">
-<div class="belief"><span class="n">1</span><p>The lifecycle, not the tool, is the unit of acceleration.</p></div>
-<div class="belief"><span class="n">2</span><p>If it isn&rsquo;t measured on your own system of record, it isn&rsquo;t proof.</p></div>
-<div class="belief"><span class="n">3</span><p>Consistency beats heroics: the same standard on every engagement.</p></div>
+<div class="belief"><span class="n">1</span><p>We enable your process. We don&rsquo;t replace it.</p></div>
+<div class="belief"><span class="n">2</span><p>We start where the constraint is, and enable one part at a time.</p></div>
+<div class="belief"><span class="n">3</span><p>Everything runs, and is measured, on your own platform.</p></div>
 </div>
-<p class="notdo rv"><b>What not to do:</b> launch another isolated pilot. A pilot that never reapplies across delivery is a demo you paid for.</p>
 </div>{foot(True)}</div>''')
-# 5 funnel
 SL.append(f'''<div class="slide" data-i="4"><div class="pad">
-<span class="eyebrow">The delivery value chain</span>
-<h1 style="font-size:32px">One motion, converging on a live, adopted platform.</h1>
-<div class="funwrap">
-<div class="funnel" id="funnel">{funnel_segs()}</div>
-<div class="sdcard"><div class="st" id="f-code"></div><h3 id="f-title"></h3><p id="f-desc"></p>
-<div class="impact"><div class="in" id="f-stat"></div><div class="il" id="f-statl"></div></div>
-<div class="scaps" id="f-caps"></div></div>
+<span class="eyebrow">Your delivery funnel</span>
+<h1 style="font-size:32px">We enable each part, one at a time.</h1>
+<div class="enfun">
+<div style="display:flex;flex-direction:column"><div class="funnel2" id="funnel2">{funnel_segs()}</div>
+<button class="enbtn" id="enbtn" onclick="enableNext()">Enable first stage &rarr;</button></div>
+<div><div class="endesc-state" id="en-state">Today</div>
+<p id="en-line">Each part of your delivery funnel runs mostly by hand today. Enable a stage to see how AI opens the flow, one part at a time.</p></div>
 </div>
 </div>{foot()}</div>''')
-# 6 flowing pipeline (centerpiece)
 SL.append(f'''<div class="slide" data-i="5"><div class="pad">
-<span class="eyebrow">See it flow</span>
-<h1 style="font-size:30px">Each artifact feeds the next, generated as you go.</h1>
+<span class="eyebrow">One part feeds the next</span>
+<h1 style="font-size:30px">Enable a stage, and its output feeds the next.</h1>
 <div class="pipehdr" id="pipehdr"></div>
 <div class="flowvp"><div class="flow" id="flow"></div></div>
-<div class="pctrl"><button class="replay" id="replayBtn" onclick="playPipe(true)">&#9654; Replay the pipeline</button><span class="hint">Discovery findings become stories, stories become design, design becomes a screen, then tests. One motion.</span></div>
+<div class="pctrl"><button class="replay" id="replayBtn" onclick="playPipe(true)">&#9654; Replay the flow</button><span class="hint">Discovery findings become stories, stories become design, design becomes a screen, then tests. One motion, inside your process.</span></div>
 </div>{foot()}</div>''')
-# 7 proof
 SL.append(f'''<div class="slide" data-i="6"><div class="pad">
 <span class="eyebrow rv">The proof</span>
 <h1 class="rv">Measured on Salesforce, not asserted on a slide.</h1>
 <div class="proofs rv">
 <div class="proof"><div class="ba"><span class="b">~5%</span><span class="ar">&rarr;</span><span class="a">~1%</span></div>
-<div class="t"><b>Estimate variance</b><span>Delivery effort predicted 4&times; more accurately</span><span class="meas">MEASURED &middot; SALESFORCE</span></div></div>
+<div class="t"><b>Estimate variance</b><span>Delivery effort predicted far more accurately</span><span class="meas">MEASURED &middot; SALESFORCE</span></div></div>
 <div class="proof"><div class="ba"><span class="b">56.7%</span><span class="ar">&rarr;</span><span class="a">57.1%</span></div>
 <div class="t"><b>Delivered margin</b><span>An AI-run engagement delivering above what was sold</span><span class="meas">MEASURED &middot; SALESFORCE</span></div></div>
 </div>
-<p class="honest rv">Everything else in this motion we show as a directional estimate, clearly labelled, until your own data measures it. The claim ceiling is deliberate: a number we can&rsquo;t defend is one we won&rsquo;t put in front of you.</p>
+<p class="honest rv">These are from engagements we have run. Everything else we would show your teams as a directional estimate, clearly labelled, until your own data measures it.</p>
 </div>{foot()}</div>''')
-# 8 offer
 SL.append(f'''<div class="slide" data-i="7"><div class="pad">
-<span class="eyebrow rv">The offer</span>
-<h1 class="rv">What you get.</h1>
-<p class="lead rv" style="margin-top:10px">A way to run your implementations on Zennify&rsquo;s AI-advanced delivery motion: the skills, agents, and delivery playbook, configured to your lifecycle and governed on your platform.</p>
+<span class="eyebrow rv">What we enable</span>
+<h1 class="rv">Proven capability, inside your teams&rsquo; process.</h1>
+<p class="lead rv" style="margin-top:10px">We enable your teams to run implementations on an AI value chain: proven skills, agents, and processes, configured to your lifecycle and governed on your platform.</p>
 <div class="offer rv">
-<div><div class="subh acc">Deliverables</div>
-<ul class="olist"><li>The delivery value chain fitted to your implementation lifecycle.</li><li>A working set of skills and agents, configured on your org.</li><li>Measured baselines for the delivery stages that matter most.</li><li>Team enablement, so the motion reapplies without us in the room.</li></ul></div>
+<div><div class="subh acc">What we bring</div>
+<ul class="olist"><li>The delivery value chain, enabled inside your teams&rsquo; existing process.</li><li>A working set of skills and agents, configured on your org.</li><li>Your teams enabled to run the motion themselves.</li><li>A baseline on one engagement, measured on your data.</li></ul></div>
 <div style="display:flex;flex-direction:column"><div class="subh">Explicitly out of scope</div>
 <ul class="olist no"><li>Bespoke model training.</li><li>A rip-and-replace of your platform.</li><li>Anything we can&rsquo;t measure or govern.</li></ul>
-<div class="startchip"><b>Start here</b><p>A delivery baseline on one active engagement.</p></div></div>
+<div class="startchip"><b>Start here</b><p>Enable one part of the funnel on an active engagement.</p></div></div>
 </div>
 </div>{foot()}</div>''')
-# 9 fit
 SL.append(f'''<div class="slide" data-i="8"><div class="pad">
 <span class="eyebrow rv">Is this you?</span>
-<h1 class="rv">Built for institutions ready to modernize delivery.</h1>
+<h1 class="rv">Built for teams ready to modernize how they deliver.</h1>
 <div class="cols2 rv" style="margin-top:20px">
 <div class="card acc"><div class="ch">Ideal fit</div>
 <ul class="olist"><li>On, or moving to, Salesforce as the system of record.</li><li>A pipeline of implementations, not a one-off project.</li><li>Delivery leaders frustrated by rework and inconsistency.</li><li>Governance and audit requirements to satisfy.</li></ul></div>
-<div class="card out"><div class="ch">Not for you</div>
+<div class="card out"><div class="ch">Not the fit</div>
 <ul class="olist no"><li>Looking for a single AI feature or chatbot.</li><li>No appetite to measure outcomes on your own data.</li><li>Off-platform with no plan to consolidate.</li></ul></div>
 </div></div>{foot()}</div>''')
-# 10 next step
 SL.append(f'''<div class="slide" data-i="9"><div class="pad">
 <span class="eyebrow rv">The next step</span>
-<h1 class="rv">Start on one engagement.</h1>
+<h1 class="rv">Enable one part first.</h1>
 <div class="steps rv">
-<div class="pstep"><div class="pn">STEP 1</div><b>Baseline</b><span>We instrument one active engagement and measure where delivery time and rework actually go.</span></div>
-<div class="pstep"><div class="pn">STEP 2</div><b>Map</b><span>We fit the delivery value chain to your lifecycle and set measured targets on your platform.</span></div>
-<div class="pstep"><div class="pn">STEP 3</div><b>Accelerate</b><span>Reapply the skills and agents, then scale the motion across your delivery portfolio.</span></div>
+<div class="pstep"><div class="pn">STEP 1</div><b>Focus</b><span>Together we find the part of your funnel where the constraint costs your teams the most.</span></div>
+<div class="pstep"><div class="pn">STEP 2</div><b>Enable</b><span>We enable that stage with proven skills and agents, on your platform and in your process.</span></div>
+<div class="pstep"><div class="pn">STEP 3</div><b>Reapply</b><span>Your teams reapply the motion across the rest of the funnel, at your pace.</span></div>
 </div>
-<p class="lead rv" style="margin-top:22px">One engagement in, you have a defensible read on where AI moves delivery for your institution, and a motion you can repeat.</p>
+<p class="lead rv" style="margin-top:22px">One part in, your teams have a defensible read on where AI helps delivery, and a motion they can repeat.</p>
 </div>{foot()}</div>''')
-# 11 close
 SL.append(f'''<div class="slide dark close" data-i="10"><div class="pad" style="justify-content:center">
 <img class="logo rv" src="{WHITE}" alt="Zennify" style="margin-bottom:26px">
 <span class="eyebrow rv">Zennify Accelerate</span>
-<h1 class="rv">Every stage of delivery, accelerated by AI.</h1>
-<p class="lead rv">Let&rsquo;s map the delivery value chain to your lifecycle, and prove it on your data.</p>
-<span class="cta rv">Baseline one engagement</span>
+<h1 class="rv">Every part of your funnel, enabled.</h1>
+<p class="lead rv">Let&rsquo;s enable the part of your delivery lifecycle where it matters most, and prove it on your data.</p>
+<span class="cta rv">Enable one part of your funnel</span>
 </div>{foot(True)}</div>''')
 
 N=len(SL)
 dots="".join(f'<span class="dot {"on" if i==0 else ""}" onclick="go({i})"></span>' for i in range(N))
-FLOW_SLIDE=5; FUNNEL_SLIDE=4
+FLOW_SLIDE=5
 
 JS=f"""
 const N={N};let cur=0;
@@ -357,38 +333,31 @@ function render(){{
 function go(n){{cur=Math.max(0,Math.min(N-1,n));render();}}
 function next(){{go(cur+1);}}function prev(){{go(cur-1);}}
 addEventListener('keydown',e=>{{if(e.key==='ArrowRight'||e.key===' '){{e.preventDefault();next();}}if(e.key==='ArrowLeft')prev();}});
-// funnel
-const FUN={FUNNEL_JSON};
-function pickF(i){{
- document.querySelectorAll('#funnel .fseg').forEach((b,j)=>b.classList.toggle('on',j===i));
- const s=FUN[i];
- document.getElementById('f-code').innerHTML=s.code+' &middot; '+s.name;
- document.getElementById('f-title').textContent=s.title;
- document.getElementById('f-desc').textContent=s.desc;
- document.getElementById('f-stat').textContent=s.stat;
- document.getElementById('f-statl').textContent=s.statl;
- document.getElementById('f-caps').innerHTML=s.caps.map(c=>`<div class="scap"><b>${{c.n}}</b><span>${{c.d}}</span></div>`).join('');
+// enable funnel
+const STAGES2={STAGES2_JSON};const ENDESC={ENDESC_JSON};const EN=STAGES2.length;let enabled=0;
+function paintFunnel(){{
+ document.querySelectorAll('#funnel2 .fseg2').forEach((b,i)=>{{b.classList.toggle('on',i<enabled-1);b.classList.toggle('cur',i===enabled-1);}});
+ const st=document.getElementById('en-state'),ln=document.getElementById('en-line'),btn=document.getElementById('enbtn');
+ if(enabled===0){{st.textContent='Today';ln.textContent='Each part of your delivery funnel runs mostly by hand today. Enable a stage to see how AI opens the flow, one part at a time.';btn.textContent='Enable first stage →';}}
+ else if(enabled>=EN){{st.textContent='Fully enabled';ln.textContent='Every part of your funnel is AI-enabled, end to end, on your platform and under your governance.';btn.textContent='↻ Reset';}}
+ else {{st.textContent=STAGES2[enabled-1]+' · enabled';ln.textContent=ENDESC[enabled-1];btn.textContent='Enable next stage →';}}
 }}
-pickF(0);
+function enableNext(){{enabled=enabled>=EN?0:enabled+1;paintFunnel();}}
+function enableTo(i){{enabled=i+1;paintFunnel();}}
+paintFunnel();
 // flowing pipeline
 const PIPE={PIPE_JSON};let pipeTimers=[],pipeStarted=false;
-function clearPipe(){{pipeTimers.forEach(t=>clearTimeout(t));pipeTimers=[];}}
-function renderHdr(cur){{
+function clearPipe(){{pipeTimers.forEach(t=>{{if(typeof t==='number')clearTimeout(t);}});pipeTimers=[];}}
+function renderHdr(c){{
  document.getElementById('pipehdr').innerHTML=PIPE.map((p,i)=>{{
-  const cls=i<cur?'done':i===cur?'cur':'';
-  const arrow=i<PIPE.length-1?'<span class=parrow>&rsaquo;</span>':'';
+  const cls=i<c?'done':i===c?'cur':'';const arrow=i<PIPE.length-1?'<span class=parrow>&rsaquo;</span>':'';
   return `<span class="ppill ${{cls}}"><span class=pd></span>${{p.stage}}</span>${{arrow}}`;
  }}).join('');
 }}
-function scrollFlow(i){{
- const off=Math.max(0,(i)*294-560);
- document.getElementById('flow').style.transform=`translateX(${{-off}}px)`;
-}}
+function scrollFlow(i){{document.getElementById('flow').style.transform=`translateX(${{-Math.max(0,i*294-560)}}px)`;}}
 function playPipe(force){{
- if(pipeStarted&&!force)return;
- pipeStarted=true;clearPipe();
- const flow=document.getElementById('flow');flow.innerHTML='';flow.style.transform='translateX(0)';
- renderHdr(0);
+ if(pipeStarted&&!force)return;pipeStarted=true;clearPipe();
+ const flow=document.getElementById('flow');flow.innerHTML='';flow.style.transform='translateX(0)';renderHdr(0);
  let i=0;
  function step(){{
   if(i>=PIPE.length){{renderHdr(PIPE.length);return;}}
@@ -399,12 +368,8 @@ function playPipe(force){{
    `<div class="pcbody"><div class="pcgen"><span class="spin"></span><span class="gtxt" id="gt${{i}}">${{p.gen[0]}}</span></div></div></div>`);
   renderHdr(i);scrollFlow(i);
   let g=0;const gt=document.getElementById('gt'+i);
-  const tick=setInterval(()=>{{g++;if(g<p.gen.length){{gt.textContent=p.gen[g];}}}},560);pipeTimers.push({{}});
-  pipeTimers.push(setTimeout(()=>{{
-    clearInterval(tick);
-    document.getElementById('pc'+i).querySelector('.pcbody').innerHTML=p.art;
-    i++;pipeTimers.push(setTimeout(step,650));
-  }},p.gen.length*560+250));
+  const tick=setInterval(()=>{{g++;if(g<p.gen.length)gt.textContent=p.gen[g];}},560);
+  pipeTimers.push(setTimeout(()=>{{clearInterval(tick);document.getElementById('pc'+i).querySelector('.pcbody').innerHTML=p.art;i++;pipeTimers.push(setTimeout(step,650));}},p.gen.length*560+250));
  }}
  step();
 }}
