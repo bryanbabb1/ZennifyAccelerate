@@ -56,6 +56,7 @@ h1{font-size:37px;font-weight:700;line-height:1.06;letter-spacing:-.5px;color:va
 .motif{display:flex;flex-direction:column;gap:8px;align-items:center;width:100%}
 .motif .mseg{height:38px;border-radius:var(--z-radius);display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;color:#fff;background:var(--z-teal)}
 .motif .mseg.d{background:var(--z-dark)}.motif .marr{color:var(--z-slate);font-size:12px;line-height:.3}
+.covmark{width:190px;height:190px;border-radius:34px}
 .cols2{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-top:22px}
 .card{background:var(--z-lt);border-radius:var(--z-radius);padding:20px 22px}
 .card.out{background:var(--z-white);border:1px solid var(--z-purple-lt)}
@@ -409,7 +410,7 @@ SL.append(f'''<div class="slide dark active" data-i="0"><div class="cover">
 <span class="eyebrow rv">AI-enabled services delivery</span>
 <h1 class="rv">Your teams, delivering on an AI value chain.</h1>
 <p class="sub rv">We reapply the skills, agents, and processes proven across our delivery work, and enable them inside your teams&rsquo; own implementation lifecycle, one part at a time.</p>
-</div><div class="r">{motif}</div></div></div>''')
+</div><div class="r"><img class="covmark" src="{BADGE}" alt="Zennify"></div></div></div>''')
 # 1 what changed
 SL.append(f'''<div class="slide" data-i="1"><div class="pad">
 <span class="eyebrow rv">What changed</span>
