@@ -80,7 +80,7 @@ Content is maintained in a **private Google Sheet CMS** (do NOT make it public):
   over the current Apps Script, redeploy the web app (same `/exec` URL, no site rebuild),
   and optionally Run ▸ `installEditTrigger` once so edits auto-clear the cache. This
   `Code.gs` ALSO emits metric/before/after/headline/basis (supersedes the 07-28 one).
-- **Session 2026-09-29 — CMS reconciliation + Operations lane (on the dev branch, not yet on `main`):**
+- **Session 2026-09-29 — CMS reconciliation + Operations lane (shipped to `main` + live Sheet):**
   reconciled the CMS against the ZAIDI board, the Auctor skill library, and the GitHub
   `Zennify/claude-skills-catalog`. User approved all 88 changes (23 adds, 2 removals,
   13 framework reworks for the new 5-living-doc framework, 33 platform → "Auctor + Claude",
@@ -95,18 +95,18 @@ Content is maintained in a **private Google Sheet CMS** (do NOT make it public):
   evidence), the user approves, then Claude applies it. Never write unapproved changes to
   the live Sheet — it feeds the client-facing site immediately. Recurring work is tracked
   in ZAIDI-59.
-- **Pending (waiting on the user's request for an org Google Sheets connector):** when it is
-  enabled, (1) re-read the live Sheet and apply the approved delta on top of its current
-  state (don't blindly overwrite with `cms_updated.csv`), (2) write in place — same file, tab,
-  and column order — and read back to confirm 108 rows, (3) merge the dev branch to `main`
-  right after so the Sheet and the site change together, (4) check the live site shows the
-  Operations row (proves `Code.gs` passes O-codes).
-- **ACTION — the approved changes are NOT yet in the live Google Sheet.** This org has no
-  Google Sheets connector (Drive can read but not edit a Sheet in place). Import-ready file
-  `cms_updated.csv` (108 rows, same columns) was handed to the user, not committed (it holds
-  internal-only rows). Either enable a Sheets connector so the edit
-  can be made in place, or the user imports via File ▸ Import ▸ Replace current sheet
-  (keeps the file ID, tab, and the bound Apps Script).
+- **Done 2026-09-29:** Google Sheets connector enabled; the approved delta was written in place
+  (108 rows, 0 cell mismatches on read-back; new rows formatted like the rows above, filter
+  extended to row 109, Visible = No cells filled light orange). Dev branch merged to `main`
+  (`e2a4820`) and deployed. The live bundle inlines the `/exec` URL — read it from
+  `assets/index-*.js` to query the feed directly with curl (headless Chromium here rejects
+  the sandbox proxy CA; curl trusts it).
+- **Endpoint cache lags API writes.** The deployed `Code.gs` caches the feed (CacheService,
+  ~6 h). Its edit trigger fires only on edits made in the Sheet UI, NOT on Sheets-API writes,
+  so after Claude writes the Sheet the site keeps serving the previous snapshot until the
+  cache expires or someone edits a cell by hand. No cache-bypass query param exists
+  (tried nocache/refresh/fresh/bust). **Recommended:** add a keyed `?refresh=` param to
+  `Code.gs` that clears the cache, so maintenance writes show up immediately.
 - **Check `Code.gs` accepts `O1`–`O4` stage codes.** Stage parsing lives in the bound Apps
   Script (not in this repo). If it filters to S/D codes, Operations rows lose their stage.
   The site itself tolerates unknown codes (drawer shows the raw code; nothing breaks).
