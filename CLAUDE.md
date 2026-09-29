@@ -80,10 +80,25 @@ Content is maintained in a **private Google Sheet CMS** (do NOT make it public):
   over the current Apps Script, redeploy the web app (same `/exec` URL, no site rebuild),
   and optionally Run ▸ `installEditTrigger` once so edits auto-clear the cache. This
   `Code.gs` ALSO emits metric/before/after/headline/basis (supersedes the 07-28 one).
-- **Baked fallback is stale (38 items vs ~81 live).** Couldn't regenerate it this session —
-  the `/exec` URL is a Vercel build secret and outbound to Google is sandboxed here. To
-  refresh it, user pastes a current sheet export (or the `/exec` URL) and I rebuild
-  `ecosystem.ts` so a cold/first load (or dead endpoint) still looks right.
+- **Session 2026-09-29 — CMS reconciliation + Operations lane (on the dev branch, not yet on `main`):**
+  reconciled the CMS against the ZAIDI board, the Auctor skill library, and the GitHub
+  `Zennify/claude-skills-catalog`. User approved all 88 changes (23 adds, 2 removals,
+  13 framework reworks for the new 5-living-doc framework, 33 platform → "Auctor + Claude",
+  hides for 5 story-less Roadmap agents). Result: 108 rows, 98 visible externally.
+  Added an **Operations** lane: stages `o1` Forecast & Staff, `o2` Govern the Portfolio,
+  `o3` Protect Scope & Margin, `o4` Learn & Improve (STAGES lane = 'Operations'). An
+  Operations stage renders only when it has ≥1 externally visible capability — O1's tools
+  (utilization, capacity, resource sync) are all Visible = No, so O1 is hidden publicly.
+  The baked fallback `ecosystem.ts` was regenerated from the approved catalog (98 rows).
+- **ACTION — the approved changes are NOT yet in the live Google Sheet.** This org has no
+  Google Sheets connector (Drive can read but not edit a Sheet in place). Import-ready file
+  `cms_updated.csv` (108 rows, same columns) was handed to the user, not committed (it holds
+  internal-only rows). Either enable a Sheets connector so the edit
+  can be made in place, or the user imports via File ▸ Import ▸ Replace current sheet
+  (keeps the file ID, tab, and the bound Apps Script).
+- **Check `Code.gs` accepts `O1`–`O4` stage codes.** Stage parsing lives in the bound Apps
+  Script (not in this repo). If it filters to S/D codes, Operations rows lose their stage.
+  The site itself tolerates unknown codes (drawer shows the raw code; nothing breaks).
 - **Ship state (2026-07-28):** quantified before→after impact is live on `main`
   (grid card `.qstat` line + drawer Impact block with measured/estimate/enabler basis).
   Handed the user `cms_refined.xlsx` (87 rows, new columns) + updated Apps Script
@@ -109,4 +124,5 @@ Reconciled from two sources: the **Auctor Skills Catalog** (54-skill library = t
 authoritative Skills list) and the **AI Value Chain JSON export** (its "agent" nodes were
 re-classified by their notes into true Agents / Claude Projects / Apps / MCPs / Tools;
 its own skill list was treated as outdated). Result: 85 capabilities. Personas were
-intentionally excluded; lifecycle (Sales S1–S5, Delivery D1–D8) is the spine.
+intentionally excluded; lifecycle (Sales S1–S5, Delivery D1–D8, Operations O1–O4 added
+2026-09-29) is the spine.

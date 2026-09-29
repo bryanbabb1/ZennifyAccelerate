@@ -60,6 +60,7 @@ export default function EcosystemOverview() {
   }, [])
 
   const capsFor = (id: string) => items.filter(a => (a.stages || []).includes(id))
+  const opsStages = STAGES.filter(s => s[3] === 'Operations' && capsFor(s[0]).length > 0)
 
   const list = useMemo(() => {
     const out = items.filter(a => {
@@ -127,7 +128,7 @@ export default function EcosystemOverview() {
           from first conversation to long after go-live.</p>
         <div className="stats">
           <div className="stat"><div className="n">{liveCount}</div><div className="l">Live AI capabilities today</div></div>
-          <div className="stat"><div className="n">{STAGES.length}</div><div className="l">Lifecycle stages</div></div>
+          <div className="stat"><div className="n">{STAGES.filter(s => s[3] !== 'Operations').length + opsStages.length}</div><div className="l">Lifecycle stages</div></div>
           <div className="stat"><div className="n">{kindCount}</div><div className="l">Capability types working together</div></div>
           <div className="stat"><div className="n">100%</div><div className="l">Deliverables on Zennify standard</div></div>
         </div>
@@ -157,6 +158,13 @@ export default function EcosystemOverview() {
         <div className="railrow">{STAGES.filter(s => s[3] === 'Sales').map(s => <StageBtn key={s[0]} s={s} on={s[0] === stage} count={capsFor(s[0]).length} impact={STAGE_IMPACT[s[0]]} onClick={() => setStage(s[0])} />)}</div>
         <div className="raillabel">Delivery</div>
         <div className="railrow">{STAGES.filter(s => s[3] === 'Delivery').map(s => <StageBtn key={s[0]} s={s} on={s[0] === stage} count={capsFor(s[0]).length} impact={STAGE_IMPACT[s[0]]} onClick={() => setStage(s[0])} />)}</div>
+        {/* Operations runs underneath every engagement. Its stages hold internal-only tools
+            (utilization, capacity, margin) as well as client-facing ones, so a stage appears
+            only once it has at least one externally visible capability. */}
+        {opsStages.length ? <>
+          <div className="raillabel">Operations</div>
+          <div className="railrow">{opsStages.map(s => <StageBtn key={s[0]} s={s} on={s[0] === stage} count={capsFor(s[0]).length} impact={STAGE_IMPACT[s[0]]} onClick={() => setStage(s[0])} />)}</div>
+        </> : null}
         <div className="detail" style={{ marginTop: 20 }}>
           <div className="dcard">
             <span className="eyebrow">{st[1]} &middot; {st[2]}</span>
