@@ -90,6 +90,17 @@ Content is maintained in a **private Google Sheet CMS** (do NOT make it public):
   Operations stage renders only when it has ≥1 externally visible capability — O1's tools
   (utilization, capacity, resource sync) are all Visible = No, so O1 is hidden publicly.
   The baked fallback `ecosystem.ts` was regenerated from the approved catalog (98 rows).
+- **Operating model (agreed 2026-09-29): Claude maintains the CMS, the user is the checkpoint.**
+  Claude proposes a delta (reconciliation workbook, one row per change, with source
+  evidence), the user approves, then Claude applies it. Never write unapproved changes to
+  the live Sheet — it feeds the client-facing site immediately. Recurring work is tracked
+  in ZAIDI-59.
+- **Pending (waiting on the user's request for an org Google Sheets connector):** when it is
+  enabled, (1) re-read the live Sheet and apply the approved delta on top of its current
+  state (don't blindly overwrite with `cms_updated.csv`), (2) write in place — same file, tab,
+  and column order — and read back to confirm 108 rows, (3) merge the dev branch to `main`
+  right after so the Sheet and the site change together, (4) check the live site shows the
+  Operations row (proves `Code.gs` passes O-codes).
 - **ACTION — the approved changes are NOT yet in the live Google Sheet.** This org has no
   Google Sheets connector (Drive can read but not edit a Sheet in place). Import-ready file
   `cms_updated.csv` (108 rows, same columns) was handed to the user, not committed (it holds
