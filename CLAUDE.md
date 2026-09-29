@@ -101,15 +101,22 @@ Content is maintained in a **private Google Sheet CMS** (do NOT make it public):
   (`e2a4820`) and deployed. The live bundle inlines the `/exec` URL — read it from
   `assets/index-*.js` to query the feed directly with curl (headless Chromium here rejects
   the sandbox proxy CA; curl trusts it).
-- **Endpoint cache lags API writes.** The deployed `Code.gs` caches the feed (CacheService,
-  ~6 h). Its edit trigger fires only on edits made in the Sheet UI, NOT on Sheets-API writes,
-  so after Claude writes the Sheet the site keeps serving the previous snapshot until the
-  cache expires or someone edits a cell by hand. No cache-bypass query param exists
-  (tried nocache/refresh/fresh/bust). **Recommended:** add a keyed `?refresh=` param to
-  `Code.gs` that clears the cache, so maintenance writes show up immediately.
-- **Check `Code.gs` accepts `O1`–`O4` stage codes.** Stage parsing lives in the bound Apps
-  Script (not in this repo). If it filters to S/D codes, Operations rows lose their stage.
-  The site itself tolerates unknown codes (drawer shows the raw code; nothing breaks).
+- **Endpoint cache (fixed 2026-09-29).** The deployed script is now in the repo at `cms/Code.gs`
+  (reference copy; the live one is bound to the Sheet). Cache key `ecosystem_json_v3`, TTL
+  **5 minutes**, so Sheets-API writes go live within ~5 min; hand edits clear it at once via the
+  installed onEdit trigger. To discard a stuck cache immediately, bump `CACHE_KEY` and redeploy
+  (Manage deployments ▸ Edit ▸ New version — never "New deployment", which changes the URL).
+  Deployment ID `AKfycbx94-duJ4Vs5ml28lqGz4dzqKPSczA6VLo79EqqwIHEC0PmRlSQyJOPmB84pGaWHLUU`
+  (public anyway — inlined into the site bundle). Verified live 2026-09-29: 98 items, O-codes
+  pass through, Operations lane renders O2·10 / O3·2 / O4·3.
+- **Monthly reconciliation — run MANUALLY** (user's choice 2026-09-29; the scheduled routine was
+  dropped because org routines can't carry connectors). Runbook: `cms/MONTHLY_RECONCILIATION.md`.
+  Trigger by saying "run the monthly reconciliation". Board + Auctor + Claude catalog → review
+  workbook → **stop for Bryan's approval** → write Sheet → regenerate fallback → merge to `main` →
+  verify live → comment on ZAIDI-59. **Last monthly reconciliation: 2026-09-29** (88 approved
+  changes, 108 rows / 98 visible, Operations lane added).
+- **Auctor MCP connector showed "needs reconnect" on 2026-09-29** — reconnect it in claude.ai
+  connector settings before the next run, or the Auctor half of the reconciliation is blocked.
 - **Ship state (2026-07-28):** quantified before→after impact is live on `main`
   (grid card `.qstat` line + drawer Impact block with measured/estimate/enabler basis).
   Handed the user `cms_refined.xlsx` (87 rows, new columns) + updated Apps Script
